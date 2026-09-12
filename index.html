@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hôm nay làm gì – Lộ trình Backend 16 tuần</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF0F5; --surface:#FFFFFF; --ink:#16203A; --muted:#5E6780; --line:#DCE1EA;
+  --navy:#1F3A5F; --navy-soft:#C9D6EA;
+  --c-class:#D95858; --c-be:#6B52E8; --c-dsa:#E07F1F; --c-en:#2380CF; --c-school:#B88D00;
+  --c-rest:#2F946A; --c-wind:#4A58A6; --c-free:#7F889C; --c-gold:#B58300;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+.wrap{max-width:600px;margin:0 auto;padding-bottom:64px}
+
+.c-class{--c:var(--c-class)} .c-be{--c:var(--c-be)} .c-dsa{--c:var(--c-dsa)} .c-en{--c:var(--c-en)}
+.c-school{--c:var(--c-school)} .c-rest{--c:var(--c-rest)} .c-wind{--c:var(--c-wind)} .c-free{--c:var(--c-free)} .c-gold{--c:var(--c-gold)}
+
+/* Hero */
+.hero{background:var(--navy);color:#fff;padding:22px 20px 20px;border-radius:0 0 26px 26px}
+.hero-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--navy-soft)}
+.hero h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-0.02em;margin:10px 0 6px}
+.hero .theme{font-size:16px;font-weight:600;margin:0}
+.hero .goal{font-size:13px;color:var(--navy-soft);margin:4px 0 0}
+.nowcard{margin-top:16px;background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 14px 12px 16px;border-left:7px solid var(--c)}
+.nowcard .lbl{font-size:12.5px;font-weight:700;color:var(--c)}
+.nowcard .t{font-weight:700;font-size:16.5px;line-height:1.35}
+.nowcard .d{font-size:14px;color:var(--muted);margin-top:2px}
+.loading{margin:0;color:var(--navy-soft)}
+
+/* Nav */
+.daynav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 16px 0}
+.daynav button,.daynav input{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer}
+.daynav button:focus-visible,.daynav input:focus-visible,.weekday:focus-visible,.links a:focus-visible{outline:3px solid #8FB3E8;outline-offset:2px}
+.daynav .today{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:600}
+.daynav input{margin-left:auto;padding:7px 8px}
+
+section{padding:0 16px}
+h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
+
+.banner{margin:14px 16px 0;padding:10px 14px;border-radius:12px;font-size:14px;background:#FFF5D6;color:#5C4700;border:1px solid #F0DC9A}
+.banner.info{background:#E7F1FB;color:#1D4E7A;border-color:#BCD7F0}
+
+/* Timeline */
+.tl{background:var(--surface);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.row{display:grid;grid-template-columns:52px 5px 1fr;column-gap:12px;padding:11px 14px 11px 12px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .time{font-size:13px;font-weight:600;line-height:1.3}
+.row .time .end{display:block;font-weight:400;color:var(--muted)}
+.row .rail{background:var(--c);border-radius:3px}
+.row .ttl{font-weight:700;font-size:14px;color:var(--c)}
+.row.static .ttl{font-weight:500;color:var(--muted)}
+.row.static .rail{opacity:.45}
+.row.is-now{background:color-mix(in srgb,var(--c) 8%,#fff)}
+.row.is-now .rail{box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent)}
+.tag{font-size:11px;font-weight:700;color:#fff;background:var(--c);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.tag.next{background:transparent;color:var(--c);border:1px solid var(--c)}
+.note{font-size:13.5px;color:var(--muted);margin-top:2px}
+
+.task{display:flex;gap:10px;align-items:flex-start;margin-top:6px;cursor:pointer;position:relative}
+.task input{position:absolute;opacity:0;width:20px;height:20px;margin:0;cursor:pointer}
+.box{flex:0 0 20px;height:20px;border:2px solid var(--c);border-radius:6px;margin-top:1px;display:grid;place-items:center;background:#fff}
+.task input:checked + .box{background:var(--c)}
+.task input:checked + .box::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.task input:focus-visible + .box{outline:3px solid color-mix(in srgb,var(--c) 40%,#fff);outline-offset:2px}
+.txt{font-size:14.5px}
+.task input:checked ~ .txt{color:var(--muted);text-decoration:line-through;text-decoration-color:#A9B0C0}
+.diff{font-size:11.5px;font-weight:700;margin-left:6px;white-space:nowrap}
+.diff.E{color:#23865C}.diff.M{color:#B96E0C}.diff.H{color:#C73E3E}
+.sub{font-size:13px;color:var(--muted);margin:1px 0 0 30px}
+.links{margin:2px 0 0 30px;display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.links a{color:var(--c-en);font-weight:600;text-decoration:none}
+.links a:hover{text-decoration:underline}
+
+/* Debt */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.debt-item{padding:6px 0;border-top:1px solid var(--line)}
+.debt-item:first-child{border-top:0}
+.debt-date{font-size:12px;font-weight:600;color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;margin:0}
+
+/* Progress */
+.prog{display:grid;gap:12px}
+.prog-row .top{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.prog-row .top span:last-child{color:var(--muted);font-weight:500}
+.bar{height:8px;background:#E3E7EF;border-radius:999px;overflow:hidden;margin-top:5px}
+.bar i{display:block;height:100%;background:var(--c);border-radius:999px}
+
+/* Week */
+.weekday{display:block;width:100%;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:8px;cursor:pointer;color:var(--ink)}
+.weekday.sel{border-color:var(--navy);box-shadow:inset 4px 0 0 var(--navy)}
+.weekday .wd{font-weight:700;font-size:14px}
+.weekday .wd small{font-weight:500;color:var(--muted);margin-left:6px;font-size:12.5px}
+.weekday ul{margin:4px 0 0;padding-left:18px;font-size:13.5px}
+.weekday li{margin:1px 0}
+.weekday li.be::marker{color:var(--c-be)} .weekday li.dsa::marker{color:var(--c-dsa)} .weekday li.ex::marker{color:var(--c-school)}
+.weekday li.dn{color:var(--muted);text-decoration:line-through}
+
+.notes{font-size:13px;color:var(--muted);margin-top:24px}
+.notes p{margin:6px 0}
+
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+@media (max-width:440px){.daynav button{flex:1 1 0;padding:8px 6px}.daynav input{margin-left:0;flex:1 1 100%}}
+@media (max-width:380px){.hero h1{font-size:29px}.row{grid-template-columns:46px 5px 1fr;column-gap:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero" id="hero"><p class="loading">Đang tải tiến độ…</p></header>
+  <nav class="daynav" aria-label="Chọn ngày">
+    <button id="prev" type="button">‹ Hôm trước</button>
+    <button id="today" class="today" type="button">Hôm nay</button>
+    <button id="next" type="button">Hôm sau ›</button>
+    <input id="pick" type="date" min="2026-09-11" max="2027-01-08" aria-label="Chọn ngày cụ thể">
+  </nav>
+  <main>
+    <div id="banners"></div>
+    <section aria-labelledby="h-day"><h2 id="h-day">Lịch trong ngày</h2><div id="timeline"></div></section>
+    <section aria-labelledby="h-debt"><h2 id="h-debt">Việc còn nợ</h2><div id="debt"></div></section>
+    <section aria-labelledby="h-prog"><h2 id="h-prog">Tiến độ</h2><div id="progress"></div></section>
+    <section aria-labelledby="h-week"><h2 id="h-week">Cả tuần</h2><div id="week"></div></section>
+    <section class="notes" id="notes">
+      <p>Tuần 14–15 là tuần thi cuối kỳ Fall 2026 theo ước lượng. Khi FAP có lịch thi thật, ưu tiên lịch thi và dời việc backend sang ô Buffer thứ Bảy.</p>
+      <p>Link LeetCode mở thẳng bài. “Tìm nguồn” mở Google với tên nguồn chính xác, để tránh link sai. 7 bài Premium của NeetCode 150 không nằm trong danh sách (143 bài miễn phí).</p>
+      <p>Việc còn nợ lấy từ 14 ngày gần nhất: backend, LeetCode và Codility chưa tích.</p>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============ LỊCH & MỐC THỜI GIAN ============ */
+const DAY = 86400000;
+const W0 = Date.UTC(2026,8,11);      // T6 11/9/2026: Tuần 0
+const W1 = Date.UTC(2026,8,14);      // T2 14/9/2026: Tuần 1
+const W16END = Date.UTC(2027,0,3);   // CN 3/1/2027: hết Tuần 16
+const BUFSTART = Date.UTC(2027,0,4); // T2 4/1/2027: tuần đệm
+const BUFEND = Date.UTC(2027,0,8);   // T6 8/1/2027
+const HOLIDAYS = {"2027-01-01":"Tết Dương lịch, nghỉ lễ"};
+
+function isoOf(t){const d=new Date(t);return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0");}
+function fromIso(s){const [y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d);}
+function todayUTC(){const n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());}
+function dow(t){return new Date(t).getUTCDay();}
+function dm(t){const d=new Date(t);return d.getUTCDate()+"/"+(d.getUTCMonth()+1);}
+function weekOf(t){
+  if(t<W0||t>BUFEND) return null;
+  if(t<W1) return 0;
+  if(t<=W16END) return Math.floor((t-W1)/(7*DAY))+1;
+  return "B";
+}
+function weekRange(w){
+  if(w===0) return [W0,W1-DAY];
+  if(w==="B") return [BUFSTART,BUFEND];
+  const s=W1+(w-1)*7*DAY; return [s,s+6*DAY];
+}
+const DOW_LONG=["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"];
+const DOW_SHORT=["CN","T2","T3","T4","T5","T6","T7"];
+const DAYTYPE={1:"Ngày bận, 2 tiết",2:"1 tiết ở NVH",3:"Ngày bận, 2 tiết",4:"1 tiết ở campus",5:"1 tiết ở NVH",6:"Ngày bận, 2 tiết",0:"Trống cả ngày"};
+
+/* ============ KHUNG GIỜ LẶP HẰNG TUẦN ============ */
+function T(s,e,cat,title,slot){return {s,e,cat,title,slot};}
+const WAKE=T("05:30","06:30","rest","Dậy, flashcard JPD123 15 phút");
+const WAKE_NVH=T("05:30","06:30","rest","Dậy, 6:00 đi NVH khu ĐHQG");
+const LUNCH=T("12:00","13:30","rest","Nghỉ trưa, không code");
+const LUNCH_LONG=T("12:00","14:00","rest","Nghỉ trưa dài, bù di chuyển");
+const DINNER=T("17:15","18:30","rest","Nghỉ, ăn tối");
+const GYM=T("18:30","19:15","rest","Tập thể dục");
+const WIND=T("21:15","22:45","wind","Wind down, nghe tiếng Anh 15 phút, ngủ trước 23:00");
+const TPL={
+  1:[WAKE,T("07:00","09:15","class","Học JPD123 (P.004)"),T("09:30","11:45","class","Học IOT102 (P.133)"),LUNCH,
+     T("13:30","15:30","be","Backend #1","be1"),T("15:45","17:15","school","Ôn IOT102: lab, bài tập","sch"),DINNER,GYM,
+     T("19:15","20:00","dsa","DSA: NeetCode","dsa"),T("20:15","21:15","school","Ôn JPD123","sch"),WIND],
+  2:[WAKE_NVH,T("07:00","09:15","class","Học SWR302 tại NVH khu ĐHQG"),T("10:15","11:45","school","Ôn SWR302 ngay sau lớp: UML, assignment","sch"),LUNCH_LONG,
+     T("14:00","15:30","be","Backend #1","be1"),T("15:45","17:15","free","Nghỉ, tự do"),DINNER,GYM,
+     T("19:15","20:00","dsa","DSA: NeetCode","dsa"),T("20:15","21:15","en","Tiếng Anh: speaking","en"),WIND],
+  3:[WAKE,T("07:00","09:15","class","Học CSD201"),T("09:30","11:45","class","Học PRJ301 (P.133)"),LUNCH,
+     T("13:30","15:30","be","Backend #1","be1"),T("15:45","17:15","school","Ôn CSD201 + PRJ301 (cộng hưởng DSA và Java)","sch"),DINNER,GYM,
+     T("19:15","20:00","dsa","DSA: NeetCode","dsa"),T("20:15","21:15","school","Ôn JPD123","sch"),WIND],
+  4:[WAKE,T("07:00","09:15","class","Học JPD123 (P.004)"),T("09:30","11:45","be","Backend #1, việc khó nhất tuần","be1"),LUNCH,
+     T("13:30","15:30","be","Backend #2","be2"),T("15:45","17:15","school","Ôn IOT102 + JPD123","sch"),DINNER,GYM,
+     T("19:15","20:00","dsa","DSA: Codility","dsa"),T("20:15","21:15","en","Tiếng Anh: mock interview","en"),WIND],
+  5:[WAKE_NVH,T("07:00","09:15","class","Học SWR302 tại NVH khu ĐHQG"),T("10:15","11:45","be","Backend #1","be1"),LUNCH_LONG,
+     T("14:00","15:30","be","Backend #2","be2"),T("15:45","17:15","school","Ôn JPD123 + SWR302","sch"),DINNER,GYM,
+     T("19:15","20:00","dsa","DSA: NeetCode","dsa"),T("20:15","21:15","free","Tự do, thư giãn"),WIND],
+  6:[WAKE,T("07:00","09:15","class","Học CSD201"),T("09:30","11:45","class","Học PRJ301 (P.133)"),LUNCH,
+     T("13:30","15:30","be","Backend #1","be1"),T("15:45","17:15","free","Buffer: bù việc còn nợ","buffer"),DINNER,GYM,
+     T("19:15","20:00","dsa","DSA: NeetCode","dsa"),T("20:15","21:15","en","Tiếng Anh: system design","en"),WIND],
+  0:[T("05:30","06:30","rest","Dậy, ăn sáng"),T("07:00","09:15","free","Tự do, đọc sách"),T("09:30","11:45","be","Backend #1: deep dive","be1"),LUNCH,
+     T("13:30","15:30","be","Backend #2","be2"),T("15:45","17:15","en","Mock OA hoặc mock interview","mock"),DINNER,GYM,
+     T("19:15","20:00","gold","Review tuần, chấm 0–5","review"),T("20:15","21:15","gold","Lập kế hoạch tuần tới","plan"),WIND]
+};
+// Vị trí task backend trong mảng be[] theo thứ trong tuần
+const BE_STD={1:[0],2:[1],3:[2],4:[3,4],5:[5,6],6:[7],0:[8,9]};
+const BE_W0={5:[0,1],6:[2],0:[3,4]};
+const BE_BUF={1:[0],2:[1],3:[2],4:[3,4],5:[5,6]};
+
+/* ============ NỘI DUNG TỪNG TUẦN ============
+   be[]: [T2, T3, T4, T5#1, T5#2, T6#1, T6#2, T7, CN#1, CN#2]
+   Mỗi task: "text" hoặc ["text", "url" | "cụm từ tìm kiếm"]  */
+const WEEKS={
+0:{theme:"Setup và baseline",dsa:"Arrays & Hashing (khởi động)",goal:"Hello Spring Boot chạy được, có baseline.md tự chấm",
+ be:[["Cài JDK 21 (Eclipse Temurin), IntelliJ IDEA Community, Git; tạo repo backend-journey","Eclipse Temurin JDK 21 download"],
+     ["Tạo project trên start.spring.io (Java 21, Spring Boot 3.x, Spring Web), viết GET /hello chạy được","https://www.baeldung.com/spring-boot-start"],
+     "Chẩn đoán Java Core: tự trả lời 20 câu Must-have trong roadmap, không tra cứu, chấm 0–5, ghi vào baseline.md",
+     ["Chẩn đoán DB: chạy PostgreSQL bằng Docker, viết 5 query JOIN / GROUP BY, giải thích index là gì, ghi vào baseline.md","PostgreSQL Docker official image"],
+     "Tạo khung repo MiniPay: README ghi mục tiêu, tính năng dự kiến, lịch 16 tuần"],
+ en:["","","Luyện tự giới thiệu 2 phút bằng tiếng Anh, ghi âm lại"],
+ mock:"Chẩn đoán speaking: ghi âm 3 phút giải thích kiến trúc NitroCine bằng tiếng Anh, ghi 5 lỗi cần sửa"},
+1:{theme:"Java Core I: OOP, equals/hashCode, String",dsa:"Arrays & Hashing, Two Pointers",goal:"Giải thích được hashCode contract bằng lời",
+ be:["OOP sâu: overloading vs overriding, interface vs abstract class. Code ví dụ trong java-core/m1-oop",
+     "== vs equals(), Java luôn pass-by-value: viết test chứng minh bằng hàm swap object",
+     ["String pool, immutability, StringBuilder vs nối chuỗi: đo thời gian với vòng lặp 100k","Baeldung Java String Pool"],
+     ["equals()/hashCode() contract: viết class Money(amount, currency) đúng chuẩn; bỏ hashCode rồi cho vào HashSet để thấy lỗi","Baeldung Java equals hashCode contracts"],
+     "static, final, immutable class: viết Money bằng class rồi bằng record, so sánh",
+     ["Wrapper class, autoboxing, Integer cache (-128..127): bẫy == với Integer","Java Integer cache autoboxing"],
+     "Viết README module 1: 10 câu hỏi phỏng vấn kèm câu trả lời của bạn bằng tiếng Anh",
+     "Dựng project java-core nhiều module (Maven hoặc Gradle), viết JUnit 5 test cho ví dụ trong tuần",
+     "Deep dive: Effective Java chương 3 (Items 10–14: equals, hashCode, toString, clone, Comparable)",
+     "Tổng hợp note Java Core Q&A tuần 1, push GitHub"],
+ en:["Speaking: giải thích equals/hashCode bằng tiếng Anh, ghi âm 3 phút","Mock với AI: 8 câu OOP, String, equals","Trình bày kiến trúc NitroCine 3 phút"],
+ mock:"Mock interview tiếng Anh 45 phút: Java Core tuần 1 (cho ChatGPT đóng vai interviewer NAB)"},
+2:{theme:"Java Core II: Collections, Generics, Exception, Optional",dsa:"Sliding Window, Stack",goal:"Vẽ được sơ đồ HashMap khi có collision",
+ be:["Collections tổng quan: List/Set/Map/Queue; ArrayList vs LinkedList (Big-O, cache locality), benchmark nhỏ",
+     ["Generics: bounded type, wildcard ? extends vs ? super (PECS), type erasure","Baeldung Java generics wildcards"],
+     ["HashMap bên trong: hash(), chỉ số bucket (n-1) & hash, collision chaining, load factor 0.75, resize","Baeldung Java HashMap under the hood"],
+     "Treeify từ Java 8: TREEIFY_THRESHOLD = 8, MIN_TREEIFY_CAPACITY = 64. Mở source HashMap.java trong IntelliJ, vẽ sơ đồ",
+     "Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test",
+     "Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap",
+     ["Exception: checked vs unchecked, custom exception, try-with-resources","Baeldung Java checked vs unchecked exceptions"],
+     ["Optional: cách dùng đúng và sai (không làm field/param); refactor code null-check sang Optional","Baeldung Guide to Java Optional"],
+     "Deep dive: fail-fast iterator và ConcurrentModificationException; Comparable vs Comparator",
+     "Viết note HashMap bên trong (có sơ đồ), push GitHub"],
+ en:["Speaking: giải thích HashMap internals","Mock với AI: Collections và Generics","Trình bày: khi nào dùng ArrayList, khi nào LinkedList"],
+ mock:"Mock OA 90 phút: 2 Medium + 1 Easy chưa làm trên LeetCode, bấm giờ như Codility"},
+3:{theme:"Java Core III: Stream API, JVM",dsa:"Stack, Binary Search",goal:"Trả lời được câu “GC hoạt động thế nào”",
+ be:["Lambda và functional interface (Function, Predicate, Supplier, Consumer), method reference",
+     ["Stream API: map/filter/reduce, collect với groupingBy, partitioningBy; lazy evaluation","Baeldung Java 8 Streams introduction"],
+     "Stream nâng cao: flatMap, Collectors.toMap khi trùng key, khi nào không nên dùng parallel stream",
+     ["JVM memory: heap (young/old), stack, metaspace. Object nằm đâu, biến local nằm đâu: vẽ sơ đồ","Baeldung Java stack memory and heap space"],
+     "Bài tập: xử lý danh sách Transaction giả lập bằng Stream (tổng theo tháng, top 5 khách hàng)",
+     ["GC: mark-sweep-compact, generational, G1 là mặc định","Oracle HotSpot garbage collection tuning guide G1"],
+     "Chạy app với -Xmx nhỏ để gây OutOfMemoryError, quan sát heap bằng VisualVM hoặc jconsole",
+     "Class loader (bootstrap, platform, application) và JIT ở mức khái niệm",
+     ["Deep dive: Java Memory Model cơ bản, happens-before, visibility (chuẩn bị cho concurrency)","Java Memory Model happens-before explained"],
+     "Tự trả lời 10 câu phỏng vấn JVM, ghi note JVM memory"],
+ en:["Speaking: giải thích lazy evaluation của Stream","Mock với AI: JVM memory và GC","Trình bày: heap vs stack"],
+ mock:"Mock interview tiếng Anh 45 phút: Collections + JVM"},
+4:{theme:"Concurrency",dsa:"Linked List",goal:"Giải thích được race condition và cách chặn",
+ be:["Thread vs Runnable vs Callable, vòng đời thread; demo race condition counter++ với 2 thread",
+     "Sửa race condition bằng 3 cách: synchronized, AtomicInteger, ReentrantLock; so sánh",
+     ["ExecutorService: fixed/cached pool, submit vs execute, Future, shutdown đúng cách","Baeldung Java ExecutorService guide"],
+     "Deadlock: tái hiện chuyển tiền A→B và B→A cùng lúc, fix bằng lock ordering (dùng lại ở MiniPay)",
+     "volatile vs synchronized, tryLock; ConcurrentHashMap hoạt động thế nào ở mức khái niệm",
+     ["CompletableFuture: supplyAsync, thenApply, thenCombine, allOf, exceptionally","Baeldung Guide to CompletableFuture"],
+     "Gọi 3 service giả lập song song bằng CompletableFuture, đo thời gian so với chạy tuần tự",
+     ["Virtual Threads (Java 21): tạo 10k virtual thread vs platform thread, so sánh","https://www.baeldung.com/spring-6-virtual-threads"],
+     "Deep dive: Java Concurrency in Practice chương 2–3 (Thread Safety, Sharing Objects)",
+     "Tự kiểm tháng 1: mock 20 câu Java Core với AI, chấm checklist Must-have"],
+ en:["Speaking: giải thích race condition và deadlock","Mock với AI: concurrency","Trình bày: CompletableFuture khác gì tạo Thread thủ công"],
+ mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
+5:{theme:"Spring Boot I: IoC/DI, REST",dsa:"Linked List, Trees",goal:"Phân biệt được @Component vs @Bean và bean scope",
+ be:["IoC/DI: viết DI thủ công bằng new trước, rồi chuyển sang Spring để thấy vì sao cần container",
+     ["Tạo project start.spring.io: Java 21, Boot 3.x, Web, Validation, Data JPA, PostgreSQL","https://www.baeldung.com/spring-boot-start"],
+     "@Component/@Service/@Repository vs @Bean + @Configuration; constructor injection; bean scope",
+     "Bean lifecycle (@PostConstruct, @PreDestroy); auto-configuration hoạt động thế nào sau @SpringBootApplication",
+     "REST CRUD /api/accounts: Controller → Service → Repository (in-memory), dùng DTO",
+     ["application.yml, @ConfigurationProperties, profiles dev/test/prod","Baeldung Spring Boot profiles"],
+     "HTTP đúng chuẩn: status code, ResponseEntity, đặt tên REST endpoint",
+     "Cộng hưởng PRJ301: so sánh Servlet/JSP trên lớp với DispatcherServlet của Spring MVC, viết note",
+     ["Deep dive: IoC container và ApplicationContext","https://www.baeldung.com/spring-boot"],
+     "Hoàn thiện CRUD API và Postman collection, push repo"],
+ en:["Speaking: giải thích IoC/DI","Mock với AI: Spring core (@Component vs @Bean, scope)","Trình bày: một request đi qua Spring MVC thế nào"],
+ mock:"Mock interview tiếng Anh 45 phút: concurrency + Spring core"},
+6:{theme:"Spring Data JPA",dsa:"Trees, Heap",goal:"Tái hiện và fix được N+1",
+ be:["JPA mapping: @Entity, @Id, @GeneratedValue, @OneToMany/@ManyToOne; kết nối PostgreSQL chạy Docker",
+     "Spring Data repository: derived query, @Query, phân trang và sắp xếp",
+     "Tái hiện N+1: bật show-sql, đếm số query khi load Account kèm Transactions",
+     ["Fix N+1: JOIN FETCH, @EntityGraph, batch size; lazy vs eager và LazyInitializationException","Vlad Mihalcea N+1 query problem"],
+     "Viết test đếm số query (Hibernate statistics) trước và sau khi fix",
+     ["@Transactional: propagation REQUIRED vs REQUIRES_NEW, rollback rules, lỗi self-invocation do proxy","Baeldung Transactions with Spring and JPA"],
+     "Isolation level: dirty read, non-repeatable read, phantom; thử 2 transaction song song trên PostgreSQL",
+     "Chuyển CRUD sang JPA + PostgreSQL thật, mapping DTO",
+     ["Deep dive: bài của Vlad Mihalcea về @Transactional và hiệu năng JPA","Vlad Mihalcea Spring Transactional best practices"],
+     "Ghi note N+1, lazy/eager, self-invocation; push repo"],
+ en:["Speaking: giải thích N+1 và cách fix","Mock với AI: JPA và @Transactional","Trình bày: các isolation level"],
+ mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
+7:{theme:"Security, JWT, validation, AOP",dsa:"Heap, Trie, Backtracking",goal:"Endpoint được bảo vệ bằng JWT, lỗi trả về thống nhất",
+ be:[["Bean Validation: @Valid, @NotNull, @Size, custom validator","Baeldung Spring Boot bean validation"],
+     ["Global exception handling: @RestControllerAdvice + ProblemDetail (RFC 7807)","Spring Framework ProblemDetail error responses"],
+     ["Spring Security: SecurityFilterChain, filter chain hoạt động thế nào, BCrypt","Spring Security servlet architecture reference"],
+     "JWT: cấu trúc header.payload.signature; login cấp token, filter xác thực token",
+     "Phân quyền endpoint theo role, test bằng Postman",
+     ["AOP: @Aspect, @Around log thời gian chạy method; proxy JDK vs CGLIB","Baeldung Introduction to Spring AOP"],
+     ["Actuator: /health, /metrics, /info; expose endpoint an toàn","Baeldung Spring Boot Actuator"],
+     "Refresh token đơn giản, xử lý 401 vs 403 đúng",
+     "Deep dive: session vs JWT (ưu nhược, cách thu hồi token)",
+     "Viết ADR-001 bản nháp: vì sao chọn JWT"],
+ en:["Speaking: giải thích luồng JWT","Mock với AI: Spring Security","Trình bày: session vs JWT"],
+ mock:"Mock interview tiếng Anh 45 phút: JPA + Security"},
+8:{theme:"Database chuyên sâu",dsa:"Backtracking, Graphs",goal:"Đọc được execution plan và chỉ ra index thiếu",
+ be:[["B-tree index hoạt động thế nào: Use The Index, Luke, chương Anatomy of an Index","Use The Index Luke anatomy of an index"],
+     "Tạo bảng 1 triệu dòng bằng generate_series trên PostgreSQL, đo query khi chưa có index",
+     ["EXPLAIN / EXPLAIN ANALYZE: Seq Scan, Index Scan, Index Only Scan; đọc cost và rows","PostgreSQL documentation Using EXPLAIN"],
+     "Composite index và thứ tự cột (leftmost prefix), covering index với INCLUDE; chụp plan trước và sau",
+     "Tối ưu query: tránh hàm trên cột có index, LIKE '%x', OR; phân trang keyset vs OFFSET",
+     "ACID và locking: row lock, SELECT ... FOR UPDATE, deadlock trong DB",
+     "Optimistic locking (@Version) vs pessimistic: demo 2 request cùng cập nhật một số dư",
+     ["Flyway: V1__init.sql, V2__add_index.sql; bỏ ddl-auto","Baeldung Flyway Spring Boot"],
+     "Normalization 1NF–3NF và khi nào denormalize; đọc lướt DDIA chương 7 (Transactions)",
+     "Lưu ảnh execution plan vào repo kèm giải thích"],
+ en:["Speaking: giải thích B-tree index","Mock với AI: indexing, ACID, locking","Trình bày: optimistic vs pessimistic locking"],
+ mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
+9:{theme:"Testing",dsa:"Graphs, Advanced Graphs",goal:"Integration test chạy với PostgreSQL thật (Testcontainers)",
+ be:[["JUnit 5: @Test, @ParameterizedTest, assertions, lifecycle; test domain Money/Account","JUnit 5 User Guide"],
+     ["Mockito: mock, when/thenReturn, verify, ArgumentCaptor; test tầng Service","Baeldung Mockito series"],
+     "@WebMvcTest cho controller (MockMvc) và @DataJpaTest cho repository",
+     ["Testcontainers: PostgreSQL thật trong integration test (@SpringBootTest + @Testcontainers)","Testcontainers Spring Boot PostgreSQL guide"],
+     "Test concurrency: 2 thread cùng rút tiền, assert số dư đúng (CountDownLatch, ExecutorService)",
+     ["JaCoCo: cấu hình report, đọc coverage; test pyramid","JaCoCo Maven plugin"],
+     "Viết test cho case lỗi: validation, 404, 409",
+     "Nâng coverage phần core lên ≥70%, dọn test chậm",
+     "Deep dive: mock vs stub vs fake, khi nào không nên mock",
+     "Chuẩn bị MiniPay: domain model (Account, Transfer, LedgerEntry) và ERD vẽ bằng UML (kỹ năng SWR302)"],
+ en:["Speaking: giải thích test pyramid","Mock với AI: testing (mock vs stub, Testcontainers)","Trình bày: cách test code có concurrency"],
+ mock:"Tự kiểm tháng 2: mock OA 90 phút + chấm checklist Strong-plus"},
+10:{theme:"MiniPay: ledger, idempotency, locking",dsa:"1-D DP",goal:"Retry không double-charge; 100 request song song vẫn đúng số dư",
+ be:["Tạo repo MiniPay, chia package domain/application/infra; Flyway schema accounts, ledger_entries",
+     "Double-entry ledger: mỗi transfer tạo 2 bút toán debit/credit; số dư = SUM(ledger)",
+     "API POST /transfers kèm validation: số tiền > 0, cùng currency, đủ số dư",
+     "Idempotency: header Idempotency-Key, bảng idempotency_keys có unique constraint; retry trả lại đúng response cũ",
+     "Test: gửi cùng key 2 lần chỉ ra 1 transfer; gửi song song vẫn chỉ 1",
+     "Optimistic locking (@Version) trên account, retry khi OptimisticLockException",
+     "So sánh với pessimistic (SELECT FOR UPDATE) + lock ordering; viết ADR-002",
+     "Integration test Testcontainers cho transfer và idempotency",
+     "Deep dive: ranh giới transaction, 1 transfer = 1 DB transaction, chọn isolation level",
+     "Chạy 100 request song song, kiểm số dư, ghi kết quả vào README"],
+ en:["Speaking: giải thích idempotency key","Mock với AI: transaction và concurrency trong payment","Trình bày: double-entry ledger"],
+ mock:"Mock interview tiếng Anh 45 phút: DB + transaction"},
+11:{theme:"MiniPay: outbox, audit log, cache, rate limit",dsa:"1-D DP, 2-D DP",goal:"Giải thích được outbox giải quyết dual-write bằng tiếng Anh",
+ be:["Audit log: bảng audit_events append-only (ai, làm gì, khi nào, correlationId)",
+     ["Outbox pattern: bảng outbox ghi cùng transaction với transfer","microservices.io transactional outbox pattern"],
+     "Outbox relay: @Scheduled đọc outbox rồi publish (tạm thời log, tuần 12 nối Kafka)",
+     ["Redis cache bằng Spring Cache: cache số dư và tra cứu, invalidate khi có transfer","Baeldung Spring Boot cache with Redis"],
+     "Test cache hit/miss, dữ liệu cũ; giải thích cache-aside",
+     ["Rate limiting với Bucket4j cho POST /transfers theo user","Bucket4j Spring Boot rate limiting"],
+     "Trả 429 kèm header Retry-After, viết test",
+     "Refactor, tăng coverage; viết ADR-003: outbox vs gửi thẳng Kafka",
+     "Deep dive: dual-write problem; cache-aside vs write-through",
+     "Cập nhật README: sơ đồ luồng transfer → outbox → event"],
+ en:["Speaking: giải thích outbox pattern","Mock với AI: caching và rate limiting","Trình bày: cache-aside"],
+ mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
+12:{theme:"Kafka, Docker, CI/CD, observability",dsa:"2-D DP, Greedy",goal:"docker compose up chạy toàn hệ, CI xanh",
+ be:[["Kafka 101: topic, partition, offset, consumer group","Confluent Developer Kafka 101 course"],
+     ["Chạy Kafka bằng docker-compose; Spring Kafka producer: outbox relay đẩy vào topic transfer-events","Spring for Apache Kafka reference"],
+     "Consumer notification giả lập; idempotent consumer (loại trùng theo eventId)",
+     "Dockerfile multi-stage cho MiniPay; docker-compose gồm app, PostgreSQL, Redis, Kafka",
+     ["GitHub Actions: build, test (Testcontainers), JaCoCo report, badge","GitHub Actions building and testing Java with Maven"],
+     ["Actuator + Micrometer → Prometheus; dashboard Grafana (RPS, latency, error)","Spring Boot Micrometer Prometheus Grafana"],
+     "Log có correlationId (MDC) xuyên suốt request",
+     "Deploy thử lên một nền tảng free tier bạn chọn, hoặc bảo đảm chạy local bằng 1 lệnh",
+     "Deep dive: at-least-once vs exactly-once, consumer lag, vì sao cần idempotent consumer",
+     "Kiểm tra toàn hệ bằng 1 lệnh docker compose up, sửa lỗi còn lại"],
+ en:["Speaking: giải thích consumer group","Mock với AI: Docker, CI/CD, observability","Trình bày kiến trúc MiniPay 5 phút"],
+ mock:"Mock interview tiếng Anh 45 phút: Spring + Kafka"},
+13:{theme:"System design, load test, ADR",dsa:"Greedy, Intervals, Math",goal:"Có số liệu throughput/latency thật trong README",
+ be:["System design 1: REST vs event-driven; vẽ kiến trúc MiniPay bằng kỹ năng UML của SWR302",
+     ["System design 2: caching, rate limiting, idempotency ở tầng hệ thống","donnemartin system-design-primer GitHub"],
+     "System design 3: DB scaling (replica, partition, sharding), CAP; ghi note",
+     ["Load test k6: 50/100/200 VUs transfer đồng thời; ghi RPS, p95, p99, error rate","k6 documentation get started"],
+     "Tối ưu 1 điểm nghẽn (index, connection pool hoặc cache), chạy lại, so sánh số liệu",
+     ["Hoàn thiện ADR-001..003 theo mẫu Context / Decision / Consequences","Michael Nygard documenting architecture decisions"],
+     "README kể chuyện: vấn đề, quyết định, đánh đổi, số liệu, ảnh Grafana",
+     "Buffer dự án: fix bug, dọn code, viết mục What I'd do next",
+     "Deep dive: tự trình bày thiết kế payment system cấp junior 15 phút bằng tiếng Anh",
+     "Tự kiểm tháng 3: quay video demo MiniPay 10 phút tiếng Anh, chấm checklist Differentiator"],
+ en:["Speaking: giải thích CAP","Mock với AI: system design fresher","Trình bày kết quả load test"],
+ mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
+14:{theme:"Tuần thi: PE PRJ301, PE CSD201",dsa:"Math, Bit (1 bài/ngày)",goal:"Sẵn sàng PE PRJ301 và CSD201",exam:true,
+ be:["Ôn PE PRJ301: làm 1 đề PE mẫu (Servlet/JSP + SQL Server), bấm giờ 85 phút",
+     "Ôn CSD201: tự cài đặt lại BST, heap, BFS/DFS, sorting bằng Java không nhìn tài liệu",
+     "Ôn PE CSD201: 1 đề mẫu, bấm giờ",
+     "Ôn SWR302: requirements, use case, UML theo đề cương",
+     "Ôn IOT102 và JPD123 theo đề cương",
+     "PE PRJ301 mẫu thứ 2",
+     "MiniPay: chỉ fix bug nhỏ, tối đa 1 giờ",
+     "Ôn JPD123 (kanji, ngữ pháp) và IOT102",
+     "Ôn tổng hợp môn có lịch thi sớm nhất",
+     "Nghỉ nhẹ hoặc ôn tiếp nếu cần"],
+ en:["Shadowing 15 phút","Mock với AI 20 phút: Java Core","Shadowing 15 phút"],
+ mock:"Ôn thi (tuần thi, bỏ mock)"},
+15:{theme:"Thi cuối kỳ",dsa:"Bit Manipulation (1 bài/ngày)",goal:"Giữ mục tiêu ≥9.0, DSA không đứt nhịp",exam:true,
+ be:["Ôn thi môn có lịch gần nhất (xem lịch thi trên FAP)",
+     "Ôn thi môn có lịch gần nhất",
+     "Ôn thi môn có lịch gần nhất",
+     "Ôn thi môn có lịch gần nhất",
+     "Đọc lại note Java Core 30 phút để giữ nhịp",
+     "Ôn thi hoặc đi thi",
+     "Nghỉ",
+     "Ôn thi môn có lịch gần nhất",
+     "Ôn thi môn có lịch gần nhất",
+     "Nghỉ"],
+ en:["","Shadowing 15 phút",""],
+ mock:"Ôn thi (tuần thi, bỏ mock)"},
+16:{theme:"Đóng gói portfolio",dsa:"Làm lại bài từng sai",goal:"Repo kể chuyện được, CV sẵn sàng",
+ be:["Hoàn thiện README MiniPay, badge CI và coverage",
+     "CV 1 trang tiếng Anh: MiniPay đứng đầu, NitroCine thứ hai, N-Body 1 dòng",
+     "Quay video demo MiniPay 3–5 phút tiếng Anh",
+     "Rà checklist Must-have, vá 2 chủ đề yếu nhất",
+     "Pin repo trên GitHub, viết profile README",
+     "Tết Dương lịch: nghỉ lễ",
+     "Nghỉ",
+     "Làm lại 3 bài NeetCode từng sai + 1 bài Codility khó",
+     "Viết bảng tự chấm: hơn và kém ở đâu so với ứng viên NAB/VNG",
+     "Chuẩn bị câu chuyện dự án cho phỏng vấn: 1 bug concurrency thật đã gặp và cách fix"],
+ en:["Luyện pitch CV 2 phút","Mock interview behavioral tiếng Anh","Pitch MiniPay 3 phút"],
+ mock:"Final mock interview tiếng Anh 60 phút: Java Core + Spring + DB + MiniPay"}
+};
+const BUF={theme:"Tuần đệm và tổng kiểm tra",dsa:"Làm lại bài sai, Codility Lesson 17",goal:"≥90% Must-have và ≥70% Strong-plus",
+ be:["Bù việc còn nợ (xem mục Việc còn nợ)",
+     "Final mock OA: 3 bài trong 90 phút",
+     "Final mock interview tiếng Anh lần 2",
+     "Rà checklist năng lực trong roadmap, tự chấm lần cuối",
+     "Cập nhật CV theo kết quả tự chấm",
+     "Đóng gói: CV, repo, video demo",
+     "Lên danh sách chương trình intern/fresher 2027 cần theo dõi"],
+ en:["Speaking: tự giới thiệu + MiniPay","Mock với AI tổng hợp",""],mock:""};
+
+/* ============ DSA: NEETCODE 150 (143 BÀI MIỄN PHÍ) ============ */
+const LC=[
+[217,"contains-duplicate","Contains Duplicate","E"],[242,"valid-anagram","Valid Anagram","E"],[1,"two-sum","Two Sum","E"],
+[49,"group-anagrams","Group Anagrams","M"],[347,"top-k-frequent-elements","Top K Frequent Elements","M"],[238,"product-of-array-except-self","Product of Array Except Self","M"],
+[36,"valid-sudoku","Valid Sudoku","M"],[128,"longest-consecutive-sequence","Longest Consecutive Sequence","M"],
+[125,"valid-palindrome","Valid Palindrome","E"],[167,"two-sum-ii-input-array-is-sorted","Two Sum II - Input Array Is Sorted","M"],[15,"3sum","3Sum","M"],
+[11,"container-with-most-water","Container With Most Water","M"],[42,"trapping-rain-water","Trapping Rain Water","H"],
+[121,"best-time-to-buy-and-sell-stock","Best Time to Buy and Sell Stock","E"],[3,"longest-substring-without-repeating-characters","Longest Substring Without Repeating Characters","M"],
+[424,"longest-repeating-character-replacement","Longest Repeating Character Replacement","M"],[567,"permutation-in-string","Permutation in String","M"],
+[76,"minimum-window-substring","Minimum Window Substring","H"],[239,"sliding-window-maximum","Sliding Window Maximum","H"],
+[20,"valid-parentheses","Valid Parentheses","E"],[155,"min-stack","Min Stack","M"],[150,"evaluate-reverse-polish-notation","Evaluate Reverse Polish Notation","M"],
+[22,"generate-parentheses","Generate Parentheses","M"],[739,"daily-temperatures","Daily Temperatures","M"],[853,"car-fleet","Car Fleet","M"],
+[84,"largest-rectangle-in-histogram","Largest Rectangle in Histogram","H"],
+[704,"binary-search","Binary Search","E"],[74,"search-a-2d-matrix","Search a 2D Matrix","M"],[875,"koko-eating-bananas","Koko Eating Bananas","M"],
+[153,"find-minimum-in-rotated-sorted-array","Find Minimum in Rotated Sorted Array","M"],[33,"search-in-rotated-sorted-array","Search in Rotated Sorted Array","M"],
+[981,"time-based-key-value-store","Time Based Key-Value Store","M"],[4,"median-of-two-sorted-arrays","Median of Two Sorted Arrays","H"],
+[206,"reverse-linked-list","Reverse Linked List","E"],[21,"merge-two-sorted-lists","Merge Two Sorted Lists","E"],[141,"linked-list-cycle","Linked List Cycle","E"],
+[143,"reorder-list","Reorder List","M"],[19,"remove-nth-node-from-end-of-list","Remove Nth Node From End of List","M"],
+[138,"copy-list-with-random-pointer","Copy List with Random Pointer","M"],[2,"add-two-numbers","Add Two Numbers","M"],
+[287,"find-the-duplicate-number","Find the Duplicate Number","M"],[146,"lru-cache","LRU Cache","M"],[23,"merge-k-sorted-lists","Merge k Sorted Lists","H"],
+[25,"reverse-nodes-in-k-group","Reverse Nodes in k-Group","H"],
+[226,"invert-binary-tree","Invert Binary Tree","E"],[104,"maximum-depth-of-binary-tree","Maximum Depth of Binary Tree","E"],
+[543,"diameter-of-binary-tree","Diameter of Binary Tree","E"],[110,"balanced-binary-tree","Balanced Binary Tree","E"],[100,"same-tree","Same Tree","E"],
+[572,"subtree-of-another-tree","Subtree of Another Tree","E"],[235,"lowest-common-ancestor-of-a-binary-search-tree","Lowest Common Ancestor of a BST","M"],
+[102,"binary-tree-level-order-traversal","Binary Tree Level Order Traversal","M"],[199,"binary-tree-right-side-view","Binary Tree Right Side View","M"],
+[1448,"count-good-nodes-in-binary-tree","Count Good Nodes in Binary Tree","M"],[98,"validate-binary-search-tree","Validate Binary Search Tree","M"],
+[230,"kth-smallest-element-in-a-bst","Kth Smallest Element in a BST","M"],
+[105,"construct-binary-tree-from-preorder-and-inorder-traversal","Construct Binary Tree from Preorder and Inorder Traversal","M"],
+[124,"binary-tree-maximum-path-sum","Binary Tree Maximum Path Sum","H"],[297,"serialize-and-deserialize-binary-tree","Serialize and Deserialize Binary Tree","H"],
+[703,"kth-largest-element-in-a-stream","Kth Largest Element in a Stream","E"],[1046,"last-stone-weight","Last Stone Weight","E"],
+[973,"k-closest-points-to-origin","K Closest Points to Origin","M"],[215,"kth-largest-element-in-an-array","Kth Largest Element in an Array","M"],
+[621,"task-scheduler","Task Scheduler","M"],[355,"design-twitter","Design Twitter","M"],[295,"find-median-from-data-stream","Find Median from Data Stream","H"],
+[208,"implement-trie-prefix-tree","Implement Trie (Prefix Tree)","M"],[211,"design-add-and-search-words-data-structure","Design Add and Search Words Data Structure","M"],
+[212,"word-search-ii","Word Search II","H"],
+[78,"subsets","Subsets","M"],[39,"combination-sum","Combination Sum","M"],[40,"combination-sum-ii","Combination Sum II","M"],[46,"permutations","Permutations","M"],
+[90,"subsets-ii","Subsets II","M"],[79,"word-search","Word Search","M"],[131,"palindrome-partitioning","Palindrome Partitioning","M"],
+[17,"letter-combinations-of-a-phone-number","Letter Combinations of a Phone Number","M"],[51,"n-queens","N-Queens","H"],
+[200,"number-of-islands","Number of Islands","M"],[695,"max-area-of-island","Max Area of Island","M"],[133,"clone-graph","Clone Graph","M"],
+[994,"rotting-oranges","Rotting Oranges","M"],[417,"pacific-atlantic-water-flow","Pacific Atlantic Water Flow","M"],[130,"surrounded-regions","Surrounded Regions","M"],
+[207,"course-schedule","Course Schedule","M"],[210,"course-schedule-ii","Course Schedule II","M"],[684,"redundant-connection","Redundant Connection","M"],
+[127,"word-ladder","Word Ladder","H"],
+[743,"network-delay-time","Network Delay Time","M"],[332,"reconstruct-itinerary","Reconstruct Itinerary","H"],
+[1584,"min-cost-to-connect-all-points","Min Cost to Connect All Points","M"],[778,"swim-in-rising-water","Swim in Rising Water","H"],
+[787,"cheapest-flights-within-k-stops","Cheapest Flights Within K Stops","M"],
+[70,"climbing-stairs","Climbing Stairs","E"],[746,"min-cost-climbing-stairs","Min Cost Climbing Stairs","E"],[198,"house-robber","House Robber","M"],
+[213,"house-robber-ii","House Robber II","M"],[5,"longest-palindromic-substring","Longest Palindromic Substring","M"],[647,"palindromic-substrings","Palindromic Substrings","M"],
+[91,"decode-ways","Decode Ways","M"],[322,"coin-change","Coin Change","M"],[152,"maximum-product-subarray","Maximum Product Subarray","M"],
+[139,"word-break","Word Break","M"],[300,"longest-increasing-subsequence","Longest Increasing Subsequence","M"],[416,"partition-equal-subset-sum","Partition Equal Subset Sum","M"],
+[62,"unique-paths","Unique Paths","M"],[1143,"longest-common-subsequence","Longest Common Subsequence","M"],
+[309,"best-time-to-buy-and-sell-stock-with-cooldown","Best Time to Buy and Sell Stock with Cooldown","M"],[518,"coin-change-ii","Coin Change II","M"],
+[494,"target-sum","Target Sum","M"],[97,"interleaving-string","Interleaving String","M"],[329,"longest-increasing-path-in-a-matrix","Longest Increasing Path in a Matrix","H"],
+[115,"distinct-subsequences","Distinct Subsequences","H"],[72,"edit-distance","Edit Distance","M"],[312,"burst-balloons","Burst Balloons","H"],
+[10,"regular-expression-matching","Regular Expression Matching","H"],
+[53,"maximum-subarray","Maximum Subarray","M"],[55,"jump-game","Jump Game","M"],[45,"jump-game-ii","Jump Game II","M"],[134,"gas-station","Gas Station","M"],
+[846,"hand-of-straights","Hand of Straights","M"],[1899,"merge-triplets-to-form-target-triplet","Merge Triplets to Form Target Triplet","M"],
+[763,"partition-labels","Partition Labels","M"],[678,"valid-parenthesis-string","Valid Parenthesis String","M"],
+[57,"insert-interval","Insert Interval","M"],[56,"merge-intervals","Merge Intervals","M"],[435,"non-overlapping-intervals","Non-overlapping Intervals","M"],
+[1851,"minimum-interval-to-include-each-query","Minimum Interval to Include Each Query","H"],
+[48,"rotate-image","Rotate Image","M"],[54,"spiral-matrix","Spiral Matrix","M"],[73,"set-matrix-zeroes","Set Matrix Zeroes","M"],[202,"happy-number","Happy Number","E"],
+[66,"plus-one","Plus One","E"],[50,"powx-n","Pow(x, n)","M"],[43,"multiply-strings","Multiply Strings","M"],[2013,"detect-squares","Detect Squares","M"],
+[136,"single-number","Single Number","E"],[191,"number-of-1-bits","Number of 1 Bits","E"],[338,"counting-bits","Counting Bits","E"],[190,"reverse-bits","Reverse Bits","E"],
+[268,"missing-number","Missing Number","E"],[371,"sum-of-two-integers","Sum of Two Integers","M"],[7,"reverse-integer","Reverse Integer","M"]
+];
+const DIFF_LABEL={E:"Easy",M:"Medium",H:"Hard"};
+
+/* Codility Lessons: T5 hằng tuần, Lesson n ở Tuần n, Lesson 17 ở tuần đệm */
+const COD=[
+[1,"Iterations","BinaryGap"],[2,"Arrays","CyclicRotation, OddOccurrencesInArray"],[3,"Time Complexity","FrogJmp, PermMissingElem, TapeEquilibrium"],
+[4,"Counting Elements","FrogRiverOne, PermCheck, MaxCounters, MissingInteger"],[5,"Prefix Sums","PassingCars, CountDiv, GenomicRangeQuery, MinAvgTwoSlice"],
+[6,"Sorting","Distinct, MaxProductOfThree, Triangle, NumberOfDiscIntersections"],[7,"Stacks and Queues","Brackets, Fish, Nesting, StoneWall"],
+[8,"Leader","Dominator, EquiLeader"],[9,"Maximum slice problem","MaxProfit, MaxSliceSum, MaxDoubleSliceSum"],
+[10,"Prime and composite numbers","CountFactors, MinPerimeterRectangle, Peaks, Flags"],[11,"Sieve of Eratosthenes","CountSemiprimes, CountNonDivisible"],
+[12,"Euclidean algorithm","ChocolatesByNumbers, CommonPrimeDivisors"],[13,"Fibonacci numbers","Ladder, FibFrog"],
+[14,"Binary search algorithm","MinMaxDivision, NailingPlanks"],[15,"Caterpillar method","AbsDistinct, CountDistinctSlices, CountTriangles, MinAbsSumOfTwo"],
+[16,"Greedy algorithms","MaxNonoverlappingSegments, TieRopes"],[17,"Dynamic programming","NumberSolitaire, MinAbsSum"]
+];
+
+/* Phân bài: Tuần 0 (T6: 2, T7: 1); Tuần 1–13: T2, T3, T4, T6, T7 mỗi ngày 2 bài; Tuần 14–15: mỗi ngày 1 bài */
+const DSA_MAP={};
+let DSA_ASSIGNED=0;
+(function(){
+  let p=0;
+  const put=(t,n)=>{const k=isoOf(t);DSA_MAP[k]=[];for(let i=0;i<n&&p<LC.length;i++)DSA_MAP[k].push(p++);};
+  put(W0,2); put(W0+DAY,1);
+  for(let w=1;w<=15;w++){const s=W1+(w-1)*7*DAY;const n=w<=13?2:1;[0,1,2,4,5].forEach(o=>put(s+o*DAY,n));}
+  DSA_ASSIGNED=p;
+})();
+
+/* ============ DỰNG MỘT NGÀY ============ */
+function srch(q){return "https://www.google.com/search?q="+encodeURIComponent(q);}
+function linkOf(spec){if(!spec)return null;return spec.startsWith("http")?{href:spec,label:"Mở bài viết"}:{href:srch(spec),label:"Tìm nguồn"};}
+function taskOf(x){return Array.isArray(x)?{text:x[0],link:linkOf(x[1])}:{text:x,link:null};}
+function weekData(w){return w==="B"?BUF:WEEKS[w];}
+function nextWeek(w){if(w==="B")return null;if(w===16)return BUF;return WEEKS[w+1];}
+
+function buildDay(t){
+  const w=weekOf(t); if(w===null) return null;
+  const wk=weekData(w), dw=dow(t), iso=isoOf(t);
+  const idxMap=w===0?BE_W0:(w==="B"?BE_BUF:BE_STD);
+  const beIdx=idxMap[dw]||[];
+  const blocks=TPL[dw].map(b=>{
+    const blk={s:b.s,e:b.e,cat:b.cat,title:b.title,items:[],note:"",slot:b.slot||""};
+    if(b.slot==="be1"||b.slot==="be2"){
+      const i=beIdx[b.slot==="be1"?0:1];
+      if(i===undefined){blk.cat="free";blk.title="Tự do";blk.slot="";return blk;}
+      const tk=taskOf(wk.be[i]);
+      if(/^(Nghỉ|Tết)/.test(tk.text)){blk.cat="free";blk.title="Nghỉ";blk.note=tk.text;blk.slot="";return blk;}
+      if(wk.exam){blk.cat="school";blk.title="Ôn thi (thay backend)";}
+      blk.items.push({id:iso+"|"+b.slot,kind:"be",text:tk.text,link:tk.link});
+    } else if(b.slot==="dsa"){
+      if(dw===4){
+        const n=w==="B"?17:w;
+        if(n>=1&&n<=17){const c=COD[n-1];blk.items.push({id:"cod-"+n,kind:"cod",text:"Lesson "+n+": "+c[1],sub:"Bài: "+c[2],link:{href:srch("Codility Lesson "+n+" "+c[1]),label:"Tìm lesson trên Codility"}});}
+      } else if(DSA_MAP[iso]){
+        DSA_MAP[iso].forEach(pi=>{const p=LC[pi];blk.items.push({id:"lc-"+p[0],kind:"lc",text:p[0]+". "+p[2],diff:p[3],link:{href:"https://leetcode.com/problems/"+p[1]+"/",label:"Mở trên LeetCode"},alt:{href:srch("NeetCode "+p[2]+" solution"),label:"Video NeetCode"}});});
+      } else if(w===16||w==="B"){
+        blk.items.push({id:iso+"|dsarev",kind:"rev",text:"Làm lại 1 bài từng sai (chọn trong các bài đã làm)"});
+      }
+      if(!blk.items.length){blk.note="Không có bài hôm nay";}
+    } else if(b.slot==="en"){
+      const i={2:0,4:1,6:2}[dw]; const txt=(wk.en||[])[i];
+      if(txt) blk.items.push({id:iso+"|en",kind:"en",text:txt}); else {blk.cat="free";blk.title="Tự do";blk.slot="";}
+    } else if(b.slot==="mock"){
+      if(wk.mock) blk.items.push({id:iso+"|mock",kind:"mock",text:wk.mock});
+    } else if(b.slot==="review"){
+      blk.items.push({id:iso+"|review",kind:"review",text:"Chấm theo tiêu chí tuần: "+wk.goal});
+    } else if(b.slot==="plan"){
+      const nx=nextWeek(w);
+      blk.items.push({id:iso+"|plan",kind:"plan",text:nx?"Xem trước tuần tới: "+nx.theme:"Hết lộ trình"});
+    } else if(b.slot==="sch"){
+      blk.items.push({id:iso+"|sch-"+b.s,kind:"sch",text:b.title});
+      blk.title="Ôn môn trên trường";
+    }
+    return blk;
+  });
+  return {w,wk,dw,iso,t,blocks};
+}
+
+/* ============ LƯU TIẾN ĐỘ ============
+   Lưu bền bằng localStorage (chạy trên web tĩnh / Vercel, giữ được sau khi tải lại
+   trang). Nếu đang chạy trong runtime Artifact của Claude thì lưu thêm vào
+   window.storage để đồng bộ. */
+const KEY="hoang-backend-tracker-v1";
+let done={};
+const hasLS=(()=>{try{const k="__probe__";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}catch(e){return false;}})();
+const hasWS=(typeof window!=="undefined")&&!!window.storage;
+const storageOK=hasLS||hasWS;
+async function loadDone(){
+  if(hasWS){
+    try{const r=await window.storage.get(KEY,false);if(r&&r.value){done=JSON.parse(r.value)||{};return;}}
+    catch(e){/* chưa có dữ liệu trong window.storage */}
+  }
+  if(hasLS){
+    try{const v=localStorage.getItem(KEY);if(v) done=JSON.parse(v)||{};}
+    catch(e){/* chưa có dữ liệu lần đầu */}
+  }
+}
+async function saveDone(){
+  if(!storageOK) return; // không có nơi lưu — banner đã báo, không cần toast mỗi lần tích
+  let ok=false;
+  if(hasLS){
+    try{localStorage.setItem(KEY,JSON.stringify(done));ok=true;}
+    catch(e){/* localStorage đầy hoặc bị chặn */}
+  }
+  if(hasWS){
+    try{const r=await window.storage.set(KEY,JSON.stringify(done),false);if(r) ok=true;}
+    catch(e){/* window.storage lỗi */}
+  }
+  if(!ok) toast("Chưa lưu được tiến độ, thử lại sau.");
+}
+
+/* ============ GIAO DIỆN ============ */
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function toMin(hm){const [h,m]=hm.split(":").map(Number);return h*60+m;}
+function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes();}
+let state={view:null};
+let toastTimer=null;
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2400);}
+
+function itemHTML(it){
+  const chk=done[it.id]?"checked":"";
+  let h='<label class="task"><input type="checkbox" data-id="'+esc(it.id)+'" '+chk+'><span class="box" aria-hidden="true"></span><span class="txt">'+esc(it.text)+
+    (it.diff?'<span class="diff '+it.diff+'">'+DIFF_LABEL[it.diff]+'</span>':"")+'</span></label>';
+  if(it.sub) h+='<div class="sub">'+esc(it.sub)+'</div>';
+  const links=[it.link,it.alt].filter(Boolean);
+  if(links.length) h+='<div class="links">'+links.map(l=>'<a href="'+esc(l.href)+'" target="_blank" rel="noopener">'+esc(l.label)+'</a>').join("")+'</div>';
+  return h;
+}
+
+function currentIndex(day){
+  if(day.t!==todayUTC()) return {now:-1,next:-1};
+  const m=nowMin();
+  let now=-1,next=-1;
+  day.blocks.forEach((b,i)=>{if(m>=toMin(b.s)&&m<toMin(b.e)) now=i;});
+  if(now<0){for(let i=0;i<day.blocks.length;i++){if(toMin(day.blocks[i].s)>m){next=i;break;}}}
+  return {now,next};
+}
+
+function renderHero(day,t){
+  const hero=document.getElementById("hero");
+  const d=new Date(t);
+  const title=DOW_LONG[dow(t)]+" "+dm(t)+"/"+d.getUTCFullYear();
+  if(!day){
+    hero.innerHTML='<div class="hero-meta"><span>Ngoài lộ trình</span></div><h1>'+esc(title)+'</h1><p class="theme">Lộ trình chạy từ 11/9/2026 đến 8/1/2027.</p>';
+    return;
+  }
+  const [rs,re]=weekRange(day.w);
+  const wkLabel=(day.w==="B"?"Tuần đệm":"Tuần "+day.w)+", "+dm(rs)+" – "+dm(re);
+  let h='<div class="hero-meta"><span>'+esc(wkLabel)+'</span><span>'+esc(DAYTYPE[day.dw])+'</span></div>'+
+        '<h1>'+esc(title)+'</h1><p class="theme">'+esc(day.wk.theme)+'</p>'+
+        '<p class="goal">DSA tuần này: '+esc(day.wk.dsa)+'. Coi như đạt: '+esc(day.wk.goal)+'</p>';
+  const ci=currentIndex(day);
+  const idx=ci.now>=0?ci.now:ci.next;
+  if(day.t===todayUTC()){
+    if(idx>=0){
+      const b=day.blocks[idx];
+      const first=b.items[0]?b.items[0].text:(b.note||"");
+      const extra=b.items.length>1?" (+"+(b.items.length-1)+" việc)":"";
+      h+='<div class="nowcard c-'+b.cat+'"><div class="lbl">'+(ci.now>=0?"Bây giờ":"Tiếp theo")+", "+b.s+"–"+b.e+'</div><div class="t">'+esc(b.title)+'</div>'+
+         (first&&first!==b.title?'<div class="d">'+esc(first)+esc(extra)+'</div>':"")+'</div>';
+    } else {
+      h+='<div class="nowcard c-wind"><div class="lbl">Hết ngày</div><div class="t">Tắt màn hình, ngủ trước 23:00</div></div>';
+    }
+  }
+  hero.innerHTML=h;
+}
+
+function renderBanners(day,t){
+  const el=document.getElementById("banners"); let h="";
+  const iso=isoOf(t);
+  if(HOLIDAYS[iso]) h+='<div class="banner">'+esc(HOLIDAYS[iso])+'. Lịch trên lớp có thể nghỉ.</div>';
+  if(day&&day.wk.exam) h+='<div class="banner">Chế độ tuần thi. Ngày thi là ước lượng; khi FAP có lịch thật, ưu tiên lịch thi và dời backend sang ô Buffer thứ Bảy.</div>';
+  if(day&&day.w==="B") h+='<div class="banner info">Học kỳ Spring 2027 có thể đã bắt đầu. Nếu lịch học đổi, giữ nội dung, dời khung giờ.</div>';
+  if(!storageOK) h+='<div class="banner info">Tiến độ chỉ được giữ trong phiên này vì trình duyệt không có bộ nhớ lưu.</div>';
+  el.innerHTML=h;
+}
+
+function renderTimeline(day){
+  const el=document.getElementById("timeline");
+  if(!day){el.innerHTML='<p class="empty">Chọn một ngày trong khoảng 11/9/2026 – 8/1/2027.</p>';return;}
+  const ci=currentIndex(day);
+  const debtN=debtList().length;
+  el.innerHTML='<div class="tl">'+day.blocks.map((b,i)=>{
+    const isStatic=!b.items.length&&b.slot!=="buffer";
+    let tag="";
+    if(i===ci.now) tag='<span class="tag">Đang diễn ra</span>';
+    else if(i===ci.next) tag='<span class="tag next">Tiếp theo</span>';
+    let body='<div class="ttl">'+esc(b.title)+tag+'</div>';
+    if(b.note) body+='<div class="note">'+esc(b.note)+'</div>';
+    if(b.slot==="buffer") body+='<div class="note">'+(debtN?"Đang có "+debtN+" việc nợ, xem mục bên dưới.":"Không có việc nợ. Dùng giờ này để nghỉ hoặc làm trước.")+'</div>';
+    body+=b.items.map(itemHTML).join("");
+    return '<div class="row c-'+b.cat+(isStatic?" static":"")+(i===ci.now?" is-now":"")+'"><div class="time">'+b.s+'<span class="end">'+b.e+'</span></div><div class="rail"></div><div class="body">'+body+'</div></div>';
+  }).join("")+'</div>';
+}
+
+function debtList(){
+  const today=todayUTC(); const out=[]; const seen={};
+  const start=Math.max(W0,today-14*DAY);
+  for(let t=today-DAY;t>=start;t-=DAY){
+    const d=buildDay(t); if(!d) continue;
+    d.blocks.forEach(b=>b.items.forEach(it=>{
+      if(["be","lc","cod"].includes(it.kind)&&!done[it.id]&&!seen[it.id]){seen[it.id]=1;out.push(Object.assign({t,cat:b.cat},it));}
+    }));
+  }
+  return out;
+}
+function renderDebt(){
+  const el=document.getElementById("debt");
+  const list=debtList();
+  if(!list.length){el.innerHTML='<div class="card"><p class="empty">Không có việc nợ trong 14 ngày qua.</p></div>';return;}
+  const shown=list.slice(0,12);
+  el.innerHTML='<div class="card">'+shown.map(it=>'<div class="debt-item c-'+it.cat+'"><div class="debt-date">'+DOW_SHORT[dow(it.t)]+" "+dm(it.t)+'</div>'+itemHTML(it)+'</div>').join("")+
+    (list.length>12?'<p class="empty" style="margin-top:8px">Còn '+(list.length-12)+' việc cũ hơn. Theo quy tắc 50%, chỉ bù phần quan trọng nhất.</p>':"")+'</div>';
+}
+
+function renderProgress(day){
+  const el=document.getElementById("progress");
+  const lcDone=LC.filter(p=>done["lc-"+p[0]]).length;
+  const codDone=COD.filter(c=>done["cod-"+c[0]]).length;
+  let beTot=0,beDone=0;
+  if(day){
+    const [rs,re]=weekRange(day.w);
+    for(let t=rs;t<=re;t+=DAY){const d=buildDay(t);if(!d)continue;d.blocks.forEach(b=>b.items.forEach(it=>{if(it.kind==="be"){beTot++;if(done[it.id])beDone++;}}));}
+  }
+  const row=(cat,label,a,b)=>'<div class="prog-row c-'+cat+'"><div class="top"><span>'+label+'</span><span>'+a+" / "+b+'</span></div><div class="bar"><i style="width:'+(b?Math.round(a/b*100):0)+'%"></i></div></div>';
+  el.innerHTML='<div class="card prog">'+
+    (day?row(day.wk.exam?"school":"be",day.wk.exam?"Ôn thi tuần này":"Backend tuần này",beDone,beTot):"")+
+    row("dsa","NeetCode 150 (bản miễn phí)",lcDone,LC.length)+
+    row("dsa","Codility Lessons",codDone,COD.length)+'</div>';
+}
+
+function renderWeek(day){
+  const el=document.getElementById("week");
+  if(!day){el.innerHTML="";return;}
+  const [rs,re]=weekRange(day.w); let h="";
+  for(let t=rs;t<=re;t+=DAY){
+    const d=buildDay(t); if(!d) continue;
+    const lis=[];
+    d.blocks.forEach(b=>b.items.forEach(it=>{
+      if(it.kind==="be") lis.push('<li class="'+(d.wk.exam?"ex":"be")+(done[it.id]?" dn":"")+'">'+esc(it.text)+'</li>');
+      if(it.kind==="lc"||it.kind==="cod") lis.push('<li class="dsa'+(done[it.id]?" dn":"")+'">'+esc(it.kind==="cod"?"Codility "+it.text:it.text)+'</li>');
+    }));
+    if(!lis.length) lis.push('<li>Nghỉ</li>');
+    h+='<button type="button" class="weekday'+(t===day.t?" sel":"")+'" data-go="'+isoOf(t)+'"><div class="wd">'+DOW_SHORT[dow(t)]+" "+dm(t)+'<small>'+esc(DAYTYPE[dow(t)])+'</small></div><ul>'+lis.join("")+'</ul></button>';
+  }
+  el.innerHTML=h;
+}
+
+function render(){
+  const t=state.view;
+  const day=buildDay(t);
+  renderHero(day,t);
+  renderBanners(day,t);
+  renderTimeline(day);
+  renderDebt();
+  renderProgress(day);
+  renderWeek(day);
+  document.getElementById("pick").value=isoOf(t);
+}
+
+function clampView(t){return Math.min(Math.max(t,W0),BUFEND);}
+
+async function init(){
+  const td=todayUTC();
+  state.view=(td<W0||td>BUFEND)?clampView(td):td;
+  await loadDone();
+  render();
+  document.addEventListener("change",e=>{
+    const id=e.target&&e.target.dataset&&e.target.dataset.id;
+    if(!id) return;
+    if(e.target.checked) done[id]=1; else delete done[id];
+    saveDone(); render();
+  });
+  document.getElementById("prev").onclick=()=>{state.view=clampView(state.view-DAY);render();};
+  document.getElementById("next").onclick=()=>{state.view=clampView(state.view+DAY);render();};
+  document.getElementById("today").onclick=()=>{state.view=clampView(todayUTC());render();};
+  document.getElementById("pick").onchange=e=>{if(e.target.value){state.view=clampView(fromIso(e.target.value));render();}};
+  document.getElementById("week").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){state.view=fromIso(b.dataset.go);render();window.scrollTo({top:0,behavior:"auto"});}});
+  setInterval(()=>{if(state.view===todayUTC()){renderHero(buildDay(state.view),state.view);renderTimeline(buildDay(state.view));}},60000);
+}
+if(typeof document!=="undefined") init();
+</script>
+</body>
+</html>
