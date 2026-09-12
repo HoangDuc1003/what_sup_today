@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hôm nay làm gì">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#274b7a"/>
+      <stop offset="1" stop-color="#1F3A5F"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <!-- dấu tick: đã hoàn thành việc hôm nay -->
+  <path d="M18 33.5 L28 43 L47 21" fill="none" stroke="#fff" stroke-width="6.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- thanh tiến độ nhiều màu -->
+  <rect x="16" y="50" width="9"  height="5" rx="2.5" fill="#6B52E8"/>
+  <rect x="27.5" y="50" width="9" height="5" rx="2.5" fill="#E07F1F"/>
+  <rect x="39" y="50" width="9"  height="5" rx="2.5" fill="#2F946A"/>
+</svg>
