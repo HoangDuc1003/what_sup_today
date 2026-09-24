@@ -9,6 +9,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1F3A5F">
+<meta name="color-scheme" content="light dark">
+<script>try{var th=localStorage.getItem("hoang-theme");if(th==="dark"||th==="light")document.documentElement.dataset.theme=th;}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,6 +20,34 @@
   --navy:#1F3A5F; --navy-soft:#C9D6EA;
   --c-class:#D95858; --c-be:#6B52E8; --c-dsa:#E07F1F; --c-en:#2380CF; --c-school:#B88D00;
   --c-rest:#2F946A; --c-wind:#4A58A6; --c-free:#7F889C; --c-gold:#B58300;
+  --box-bg:#FFFFFF; --bar-bg:#E3E7EF; --accent:#1F3A5F; --focus:#8FB3E8;
+  --warn-bg:#FFF5D6; --warn-fg:#5C4700; --warn-bd:#F0DC9A;
+  --info-bg:#E7F1FB; --info-fg:#1D4E7A; --info-bd:#BCD7F0;
+  --toast-bg:#16203A; --toast-fg:#FFFFFF; --link:#2380CF;
+  /* Heatmap: thang tuần tự một màu (xanh), 4 bậc thứ tự, bậc nhạt nhất vẫn ≥2:1 so với nền */
+  --heat-0:#E3E7EF; --heat-1:#86B6EF; --heat-2:#3987E5; --heat-3:#1C5CAB; --heat-4:#0D366B;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1420; --surface:#172033; --ink:#E4E8F1; --muted:#9BA5BA; --line:#28344A;
+  --navy:#1C3354; --navy-soft:#B3C3DC;
+  --c-class:#E77575; --c-be:#9583F2; --c-dsa:#EE9A45; --c-en:#4EA3E6; --c-school:#D4AA2A;
+  --c-rest:#45B584; --c-wind:#8391D8; --c-free:#98A1B4; --c-gold:#D9A520;
+  --box-bg:#0E1420; --bar-bg:#28344A; --accent:#7EA6DA; --focus:#5E86C0;
+  --warn-bg:#3A3217; --warn-fg:#F2DC9A; --warn-bd:#5E5020;
+  --info-bg:#172B42; --info-fg:#BCD7F0; --info-bd:#274A6E;
+  --toast-bg:#E4E8F1; --toast-fg:#0E1420; --link:#6DB4F0;
+  --heat-0:#222D42; --heat-1:#184F95; --heat-2:#256ABF; --heat-3:#5598E7; --heat-4:#9EC5F4;
+}}
+:root[data-theme="dark"]{
+  --paper:#0E1420; --surface:#172033; --ink:#E4E8F1; --muted:#9BA5BA; --line:#28344A;
+  --navy:#1C3354; --navy-soft:#B3C3DC;
+  --c-class:#E77575; --c-be:#9583F2; --c-dsa:#EE9A45; --c-en:#4EA3E6; --c-school:#D4AA2A;
+  --c-rest:#45B584; --c-wind:#8391D8; --c-free:#98A1B4; --c-gold:#D9A520;
+  --box-bg:#0E1420; --bar-bg:#28344A; --accent:#7EA6DA; --focus:#5E86C0;
+  --warn-bg:#3A3217; --warn-fg:#F2DC9A; --warn-bd:#5E5020;
+  --info-bg:#172B42; --info-fg:#BCD7F0; --info-bd:#274A6E;
+  --toast-bg:#E4E8F1; --toast-fg:#0E1420; --link:#6DB4F0;
+  --heat-0:#222D42; --heat-1:#184F95; --heat-2:#256ABF; --heat-3:#5598E7; --heat-4:#9EC5F4;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -42,15 +72,17 @@ body{background:var(--paper);color:var(--ink);font-family:"Be Vietnam Pro",syste
 /* Nav */
 .daynav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 16px 0}
 .daynav button,.daynav input{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer}
-.daynav button:focus-visible,.daynav input:focus-visible,.weekday:focus-visible,.links a:focus-visible{outline:3px solid #8FB3E8;outline-offset:2px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,.links a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .daynav .today{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:600}
-.daynav input{margin-left:auto;padding:7px 8px}
+.daynav input{margin-left:auto;padding:7px 8px;color-scheme:light dark}
+.daynav .tools{display:flex;gap:6px}
+.icon-btn{min-width:38px;font-weight:700}
 
 section{padding:0 16px}
 h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 
-.banner{margin:14px 16px 0;padding:10px 14px;border-radius:12px;font-size:14px;background:#FFF5D6;color:#5C4700;border:1px solid #F0DC9A}
-.banner.info{background:#E7F1FB;color:#1D4E7A;border-color:#BCD7F0}
+.banner{margin:14px 16px 0;padding:10px 14px;border-radius:12px;font-size:14px;background:var(--warn-bg);color:var(--warn-fg);border:1px solid var(--warn-bd)}
+.banner.info{background:var(--info-bg);color:var(--info-fg);border-color:var(--info-bd)}
 
 /* Timeline */
 .tl{background:var(--surface);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
@@ -62,7 +94,7 @@ h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 .row .ttl{font-weight:700;font-size:14px;color:var(--c)}
 .row.static .ttl{font-weight:500;color:var(--muted)}
 .row.static .rail{opacity:.45}
-.row.is-now{background:color-mix(in srgb,var(--c) 8%,#fff)}
+.row.is-now{background:color-mix(in srgb,var(--c) 10%,var(--surface))}
 .row.is-now .rail{box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent)}
 .tag{font-size:11px;font-weight:700;color:#fff;background:var(--c);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px;white-space:nowrap}
 .tag.next{background:transparent;color:var(--c);border:1px solid var(--c)}
@@ -70,17 +102,17 @@ h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 
 .task{display:flex;gap:10px;align-items:flex-start;margin-top:6px;cursor:pointer;position:relative}
 .task input{position:absolute;opacity:0;width:20px;height:20px;margin:0;cursor:pointer}
-.box{flex:0 0 20px;height:20px;border:2px solid var(--c);border-radius:6px;margin-top:1px;display:grid;place-items:center;background:#fff}
+.box{flex:0 0 20px;height:20px;border:2px solid var(--c);border-radius:6px;margin-top:1px;display:grid;place-items:center;background:var(--box-bg)}
 .task input:checked + .box{background:var(--c)}
 .task input:checked + .box::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
-.task input:focus-visible + .box{outline:3px solid color-mix(in srgb,var(--c) 40%,#fff);outline-offset:2px}
+.task input:focus-visible + .box{outline:3px solid color-mix(in srgb,var(--c) 45%,var(--surface));outline-offset:2px}
 .txt{font-size:14.5px}
 .task input:checked ~ .txt{color:var(--muted);text-decoration:line-through;text-decoration-color:#A9B0C0}
 .diff{font-size:11.5px;font-weight:700;margin-left:6px;white-space:nowrap}
 .diff.E{color:#23865C}.diff.M{color:#B96E0C}.diff.H{color:#C73E3E}
 .sub{font-size:13px;color:var(--muted);margin:1px 0 0 30px}
 .links{margin:2px 0 0 30px;display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
-.links a{color:var(--c-en);font-weight:600;text-decoration:none}
+.links a{color:var(--link);font-weight:600;text-decoration:none}
 .links a:hover{text-decoration:underline}
 
 /* Debt */
@@ -94,51 +126,171 @@ h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 .prog{display:grid;gap:12px}
 .prog-row .top{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
 .prog-row .top span:last-child{color:var(--muted);font-weight:500}
-.bar{height:8px;background:#E3E7EF;border-radius:999px;overflow:hidden;margin-top:5px}
+.bar{height:8px;background:var(--bar-bg);border-radius:999px;overflow:hidden;margin-top:5px}
 .bar i{display:block;height:100%;background:var(--c);border-radius:999px}
 
 /* Week */
 .weekday{display:block;width:100%;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:8px;cursor:pointer;color:var(--ink)}
-.weekday.sel{border-color:var(--navy);box-shadow:inset 4px 0 0 var(--navy)}
+.weekday.sel{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent)}
 .weekday .wd{font-weight:700;font-size:14px}
 .weekday .wd small{font-weight:500;color:var(--muted);margin-left:6px;font-size:12.5px}
 .weekday ul{margin:4px 0 0;padding-left:18px;font-size:13.5px}
-.weekday li{margin:1px 0}
+.weekday li{margin:1px 0;overflow-wrap:anywhere}
 .weekday li.be::marker{color:var(--c-be)} .weekday li.dsa::marker{color:var(--c-dsa)} .weekday li.ex::marker{color:var(--c-school)}
 .weekday li.dn{color:var(--muted);text-decoration:line-through}
 
 .notes{font-size:13px;color:var(--muted);margin-top:24px}
 .notes p{margin:6px 0}
 
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--toast-bg);color:var(--toast-fg);z-index:20;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
-@media (max-width:440px){.daynav button{flex:1 1 0;padding:8px 6px}.daynav input{margin-left:0;flex:1 1 100%}}
+@media (max-width:440px){.daynav>button{flex:1 1 30%;padding:8px 6px}.daynav input{margin-left:0;flex:1 1 60%;min-width:0}}
 @media (max-width:380px){.hero h1{font-size:29px}.row{grid-template-columns:46px 5px 1fr;column-gap:10px}}
+
+/* Ghi chú ngày */
+.daynote{width:100%;min-height:92px;resize:vertical;font:inherit;font-size:14px;color:var(--ink);background:var(--box-bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.note-meta{font-size:12px;color:var(--muted);margin-top:4px;min-height:18px}
+
+/* Hẹn giờ tập trung */
+.tm-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tm-clock{font-size:38px;font-weight:800;letter-spacing:-0.02em;line-height:1.1}
+.tm-label{font-size:13.5px;color:var(--muted);flex:1 1 140px}
+.tm .bar i{background:var(--c-be)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600}
+.btn:hover{border-color:var(--muted)}
+
+/* Heatmap tiến độ */
+.heat{display:grid;grid-template-columns:26px repeat(18,minmax(0,1fr));gap:2px;font-size:10.5px;color:var(--muted)}
+.heat .hl{display:flex;align-items:center;justify-content:center;min-height:14px}
+.heat .hr{justify-content:flex-start}
+.hc{aspect-ratio:1;border:0;border-radius:4px;padding:0;background:var(--heat-0);cursor:pointer;max-height:30px}
+.hc.l1{background:var(--heat-1)}.hc.l2{background:var(--heat-2)}.hc.l3{background:var(--heat-3)}.hc.l4{background:var(--heat-4)}
+.hc.fut{background:transparent;box-shadow:inset 0 0 0 1px var(--line)}
+.hc.off{visibility:hidden}
+.hc.today{box-shadow:0 0 0 2px var(--ink)}
+.hc.sel{box-shadow:0 0 0 2px var(--accent)}
+.heat-legend{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
+.heat-legend .hc{width:14px;height:14px;cursor:default}
+.heat-legend .sep{margin-left:10px}
+.heat-tip{position:fixed;z-index:30;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:12.5px;box-shadow:0 6px 18px rgba(0,0,0,.18);display:none;max-width:240px}
+.heat-tip b{display:block;font-size:13px}
+.stat-line{font-size:13.5px;color:var(--muted);margin-top:8px}
+.stat-line strong{color:var(--ink)}
+
+/* Giai đoạn 2 */
+.p2-group{padding:8px 0;border-top:1px solid var(--line)}
+.p2-group:first-child{border-top:0;padding-top:0}
+.p2-when{font-size:12.5px;font-weight:700;color:var(--c-gold)}
+.p2-group{--c:var(--c-be)}
+
+/* Hộp phím tắt */
+dialog.help{border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);padding:18px 20px;max-width:360px;width:calc(100% - 32px)}
+dialog.help::backdrop{background:rgba(10,16,30,.45)}
+dialog.help h3{margin:0 0 10px;font-size:17px}
+dialog.help dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 14px;font-size:14px}
+dialog.help dt{font-weight:700}
+kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;background:var(--box-bg)}
+
+.layout section{scroll-margin-top:12px}
+
+/* Máy tính bảng */
+@media (min-width:720px) and (max-width:1023px){
+  .wrap{max-width:780px}
+  #week{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #week .weekday{margin:0;display:flex;flex-direction:column;justify-content:flex-start}
+}
+/* PC / màn hình ngang: bố cục 2 cột */
+@media (min-width:1024px){
+  body{font-size:15.5px}
+  .wrap{max-width:1280px;padding:0 28px 64px}
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,420px);column-gap:36px;padding:26px 32px 28px}
+  .hero>*{grid-column:1}
+  .hero .nowcard{grid-column:2;grid-row:1 / span 4;align-self:center;margin-top:0}
+  .hero h1{font-size:42px}
+  .daynav{padding:16px 0 0}
+  .banner{margin:14px 0 0}
+  .layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:28px;align-items:start}
+  .split{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:28px;align-items:start}
+  .layout section{padding:0}
+  .col-side{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto;padding:0 2px 4px;scrollbar-width:thin}
+  .span-all{grid-column:1 / -1}
+  #week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+  #week .weekday{margin:0;height:100%;display:flex;flex-direction:column;justify-content:flex-start}
+  .notes{grid-column:1 / -1}
+}
+/* Điện thoại xoay ngang */
+@media (orientation:landscape) and (max-height:520px){
+  .hero{padding:14px 20px 16px}
+  .hero h1{font-size:26px;margin:6px 0 4px}
+  .nowcard{margin-top:10px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero" id="hero"><p class="loading">Đang tải tiến độ…</p></header>
   <nav class="daynav" aria-label="Chọn ngày">
-    <button id="prev" type="button">‹ Hôm trước</button>
-    <button id="today" class="today" type="button">Hôm nay</button>
-    <button id="next" type="button">Hôm sau ›</button>
+    <button id="prev" type="button" title="Phím ←">‹ Hôm trước</button>
+    <button id="today" class="today" type="button" title="Phím T">Hôm nay</button>
+    <button id="next" type="button" title="Phím →">Hôm sau ›</button>
     <input id="pick" type="date" min="2026-09-11" max="2027-01-08" aria-label="Chọn ngày cụ thể">
+    <div class="tools">
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="Đổi giao diện sáng / tối" title="Sáng / tối (phím D)">◐</button>
+      <button id="helpBtn" class="icon-btn" type="button" aria-label="Xem phím tắt" title="Phím tắt (phím ?)">?</button>
+    </div>
   </nav>
-  <main>
-    <div id="banners"></div>
-    <section aria-labelledby="h-day"><h2 id="h-day">Lịch trong ngày</h2><div id="timeline"></div></section>
-    <section aria-labelledby="h-debt"><h2 id="h-debt">Việc còn nợ</h2><div id="debt"></div></section>
-    <section aria-labelledby="h-prog"><h2 id="h-prog">Tiến độ</h2><div id="progress"></div></section>
-    <section aria-labelledby="h-week"><h2 id="h-week">Cả tuần</h2><div id="week"></div></section>
+  <div id="banners"></div>
+  <main class="layout">
+    <div class="split span-all">
+    <div class="col-main">
+      <section aria-labelledby="h-day"><h2 id="h-day">Lịch trong ngày</h2><div id="timeline"></div></section>
+      <section aria-labelledby="h-note"><h2 id="h-note">Ghi chú trong ngày</h2>
+        <div class="card"><textarea id="dayNote" class="daynote" aria-labelledby="h-note" placeholder="Hôm nay học được gì, kẹt ở đâu, điểm đề kiểm tra…"></textarea><div class="note-meta" id="noteMeta"></div></div>
+      </section>
+    </div>
+    <aside class="col-side">
+      <section aria-labelledby="h-timer"><h2 id="h-timer">Hẹn giờ tập trung</h2><div id="timer" class="card tm"></div></section>
+      <section aria-labelledby="h-debt"><h2 id="h-debt">Việc còn nợ</h2><div id="debt"></div></section>
+      <section aria-labelledby="h-prog"><h2 id="h-prog">Tiến độ</h2><div id="progress"></div></section>
+    </aside>
+    </div>
+    <section class="span-all" aria-labelledby="h-week"><h2 id="h-week">Cả tuần</h2><div id="week"></div></section>
+    <section class="span-all" aria-labelledby="h-heat"><h2 id="h-heat">Bản đồ tiến độ</h2><div id="heat" class="card"></div></section>
+    <section aria-labelledby="h-p2"><h2 id="h-p2">Giai đoạn 2: Java Intensive → OJT NAB</h2><div id="phase2" class="card"></div></section>
+    <section aria-labelledby="h-bak"><h2 id="h-bak">Sao lưu tiến độ</h2>
+      <div class="card">
+        <p class="empty">Tiến độ chỉ nằm trong trình duyệt này. Xuất file JSON để lưu dự phòng hoặc chuyển sang máy khác (PC ↔ điện thoại).</p>
+        <div class="btnrow">
+          <button id="exportBtn" class="btn primary" type="button">Xuất file tiến độ</button>
+          <button id="importBtn" class="btn" type="button">Nhập file (gộp)</button>
+          <input id="importFile" type="file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+    </section>
     <section class="notes" id="notes">
+      <p>Lịch đã sửa lại từ T5 24/9/2026: hôm nay làm bù Effective Java chương 3, từ T6 25/9 là lịch bắt kịp (Tuần 2 rút gọn, Tuần 3 gộp), từ Tuần 4 khớp lịch gốc. Việc chưa làm trước 24/9 đã được dồn vào lịch mới nên không tính nợ.</p>
       <p>Tuần 14–15 là tuần thi cuối kỳ Fall 2026 theo ước lượng. Khi FAP có lịch thi thật, ưu tiên lịch thi và dời việc backend sang ô Buffer thứ Bảy.</p>
       <p>Link LeetCode mở thẳng bài. “Tìm nguồn” mở Google với tên nguồn chính xác, để tránh link sai. 7 bài Premium của NeetCode 150 không nằm trong danh sách (143 bài miễn phí).</p>
-      <p>Việc còn nợ lấy từ 14 ngày gần nhất: backend, LeetCode và Codility chưa tích.</p>
+      <p>Việc còn nợ lấy từ 14 ngày gần nhất (không trước mốc sửa lịch): backend, LeetCode và Codility chưa tích.</p>
     </section>
   </main>
 </div>
+<div class="heat-tip" id="heatTip" role="tooltip"></div>
+<dialog class="help" id="helpDlg" aria-labelledby="h-help">
+  <h3 id="h-help">Phím tắt</h3>
+  <dl>
+    <dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Hôm trước / hôm sau</dd>
+    <dt><kbd>T</kbd></dt><dd>Về hôm nay</dd>
+    <dt><kbd>F</kbd></dt><dd>Bắt đầu / tạm dừng hẹn giờ</dd>
+    <dt><kbd>N</kbd></dt><dd>Viết ghi chú trong ngày</dd>
+    <dt><kbd>D</kbd></dt><dd>Đổi giao diện sáng / tối</dd>
+    <dt><kbd>?</kbd></dt><dd>Mở bảng này</dd>
+  </dl>
+  <form method="dialog"><button class="btn primary" type="submit">Đóng</button></form>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -150,6 +302,7 @@ const W16END = Date.UTC(2027,0,3);   // CN 3/1/2027: hết Tuần 16
 const BUFSTART = Date.UTC(2027,0,4); // T2 4/1/2027: tuần đệm
 const BUFEND = Date.UTC(2027,0,8);   // T6 8/1/2027
 const HOLIDAYS = {"2027-01-01":"Tết Dương lịch, nghỉ lễ"};
+const REPLAN = Date.UTC(2026,8,24);  // T5 24/9/2026: sửa lịch bắt kịp, việc trước mốc này không tính nợ
 
 function isoOf(t){const d=new Date(t);return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0");}
 function fromIso(s){const [y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d);}
@@ -210,7 +363,7 @@ const BE_BUF={1:[0],2:[1],3:[2],4:[3,4],5:[5,6]};
 
 /* ============ NỘI DUNG TỪNG TUẦN ============
    be[]: [T2, T3, T4, T5#1, T5#2, T6#1, T6#2, T7, CN#1, CN#2]
-   Mỗi task: "text" hoặc ["text", "url" | "cụm từ tìm kiếm"]  */
+   Mỗi task: "text" hoặc ["text", "url" | "cụm từ tìm kiếm", "ghi chú cách làm (tuỳ chọn)"]  */
 const WEEKS={
 0:{theme:"Setup và baseline",dsa:"Arrays & Hashing (khởi động)",goal:"Hello Spring Boot chạy được, có baseline.md tự chấm",
  be:[["Cài JDK 21 (Eclipse Temurin), IntelliJ IDEA Community, Git; tạo repo backend-journey","Eclipse Temurin JDK 21 download"],
@@ -233,31 +386,34 @@ const WEEKS={
      "Tổng hợp note Java Core Q&A tuần 1, push GitHub"],
  en:["Speaking: giải thích equals/hashCode bằng tiếng Anh, ghi âm 3 phút","Mock với AI: 8 câu OOP, String, equals","Trình bày kiến trúc NitroCine 3 phút"],
  mock:"Mock interview tiếng Anh 45 phút: Java Core tuần 1 (cho ChatGPT đóng vai interviewer NAB)"},
-2:{theme:"Java Core II: Collections, Generics, Exception, Optional",dsa:"Sliding Window, Stack",goal:"Vẽ được sơ đồ HashMap khi có collision",
+2:{theme:"Bắt kịp: EJ chương 3 + Collections, HashMap",dsa:"Sliding Window, Stack",goal:"Đạt ≥9/12 đề EJ ch.3; vẽ được sơ đồ HashMap khi có collision",
+ /* Lịch sửa lại từ T5 24/9 (xem REPLAN). T2–T4 giữ nguyên để không lệch tiến độ đã tích. */
  be:["Collections tổng quan: List/Set/Map/Queue; ArrayList vs LinkedList (Big-O, cache locality), benchmark nhỏ",
      ["Generics: bounded type, wildcard ? extends vs ? super (PECS), type erasure","Baeldung Java generics wildcards"],
      ["HashMap bên trong: hash(), chỉ số bucket (n-1) & hash, collision chaining, load factor 0.75, resize","Baeldung Java HashMap under the hood"],
-     "Treeify từ Java 8: TREEIFY_THRESHOLD = 8, MIN_TREEIFY_CAPACITY = 64. Mở source HashMap.java trong IntelliJ, vẽ sơ đồ",
-     "Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test",
-     "Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap",
-     ["Exception: checked vs unchecked, custom exception, try-with-resources","Baeldung Java checked vs unchecked exceptions"],
-     ["Optional: cách dùng đúng và sai (không làm field/param); refactor code null-check sang Optional","Baeldung Guide to Java Optional"],
-     "Deep dive: fail-fast iterator và ConcurrentModificationException; Comparable vs Comparator",
-     "Viết note HashMap bên trong (có sơ đồ), push GitHub"],
- en:["Speaking: giải thích HashMap internals","Mock với AI: Collections và Generics","Trình bày: khi nào dùng ArrayList, khi nào LinkedList"],
+     ["Bù Tuần 1: Effective Java chương 3, Items 10–12 (equals, hashCode, toString) + lab BrokenMoney/Money","Effective Java 3rd edition Item 10 11 12 equals hashCode toString",
+      "15' đọc lý thuyết → BrokenMoney (thiếu hashCode, HashSet.contains = false) → Money final: chuẩn hoá scale BigDecimal, equals/hashCode/toString (mask PII nếu có)"],
+     ["Bù Tuần 1: EJ chương 3, Items 13–14 (clone, Comparable) + JUnit test contract + đề kiểm tra 12 câu (đạt ≥9/12)","Effective Java 3rd edition Item 13 14 clone Comparable",
+      "Copy constructor thay clone; compareTo nhất quán equals (BigDecimal 1.0 vs 1.00); không trừ trong comparator. Test: HashSet vs TreeSet cùng size"],
+     "Collections tổng quan (List/Set/Map/Queue), ArrayList vs LinkedList; Comparable vs Comparator (nối tiếp Item 14)",
+     ["HashMap bên trong: hash(), (n-1) & hash, collision, load factor 0.75, resize; treeify (8 / 64). Mở HashMap.java, vẽ sơ đồ","Baeldung Java HashMap under the hood"],
+     "Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test; dùng Money làm key để thấy vai trò equals/hashCode",
+     "Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap; fail-fast iterator và ConcurrentModificationException",
+     "Viết note HashMap (có sơ đồ) + note EJ ch.3 bằng tiếng Anh, push GitHub"],
+ en:["Speaking: giải thích HashMap internals","Speaking: equals/hashCode contract trong 60 giây (câu Q12 đề EJ ch.3)","Trình bày: khi nào dùng ArrayList, khi nào LinkedList"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy chưa làm trên LeetCode, bấm giờ như Codility"},
-3:{theme:"Java Core III: Stream API, JVM",dsa:"Stack, Binary Search",goal:"Trả lời được câu “GC hoạt động thế nào”",
- be:["Lambda và functional interface (Function, Predicate, Supplier, Consumer), method reference",
-     ["Stream API: map/filter/reduce, collect với groupingBy, partitioningBy; lazy evaluation","Baeldung Java 8 Streams introduction"],
+3:{theme:"Java Core III (gộp): Generics, Exception, Optional, Stream, JVM",dsa:"Stack, Binary Search",goal:"Giải thích được PECS và “GC hoạt động thế nào”",
+ be:[["Generics: bounded type, wildcard ? extends vs ? super (PECS), type erasure; viết 1 hàm copy(List<? super T>, List<? extends T>)","Baeldung Java generics wildcards"],
+     ["Exception: checked vs unchecked, custom exception, try-with-resources; Optional dùng đúng/sai (không làm field/param)","Baeldung Java checked vs unchecked exceptions"],
+     ["Lambda, functional interface, method reference; Stream API map/filter/reduce, groupingBy, partitioningBy, lazy evaluation","Baeldung Java 8 Streams introduction"],
      "Stream nâng cao: flatMap, Collectors.toMap khi trùng key, khi nào không nên dùng parallel stream",
+     "Bài tập: xử lý danh sách Transaction (dùng lại Money) bằng Stream: tổng theo tháng, top 5 khách hàng",
      ["JVM memory: heap (young/old), stack, metaspace. Object nằm đâu, biến local nằm đâu: vẽ sơ đồ","Baeldung Java stack memory and heap space"],
-     "Bài tập: xử lý danh sách Transaction giả lập bằng Stream (tổng theo tháng, top 5 khách hàng)",
-     ["GC: mark-sweep-compact, generational, G1 là mặc định","Oracle HotSpot garbage collection tuning guide G1"],
-     "Chạy app với -Xmx nhỏ để gây OutOfMemoryError, quan sát heap bằng VisualVM hoặc jconsole",
-     "Class loader (bootstrap, platform, application) và JIT ở mức khái niệm",
-     ["Deep dive: Java Memory Model cơ bản, happens-before, visibility (chuẩn bị cho concurrency)","Java Memory Model happens-before explained"],
-     "Tự trả lời 10 câu phỏng vấn JVM, ghi note JVM memory"],
- en:["Speaking: giải thích lazy evaluation của Stream","Mock với AI: JVM memory và GC","Trình bày: heap vs stack"],
+     ["GC: mark-sweep-compact, generational, G1 mặc định; chạy -Xmx nhỏ gây OutOfMemoryError, xem heap bằng VisualVM","Oracle HotSpot garbage collection tuning guide G1"],
+     ["Class loader và JIT ở mức khái niệm; Java Memory Model: happens-before, visibility (chuẩn bị cho concurrency)","Java Memory Model happens-before explained"],
+     "Tự trả lời 20 câu phỏng vấn: 10 JVM + 10 Generics/Exception/Stream, chấm 0–5",
+     "Ghi note JVM memory + Stream, push GitHub. Từ Tuần 4 lịch khớp lại như gốc"],
+ en:["Speaking: giải thích PECS và lazy evaluation của Stream","Mock với AI: JVM memory và GC","Trình bày: heap vs stack"],
  mock:"Mock interview tiếng Anh 45 phút: Collections + JVM"},
 4:{theme:"Concurrency",dsa:"Linked List",goal:"Giải thích được race condition và cách chặn",
  be:["Thread vs Runnable vs Callable, vòng đời thread; demo race condition counter++ với 2 thread",
@@ -281,8 +437,8 @@ const WEEKS={
      ["application.yml, @ConfigurationProperties, profiles dev/test/prod","Baeldung Spring Boot profiles"],
      "HTTP đúng chuẩn: status code, ResponseEntity, đặt tên REST endpoint",
      "Cộng hưởng PRJ301: so sánh Servlet/JSP trên lớp với DispatcherServlet của Spring MVC, viết note",
-     ["Deep dive: IoC container và ApplicationContext","https://www.baeldung.com/spring-boot"],
-     "Hoàn thiện CRUD API và Postman collection, push repo"],
+     ["Deep dive: IoC container, ApplicationContext và design pattern Spring dùng: Factory (BeanFactory), Proxy (AOP, @Transactional), Template Method (JdbcTemplate), Strategy","Design patterns used in Spring Framework"],
+     "SOLID (Java Intensive): rà lại CRUD API theo SRP/DIP, hoàn thiện Postman collection, push repo"],
  en:["Speaking: giải thích IoC/DI","Mock với AI: Spring core (@Component vs @Bean, scope)","Trình bày: một request đi qua Spring MVC thế nào"],
  mock:"Mock interview tiếng Anh 45 phút: concurrency + Spring core"},
 6:{theme:"Spring Data JPA",dsa:"Trees, Heap",goal:"Tái hiện và fix được N+1",
@@ -332,7 +488,7 @@ const WEEKS={
      "Test concurrency: 2 thread cùng rút tiền, assert số dư đúng (CountDownLatch, ExecutorService)",
      ["JaCoCo: cấu hình report, đọc coverage; test pyramid","JaCoCo Maven plugin"],
      "Viết test cho case lỗi: validation, 404, 409",
-     "Nâng coverage phần core lên ≥70%, dọn test chậm",
+     ["TDD (NAB làm TDD/pair programming): red-green-refactor 1 tính năng nhỏ viết test trước; nâng coverage core ≥70%","Martin Fowler test driven development"],
      "Deep dive: mock vs stub vs fake, khi nào không nên mock",
      "Chuẩn bị MiniPay: domain model (Account, Transfer, LedgerEntry) và ERD vẽ bằng UML (kỹ năng SWR302)"],
  en:["Speaking: giải thích test pyramid","Mock với AI: testing (mock vs stub, Testcontainers)","Trình bày: cách test code có concurrency"],
@@ -370,10 +526,10 @@ const WEEKS={
      "Dockerfile multi-stage cho MiniPay; docker-compose gồm app, PostgreSQL, Redis, Kafka",
      ["GitHub Actions: build, test (Testcontainers), JaCoCo report, badge","GitHub Actions building and testing Java with Maven"],
      ["Actuator + Micrometer → Prometheus; dashboard Grafana (RPS, latency, error)","Spring Boot Micrometer Prometheus Grafana"],
-     "Log có correlationId (MDC) xuyên suốt request",
-     "Deploy thử lên một nền tảng free tier bạn chọn, hoặc bảo đảm chạy local bằng 1 lệnh",
+     "Log có correlationId (MDC) xuyên suốt request; mask PII (số tài khoản, email) trong log như chuẩn ngân hàng",
+     ["Deploy MiniPay lên AWS free tier (EC2 hoặc Elastic Beanstalk + RDS PostgreSQL); NAB chạy trên AWS","AWS Elastic Beanstalk deploy Spring Boot"],
      "Deep dive: at-least-once vs exactly-once, consumer lag, vì sao cần idempotent consumer",
-     "Kiểm tra toàn hệ bằng 1 lệnh docker compose up, sửa lỗi còn lại"],
+     "Kiểm tra toàn hệ bằng 1 lệnh docker compose up; làm việc theo Git flow: mỗi tính năng 1 PR, tự review theo checklist"],
  en:["Speaking: giải thích consumer group","Mock với AI: Docker, CI/CD, observability","Trình bày kiến trúc MiniPay 5 phút"],
  mock:"Mock interview tiếng Anh 45 phút: Spring + Kafka"},
 13:{theme:"System design, load test, ADR",dsa:"Greedy, Intervals, Math",goal:"Có số liệu throughput/latency thật trong README",
@@ -384,7 +540,7 @@ const WEEKS={
      "Tối ưu 1 điểm nghẽn (index, connection pool hoặc cache), chạy lại, so sánh số liệu",
      ["Hoàn thiện ADR-001..003 theo mẫu Context / Decision / Consequences","Michael Nygard documenting architecture decisions"],
      "README kể chuyện: vấn đề, quyết định, đánh đổi, số liệu, ảnh Grafana",
-     "Buffer dự án: fix bug, dọn code, viết mục What I'd do next",
+     ["Microservices cơ bản (service boundary, API gateway, Spring Cloud ở mức khái niệm) + Agile/Scrum (sprint, standup, story point); viết mục What I'd do next","microservices.io patterns microservice architecture"],
      "Deep dive: tự trình bày thiết kế payment system cấp junior 15 phút bằng tiếng Anh",
      "Tự kiểm tháng 3: quay video demo MiniPay 10 phút tiếng Anh, chấm checklist Differentiator"],
  en:["Speaking: giải thích CAP","Mock với AI: system design fresher","Trình bày kết quả load test"],
@@ -417,7 +573,7 @@ const WEEKS={
  mock:"Ôn thi (tuần thi, bỏ mock)"},
 16:{theme:"Đóng gói portfolio",dsa:"Làm lại bài từng sai",goal:"Repo kể chuyện được, CV sẵn sàng",
  be:["Hoàn thiện README MiniPay, badge CI và coverage",
-     "CV 1 trang tiếng Anh: MiniPay đứng đầu, NitroCine thứ hai, N-Body 1 dòng",
+     "CV 1 trang tiếng Anh cho OJT NAB: MiniPay đứng đầu, NitroCine thứ hai, N-Body 1 dòng; nêu Java/Spring/AWS/TDD",
      "Quay video demo MiniPay 3–5 phút tiếng Anh",
      "Rà checklist Must-have, vá 2 chủ đề yếu nhất",
      "Pin repo trên GitHub, viết profile README",
@@ -438,6 +594,27 @@ const BUF={theme:"Tuần đệm và tổng kiểm tra",dsa:"Làm lại bài sai,
      "Đóng gói: CV, repo, video demo",
      "Lên danh sách chương trình intern/fresher 2027 cần theo dõi"],
  en:["Speaking: tự giới thiệu + MiniPay","Mock với AI tổng hợp",""],mock:""};
+
+/* ============ GIAI ĐOẠN 2: KỲ 5 JAVA INTENSIVE → OJT NAB KỲ 6 ============
+   Mốc ước lượng; cập nhật khi có syllabus trên FLM và lịch OJT chính thức. */
+const PHASE2=[
+ {when:"Tháng 1/2027 · bắt đầu kỳ 5",items:[
+   "Tra FLM: danh sách môn chuyên ngành hẹp Java Intensive kỳ 5, đọc syllabus, map từng môn với MiniPay",
+   "Hỏi phòng Quan hệ doanh nghiệp: lịch đăng ký OJT kỳ 6 và đợt tuyển của NAB Innovation Centre Vietnam",
+   "CV + LinkedIn tiếng Anh: MiniPay, NitroCine, N-Body; nêu Java/Spring/AWS/TDD"]},
+ {when:"Tháng 2/2027",items:[
+   ["AWS Cloud Practitioner: học Cloud Practitioner Essentials, làm 2 đề thi thử","AWS Cloud Practitioner Essentials course"],
+   ["Docker + Kubernetes cơ bản: deploy MiniPay lên minikube (Deployment, Service, ConfigMap)","Kubernetes basics tutorial minikube"],
+   "Giữ nhịp DSA: 5 bài/tuần, ưu tiên Medium hay gặp trong OA"]},
+ {when:"Tháng 3/2027",items:[
+   ["Microservices: tách MiniPay thành account-service + notification-service, Spring Cloud Gateway, giao tiếp qua Kafka","Spring Cloud Gateway getting started"],
+   "Contract test / integration test giữa 2 service; tracing bằng Micrometer Tracing",
+   "Nộp hồ sơ OJT NAB (theo lịch trường), chuẩn bị bài OA/Codility"]},
+ {when:"Tháng 4/2027 · trước OJT",items:[
+   "Mock technical interview tiếng Anh 3 buổi: Java Core, Spring, DB, MiniPay",
+   "Behavioral theo STAR (teamwork, conflict, failure): viết sẵn 5 câu chuyện",
+   ["Agile/Scrum thực hành: làm MiniPay theo sprint 1 tuần trên Jira/GitHub Projects","Scrum Guide"]]}
+];
 
 /* ============ DSA: NEETCODE 150 (143 BÀI MIỄN PHÍ) ============ */
 const LC=[
@@ -530,7 +707,7 @@ let DSA_ASSIGNED=0;
 /* ============ DỰNG MỘT NGÀY ============ */
 function srch(q){return "https://www.google.com/search?q="+encodeURIComponent(q);}
 function linkOf(spec){if(!spec)return null;return spec.startsWith("http")?{href:spec,label:"Mở bài viết"}:{href:srch(spec),label:"Tìm nguồn"};}
-function taskOf(x){return Array.isArray(x)?{text:x[0],link:linkOf(x[1])}:{text:x,link:null};}
+function taskOf(x){return Array.isArray(x)?{text:x[0],link:linkOf(x[1]),sub:x[2]||""}:{text:x,link:null,sub:""};}
 function weekData(w){return w==="B"?BUF:WEEKS[w];}
 function nextWeek(w){if(w==="B")return null;if(w===16)return BUF;return WEEKS[w+1];}
 
@@ -547,7 +724,7 @@ function buildDay(t){
       const tk=taskOf(wk.be[i]);
       if(/^(Nghỉ|Tết)/.test(tk.text)){blk.cat="free";blk.title="Nghỉ";blk.note=tk.text;blk.slot="";return blk;}
       if(wk.exam){blk.cat="school";blk.title="Ôn thi (thay backend)";}
-      blk.items.push({id:iso+"|"+b.slot,kind:"be",text:tk.text,link:tk.link});
+      blk.items.push({id:iso+"|"+b.slot,kind:"be",text:tk.text,link:tk.link,sub:tk.sub});
     } else if(b.slot==="dsa"){
       if(dw===4){
         const n=w==="B"?17:w;
@@ -696,7 +873,7 @@ function renderTimeline(day){
 
 function debtList(){
   const today=todayUTC(); const out=[]; const seen={};
-  const start=Math.max(W0,today-14*DAY);
+  const start=Math.max(W0,REPLAN,today-14*DAY);
   for(let t=today-DAY;t>=start;t-=DAY){
     const d=buildDay(t); if(!d) continue;
     d.blocks.forEach(b=>b.items.forEach(it=>{
@@ -724,10 +901,14 @@ function renderProgress(day){
     for(let t=rs;t<=re;t+=DAY){const d=buildDay(t);if(!d)continue;d.blocks.forEach(b=>b.items.forEach(it=>{if(it.kind==="be"){beTot++;if(done[it.id])beDone++;}}));}
   }
   const row=(cat,label,a,b)=>'<div class="prog-row c-'+cat+'"><div class="top"><span>'+label+'</span><span>'+a+" / "+b+'</span></div><div class="bar"><i style="width:'+(b?Math.round(a/b*100):0)+'%"></i></div></div>';
+  const ds=day?dayStats(day.t):null;
+  const sk=streak();
   el.innerHTML='<div class="card prog">'+
+    (ds?row("gold",(day.t===todayUTC()?"Việc hôm nay":"Việc ngày "+dm(day.t)),ds.dn,ds.tot):"")+
     (day?row(day.wk.exam?"school":"be",day.wk.exam?"Ôn thi tuần này":"Backend tuần này",beDone,beTot):"")+
     row("dsa","NeetCode 150 (bản miễn phí)",lcDone,LC.length)+
-    row("dsa","Codility Lessons",codDone,COD.length)+'</div>';
+    row("dsa","Codility Lessons",codDone,COD.length)+
+    '<p class="stat-line">Chuỗi ngày xong hết backend: <strong>'+sk+' ngày</strong>'+(sk?"":". Bắt đầu lại từ hôm nay.")+'</p></div>';
 }
 
 function renderWeek(day){
@@ -747,6 +928,192 @@ function renderWeek(day){
   el.innerHTML=h;
 }
 
+/* ============ THỐNG KÊ & BẢN ĐỒ TIẾN ĐỘ ============ */
+function dayStats(t){
+  const d=buildDay(t); if(!d) return null;
+  let tot=0,dn=0,beTot=0,beDone=0;
+  d.blocks.forEach(b=>b.items.forEach(it=>{tot++;if(done[it.id])dn++;if(it.kind==="be"){beTot++;if(done[it.id])beDone++;}}));
+  return {tot,dn,beTot,beDone};
+}
+// Số ngày liên tiếp (tính tới hôm nay nếu đã xong, không thì tới hôm qua) tích hết việc backend; ngày không có backend được bỏ qua
+function streak(){
+  const today=todayUTC(); let n=0, t=today;
+  const s0=dayStats(today);
+  if(!(s0&&s0.beTot&&s0.beDone===s0.beTot)) t=today-DAY;
+  for(;t>=W0;t-=DAY){
+    const st=dayStats(t); if(!st) break;
+    if(!st.beTot) continue;
+    if(st.beDone===st.beTot) n++; else break;
+  }
+  return n;
+}
+const HEAT_COLS=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,"B"];
+function mondayOf(w){return w===0?W1-7*DAY:(w==="B"?BUFSTART:W1+(w-1)*7*DAY);}
+function heatLevel(st){if(!st||!st.tot||!st.dn)return 0;const r=st.dn/st.tot;return r>=1?4:r>=0.67?3:r>=0.34?2:1;}
+function renderHeat(day){
+  const el=document.getElementById("heat");
+  const today=todayUTC();
+  let h='<div class="heat"><div class="hl"></div>'+HEAT_COLS.map(w=>'<div class="hl" title="'+(w==="B"?"Tuần đệm":"Tuần "+w)+'">'+(w==="B"?"Đ":w)+'</div>').join("");
+  let dueTot=0,dueDone=0;
+  [1,2,3,4,5,6,0].forEach(dw=>{
+    h+='<div class="hl hr">'+DOW_SHORT[dw]+'</div>';
+    HEAT_COLS.forEach(w=>{
+      const t=mondayOf(w)+((dw+6)%7)*DAY;
+      if(weekOf(t)!==w){h+='<span class="hc off" aria-hidden="true"></span>';return;}
+      const st=dayStats(t), fut=t>today;
+      if(!fut){dueTot+=st.tot;dueDone+=st.dn;}
+      const pct=st.tot?Math.round(st.dn/st.tot*100):0;
+      const head=DOW_SHORT[dw]+" "+dm(t)+" · "+(w==="B"?"Tuần đệm":"Tuần "+w);
+      const body=fut?"Chưa tới":(st.tot?st.dn+"/"+st.tot+" việc ("+pct+"%)":"Không có việc");
+      const cls="hc"+(fut?" fut":" l"+heatLevel(st))+(t===today?" today":"")+(day&&t===day.t&&t!==today?" sel":"");
+      h+='<button type="button" class="'+cls+'" data-go="'+isoOf(t)+'" data-h="'+esc(head)+'" data-b="'+esc(body)+'" aria-label="'+esc(head+": "+body)+'"></button>';
+    });
+  });
+  h+='</div><div class="heat-legend"><span>Ít</span>'+[0,1,2,3,4].map(l=>'<span class="hc l'+l+'" aria-hidden="true"></span>').join("")+'<span>Nhiều</span>'+
+     '<span class="sep">Viền đậm: hôm nay · Ô rỗng: chưa tới</span></div>'+
+     '<p class="stat-line">Đã tới hạn: <strong>'+dueDone+'/'+dueTot+' việc</strong> ('+(dueTot?Math.round(dueDone/dueTot*100):0)+'%). Nhấp vào ô để mở ngày đó.</p>';
+  el.innerHTML=h;
+}
+function showTip(btn,x,y){
+  const tip=document.getElementById("heatTip");
+  tip.innerHTML='<b>'+esc(btn.dataset.h)+'</b>'+esc(btn.dataset.b);
+  tip.style.display="block";
+  const w=tip.offsetWidth,hh=tip.offsetHeight;
+  let lx=x+14, ly=y-hh-10;
+  if(lx+w>window.innerWidth-8) lx=x-w-14;
+  if(ly<8) ly=y+18;
+  tip.style.left=Math.max(8,lx)+"px"; tip.style.top=ly+"px";
+}
+function hideTip(){document.getElementById("heatTip").style.display="none";}
+
+/* ============ GIAI ĐOẠN 2 ============ */
+function renderPhase2(){
+  document.getElementById("phase2").innerHTML=PHASE2.map((g,gi)=>'<div class="p2-group c-be"><div class="p2-when">'+esc(g.when)+'</div>'+
+    g.items.map((x,ii)=>{const tk=taskOf(x);return itemHTML({id:"p2-"+gi+"-"+ii,text:tk.text,link:tk.link});}).join("")+'</div>').join("")+
+    '<p class="stat-line">Mốc ước lượng. Khi có syllabus trên FLM và lịch OJT chính thức thì chỉnh lại cho khớp.</p>';
+}
+
+/* ============ GHI CHÚ TRONG NGÀY ============ */
+const noteKey=iso=>"note|"+iso;
+function renderNote(){
+  const ta=document.getElementById("dayNote"), iso=isoOf(state.view);
+  document.getElementById("h-note").textContent="Ghi chú ngày "+dm(state.view);
+  if(document.activeElement!==ta||ta.dataset.iso!==iso){
+    const v=done[noteKey(iso)];
+    ta.value=typeof v==="string"?v:"";
+    ta.dataset.iso=iso;
+    document.getElementById("noteMeta").textContent=ta.value?"Đã lưu trong trình duyệt":"";
+  }
+}
+let noteTimer=null;
+function onNoteInput(e){
+  const ta=e.target, iso=ta.dataset.iso, v=ta.value;
+  clearTimeout(noteTimer);
+  noteTimer=setTimeout(()=>{
+    if(v.trim()) done[noteKey(iso)]=v; else delete done[noteKey(iso)];
+    saveDone();
+    const n=new Date();
+    document.getElementById("noteMeta").textContent="Đã lưu lúc "+String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");
+  },400);
+}
+
+/* ============ HẸN GIỜ TẬP TRUNG ============ */
+const TKEY="hoang-timer-v1";
+const BASE_TITLE=document.title;
+let timer={dur:25*60000,left:25*60000,endAt:0,label:""};
+function loadTimer(){try{const v=JSON.parse(localStorage.getItem(TKEY)||"null");if(v&&typeof v.dur==="number")timer=Object.assign(timer,v);}catch(e){/* chưa có */}}
+function saveTimer(){try{localStorage.setItem(TKEY,JSON.stringify(timer));}catch(e){/* bị chặn */}}
+function timerLeft(){return timer.endAt?Math.max(0,timer.endAt-Date.now()):timer.left;}
+function fmtMs(ms){const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":"+String(m).padStart(2,"0"):String(m).padStart(2,"0"))+":"+String(x).padStart(2,"0");}
+function currentBlock(){const d=buildDay(todayUTC());if(!d)return null;const ci=currentIndex(d);return ci.now>=0?d.blocks[ci.now]:null;}
+function renderTimer(){
+  const el=document.getElementById("timer");
+  const running=!!timer.endAt, left=timerLeft();
+  const pct=timer.dur?Math.round((1-left/timer.dur)*100):0;
+  const cur=currentBlock(), toEnd=cur?toMin(cur.e)-nowMin():0;
+  const paused=!running&&left>0&&left<timer.dur;
+  el.innerHTML='<div class="tm-top"><div class="tm-clock" id="tmClock">'+fmtMs(left)+'</div><div class="tm-label">'+esc(timer.label||"Chọn thời lượng, hẹn giờ chạy ngay")+'</div></div>'+
+    '<div class="bar"><i id="tmBar" style="width:'+pct+'%"></i></div>'+
+    '<div class="btnrow"><button class="btn primary" type="button" data-tm="toggle">'+(running?"Tạm dừng":(paused?"Tiếp tục":"Bắt đầu"))+'</button>'+
+    '<button class="btn" type="button" data-tm="reset">Đặt lại</button></div>'+
+    '<div class="btnrow">'+[25,50,90].map(m=>'<button class="btn" type="button" data-tm="set" data-min="'+m+'">'+m+' phút</button>').join("")+
+    (cur&&toEnd>=5?'<button class="btn" type="button" data-tm="set" data-min="'+toEnd+'">Hết khung giờ ('+toEnd+' phút)</button>':"")+'</div>';
+}
+function timerLabel(min){
+  const cur=currentBlock();
+  if(cur){const f=cur.items[0];return cur.title+(f&&f.text!==cur.title?": "+f.text:"");}
+  return "Tập trung "+min+" phút";
+}
+function startTimer(){
+  if(timer.left<=0) timer.left=timer.dur;
+  timer.endAt=Date.now()+timer.left;
+  try{if(window.Notification&&Notification.permission==="default")Notification.requestPermission();}catch(e){/* không hỗ trợ */}
+}
+function timerAction(act,min){
+  if(act==="toggle"){ if(timer.endAt){timer.left=timerLeft();timer.endAt=0;} else startTimer(); }
+  else if(act==="reset"){timer.endAt=0;timer.left=timer.dur;}
+  else if(act==="set"){timer.dur=min*60000;timer.left=timer.dur;timer.label=timerLabel(min);timer.endAt=0;startTimer();}
+  saveTimer(); renderTimer(); tickTimer();
+}
+function beep(){
+  try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ac=new C();
+    [0,0.35,0.7].forEach(d=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.setValueAtTime(0.18,ac.currentTime+d);g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+d+0.3);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+d);o.stop(ac.currentTime+d+0.3);});
+  }catch(e){/* không phát được âm thanh */}
+}
+function finishTimer(){
+  const label=timer.label||"Hẹn giờ";
+  timer.endAt=0; timer.left=0; saveTimer(); renderTimer();
+  document.title=BASE_TITLE;
+  toast("Hết giờ: "+label); beep();
+  try{if(window.Notification&&Notification.permission==="granted")new Notification("Hết giờ",{body:label,icon:"icon-192.png"});}catch(e){/* bỏ qua */}
+}
+function tickTimer(){
+  if(!timer.endAt){document.title=BASE_TITLE;return;}
+  const left=timerLeft();
+  if(left<=0){finishTimer();return;}
+  const c=document.getElementById("tmClock"), b=document.getElementById("tmBar");
+  if(c) c.textContent=fmtMs(left);
+  if(b) b.style.width=Math.round((1-left/timer.dur)*100)+"%";
+  document.title=fmtMs(left)+" · Hôm nay làm gì";
+}
+
+/* ============ GIAO DIỆN SÁNG / TỐI ============ */
+function effectiveTheme(){const t=document.documentElement.dataset.theme;if(t)return t;return (window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";}
+function syncThemeMeta(){const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",effectiveTheme()==="dark"?"#1C3354":"#1F3A5F");}
+function toggleTheme(){
+  const nx=effectiveTheme()==="dark"?"light":"dark";
+  document.documentElement.dataset.theme=nx;
+  try{localStorage.setItem("hoang-theme",nx);}catch(e){/* bị chặn */}
+  syncThemeMeta(); toast(nx==="dark"?"Giao diện tối":"Giao diện sáng");
+}
+
+/* ============ SAO LƯU ============ */
+function exportDone(){
+  const data={app:"hoang-backend-tracker",version:1,exportedAt:new Date().toISOString(),done};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:"application/json"}));
+  const a=document.createElement("a"); a.href=url; a.download="tien-do-"+isoOf(todayUTC())+".json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast("Đã xuất file tiến độ");
+}
+function importDone(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const j=JSON.parse(r.result);
+      const src=j&&j.done&&typeof j.done==="object"?j.done:j;
+      if(!src||typeof src!=="object"||Array.isArray(src)) throw new Error("bad");
+      let n=0;
+      for(const k in src){
+        const v=src[k];
+        if(v===1||v===true){done[k]=1;n++;}
+        else if(typeof v==="string"&&k.startsWith("note|")){done[k]=v;n++;}
+      }
+      saveDone(); render(); toast("Đã gộp "+n+" mục từ file");
+    }catch(e){toast("File không hợp lệ");}
+  };
+  r.readAsText(file);
+}
+
 function render(){
   const t=state.view;
   const day=buildDay(t);
@@ -756,28 +1123,72 @@ function render(){
   renderDebt();
   renderProgress(day);
   renderWeek(day);
+  renderHeat(day);
+  renderPhase2();
+  renderNote();
   document.getElementById("pick").value=isoOf(t);
 }
 
 function clampView(t){return Math.min(Math.max(t,W0),BUFEND);}
 
+function go(delta){state.view=clampView(state.view+delta*DAY);render();}
+function openHelp(){const d=document.getElementById("helpDlg");if(d.showModal){if(!d.open)d.showModal();}else alert("Phím tắt: ← → đổi ngày, T hôm nay, F hẹn giờ, N ghi chú, D sáng/tối");}
+
 async function init(){
   const td=todayUTC();
   state.view=(td<W0||td>BUFEND)?clampView(td):td;
   await loadDone();
+  loadTimer();
+  syncThemeMeta();
   render();
+  renderTimer();
+  tickTimer();
   document.addEventListener("change",e=>{
     const id=e.target&&e.target.dataset&&e.target.dataset.id;
     if(!id) return;
     if(e.target.checked) done[id]=1; else delete done[id];
     saveDone(); render();
   });
-  document.getElementById("prev").onclick=()=>{state.view=clampView(state.view-DAY);render();};
-  document.getElementById("next").onclick=()=>{state.view=clampView(state.view+DAY);render();};
+  document.getElementById("prev").onclick=()=>go(-1);
+  document.getElementById("next").onclick=()=>go(1);
   document.getElementById("today").onclick=()=>{state.view=clampView(todayUTC());render();};
   document.getElementById("pick").onchange=e=>{if(e.target.value){state.view=clampView(fromIso(e.target.value));render();}};
-  document.getElementById("week").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){state.view=fromIso(b.dataset.go);render();window.scrollTo({top:0,behavior:"auto"});}});
-  setInterval(()=>{if(state.view===todayUTC()){renderHero(buildDay(state.view),state.view);renderTimeline(buildDay(state.view));}},60000);
+  const goTo=e=>{const b=e.target.closest("[data-go]");if(b){hideTip();state.view=fromIso(b.dataset.go);render();window.scrollTo({top:0,behavior:"auto"});}};
+  document.getElementById("week").addEventListener("click",goTo);
+  const heat=document.getElementById("heat");
+  heat.addEventListener("click",goTo);
+  heat.addEventListener("mousemove",e=>{const b=e.target.closest(".hc[data-h]");if(b)showTip(b,e.clientX,e.clientY);else hideTip();});
+  heat.addEventListener("mouseleave",hideTip);
+  document.getElementById("dayNote").addEventListener("input",onNoteInput);
+  document.getElementById("timer").addEventListener("click",e=>{const b=e.target.closest("[data-tm]");if(b)timerAction(b.dataset.tm,Number(b.dataset.min));});
+  document.getElementById("themeBtn").onclick=toggleTheme;
+  document.getElementById("helpBtn").onclick=openHelp;
+  document.getElementById("exportBtn").onclick=exportDone;
+  const fileIn=document.getElementById("importFile");
+  document.getElementById("importBtn").onclick=()=>fileIn.click();
+  fileIn.onchange=()=>{if(fileIn.files[0])importDone(fileIn.files[0]);fileIn.value="";};
+  if(window.matchMedia){const mq=matchMedia("(prefers-color-scheme: dark)");if(mq.addEventListener)mq.addEventListener("change",syncThemeMeta);}
+  document.addEventListener("keydown",e=>{
+    if(e.ctrlKey||e.metaKey||e.altKey) return;
+    const tg=e.target;
+    if(tg&&((tg.tagName==="INPUT"&&tg.type!=="checkbox")||tg.tagName==="TEXTAREA"||tg.isContentEditable)){if(e.key==="Escape")tg.blur();return;}
+    if(document.getElementById("helpDlg").open) return;
+    const k=e.key; let hit=true;
+    if(k==="ArrowLeft") go(-1);
+    else if(k==="ArrowRight") go(1);
+    else if(k==="t"||k==="T"){state.view=clampView(todayUTC());render();}
+    else if(k==="f"||k==="F") timerAction("toggle");
+    else if(k==="n"||k==="N"){const ta=document.getElementById("dayNote");ta.focus();ta.scrollIntoView({block:"center"});}
+    else if(k==="d"||k==="D") toggleTheme();
+    else if(k==="?") openHelp();
+    else hit=false;
+    if(hit) e.preventDefault();
+  });
+  setInterval(tickTimer,1000);
+  setInterval(()=>{
+    if(state.view===todayUTC()){renderHero(buildDay(state.view),state.view);renderTimeline(buildDay(state.view));}
+    if(!document.getElementById("timer").contains(document.activeElement)) renderTimer();
+  },60000);
 }
 if(typeof document!=="undefined") init();
 </script>
