@@ -9,6 +9,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1F3A5F">
+<meta name="color-scheme" content="light dark">
+<script>try{var th=localStorage.getItem("hoang-theme");if(th==="dark"||th==="light")document.documentElement.dataset.theme=th;}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,6 +20,34 @@
   --navy:#1F3A5F; --navy-soft:#C9D6EA;
   --c-class:#D95858; --c-be:#6B52E8; --c-dsa:#E07F1F; --c-en:#2380CF; --c-school:#B88D00;
   --c-rest:#2F946A; --c-wind:#4A58A6; --c-free:#7F889C; --c-gold:#B58300;
+  --box-bg:#FFFFFF; --bar-bg:#E3E7EF; --accent:#1F3A5F; --focus:#8FB3E8;
+  --warn-bg:#FFF5D6; --warn-fg:#5C4700; --warn-bd:#F0DC9A;
+  --info-bg:#E7F1FB; --info-fg:#1D4E7A; --info-bd:#BCD7F0;
+  --toast-bg:#16203A; --toast-fg:#FFFFFF; --link:#2380CF;
+  /* Heatmap: thang tuần tự một màu (xanh), 4 bậc thứ tự, bậc nhạt nhất vẫn ≥2:1 so với nền */
+  --heat-0:#E3E7EF; --heat-1:#86B6EF; --heat-2:#3987E5; --heat-3:#1C5CAB; --heat-4:#0D366B;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1420; --surface:#172033; --ink:#E4E8F1; --muted:#9BA5BA; --line:#28344A;
+  --navy:#1C3354; --navy-soft:#B3C3DC;
+  --c-class:#E77575; --c-be:#9583F2; --c-dsa:#EE9A45; --c-en:#4EA3E6; --c-school:#D4AA2A;
+  --c-rest:#45B584; --c-wind:#8391D8; --c-free:#98A1B4; --c-gold:#D9A520;
+  --box-bg:#0E1420; --bar-bg:#28344A; --accent:#7EA6DA; --focus:#5E86C0;
+  --warn-bg:#3A3217; --warn-fg:#F2DC9A; --warn-bd:#5E5020;
+  --info-bg:#172B42; --info-fg:#BCD7F0; --info-bd:#274A6E;
+  --toast-bg:#E4E8F1; --toast-fg:#0E1420; --link:#6DB4F0;
+  --heat-0:#222D42; --heat-1:#184F95; --heat-2:#256ABF; --heat-3:#5598E7; --heat-4:#9EC5F4;
+}}
+:root[data-theme="dark"]{
+  --paper:#0E1420; --surface:#172033; --ink:#E4E8F1; --muted:#9BA5BA; --line:#28344A;
+  --navy:#1C3354; --navy-soft:#B3C3DC;
+  --c-class:#E77575; --c-be:#9583F2; --c-dsa:#EE9A45; --c-en:#4EA3E6; --c-school:#D4AA2A;
+  --c-rest:#45B584; --c-wind:#8391D8; --c-free:#98A1B4; --c-gold:#D9A520;
+  --box-bg:#0E1420; --bar-bg:#28344A; --accent:#7EA6DA; --focus:#5E86C0;
+  --warn-bg:#3A3217; --warn-fg:#F2DC9A; --warn-bd:#5E5020;
+  --info-bg:#172B42; --info-fg:#BCD7F0; --info-bd:#274A6E;
+  --toast-bg:#E4E8F1; --toast-fg:#0E1420; --link:#6DB4F0;
+  --heat-0:#222D42; --heat-1:#184F95; --heat-2:#256ABF; --heat-3:#5598E7; --heat-4:#9EC5F4;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -42,19 +72,21 @@ body{background:var(--paper);color:var(--ink);font-family:"Be Vietnam Pro",syste
 /* Nav */
 .daynav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 16px 0}
 .daynav button,.daynav input{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer}
-.daynav button:focus-visible,.daynav input:focus-visible,.weekday:focus-visible,.links a:focus-visible{outline:3px solid #8FB3E8;outline-offset:2px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,.links a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .daynav .today{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:600}
-.daynav input{margin-left:auto;padding:7px 8px}
+.daynav input{margin-left:auto;padding:7px 8px;color-scheme:light dark}
+.daynav .tools{display:flex;gap:6px}
+.icon-btn{min-width:38px;font-weight:700}
 
 section{padding:0 16px}
 h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 
-.banner{margin:14px 16px 0;padding:10px 14px;border-radius:12px;font-size:14px;background:#FFF5D6;color:#5C4700;border:1px solid #F0DC9A}
-.banner.info{background:#E7F1FB;color:#1D4E7A;border-color:#BCD7F0}
+.banner{margin:14px 16px 0;padding:10px 14px;border-radius:12px;font-size:14px;background:var(--warn-bg);color:var(--warn-fg);border:1px solid var(--warn-bd)}
+.banner.info{background:var(--info-bg);color:var(--info-fg);border-color:var(--info-bd)}
 
 /* Timeline */
 .tl{background:var(--surface);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
-.row{display:grid;grid-template-columns:52px 5px 1fr;column-gap:12px;padding:11px 14px 11px 12px;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:52px 5px minmax(0,1fr);column-gap:12px;padding:11px 14px 11px 12px;border-top:1px solid var(--line)}
 .row:first-child{border-top:0}
 .row .time{font-size:13px;font-weight:600;line-height:1.3}
 .row .time .end{display:block;font-weight:400;color:var(--muted)}
@@ -62,7 +94,7 @@ h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 .row .ttl{font-weight:700;font-size:14px;color:var(--c)}
 .row.static .ttl{font-weight:500;color:var(--muted)}
 .row.static .rail{opacity:.45}
-.row.is-now{background:color-mix(in srgb,var(--c) 8%,#fff)}
+.row.is-now{background:color-mix(in srgb,var(--c) 10%,var(--surface))}
 .row.is-now .rail{box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent)}
 .tag{font-size:11px;font-weight:700;color:#fff;background:var(--c);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px;white-space:nowrap}
 .tag.next{background:transparent;color:var(--c);border:1px solid var(--c)}
@@ -70,17 +102,17 @@ h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 
 .task{display:flex;gap:10px;align-items:flex-start;margin-top:6px;cursor:pointer;position:relative}
 .task input{position:absolute;opacity:0;width:20px;height:20px;margin:0;cursor:pointer}
-.box{flex:0 0 20px;height:20px;border:2px solid var(--c);border-radius:6px;margin-top:1px;display:grid;place-items:center;background:#fff}
+.box{flex:0 0 20px;height:20px;border:2px solid var(--c);border-radius:6px;margin-top:1px;display:grid;place-items:center;background:var(--box-bg)}
 .task input:checked + .box{background:var(--c)}
 .task input:checked + .box::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
-.task input:focus-visible + .box{outline:3px solid color-mix(in srgb,var(--c) 40%,#fff);outline-offset:2px}
-.txt{font-size:14.5px}
+.task input:focus-visible + .box{outline:3px solid color-mix(in srgb,var(--c) 45%,var(--surface));outline-offset:2px}
+.txt{font-size:14.5px;min-width:0;overflow-wrap:anywhere}
 .task input:checked ~ .txt{color:var(--muted);text-decoration:line-through;text-decoration-color:#A9B0C0}
 .diff{font-size:11.5px;font-weight:700;margin-left:6px;white-space:nowrap}
 .diff.E{color:#23865C}.diff.M{color:#B96E0C}.diff.H{color:#C73E3E}
-.sub{font-size:13px;color:var(--muted);margin:1px 0 0 30px}
+.sub{font-size:13px;color:var(--muted);margin:1px 0 0 30px;overflow-wrap:anywhere}
 .links{margin:2px 0 0 30px;display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
-.links a{color:var(--c-en);font-weight:600;text-decoration:none}
+.links a{color:var(--link);font-weight:600;text-decoration:none}
 .links a:hover{text-decoration:underline}
 
 /* Debt */
@@ -94,51 +126,175 @@ h2{font-size:18px;font-weight:700;margin:24px 0 10px;letter-spacing:-0.01em}
 .prog{display:grid;gap:12px}
 .prog-row .top{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
 .prog-row .top span:last-child{color:var(--muted);font-weight:500}
-.bar{height:8px;background:#E3E7EF;border-radius:999px;overflow:hidden;margin-top:5px}
+.bar{height:8px;background:var(--bar-bg);border-radius:999px;overflow:hidden;margin-top:5px}
 .bar i{display:block;height:100%;background:var(--c);border-radius:999px}
 
 /* Week */
 .weekday{display:block;width:100%;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:8px;cursor:pointer;color:var(--ink)}
-.weekday.sel{border-color:var(--navy);box-shadow:inset 4px 0 0 var(--navy)}
+.weekday.sel{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent)}
 .weekday .wd{font-weight:700;font-size:14px}
 .weekday .wd small{font-weight:500;color:var(--muted);margin-left:6px;font-size:12.5px}
 .weekday ul{margin:4px 0 0;padding-left:18px;font-size:13.5px}
-.weekday li{margin:1px 0}
+.weekday li{margin:1px 0;overflow-wrap:anywhere}
 .weekday li.be::marker{color:var(--c-be)} .weekday li.dsa::marker{color:var(--c-dsa)} .weekday li.ex::marker{color:var(--c-school)}
 .weekday li.dn{color:var(--muted);text-decoration:line-through}
 
 .notes{font-size:13px;color:var(--muted);margin-top:24px}
 .notes p{margin:6px 0}
 
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--toast-bg);color:var(--toast-fg);z-index:20;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
-@media (max-width:440px){.daynav button{flex:1 1 0;padding:8px 6px}.daynav input{margin-left:0;flex:1 1 100%}}
-@media (max-width:380px){.hero h1{font-size:29px}.row{grid-template-columns:46px 5px 1fr;column-gap:10px}}
+@media (max-width:440px){.daynav>button{flex:1 1 30%;padding:8px 6px}.daynav input{margin-left:0;flex:1 1 60%;min-width:0}}
+@media (max-width:380px){.hero h1{font-size:29px}.row{grid-template-columns:46px 5px minmax(0,1fr);column-gap:10px}}
+
+/* Ghi chú ngày */
+.daynote{width:100%;min-height:92px;resize:vertical;font:inherit;font-size:14px;color:var(--ink);background:var(--box-bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.note-meta{font-size:12px;color:var(--muted);margin-top:4px;min-height:18px}
+
+/* Hẹn giờ tập trung */
+.tm-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tm-clock{font-size:38px;font-weight:800;letter-spacing:-0.02em;line-height:1.1}
+.tm-label{font-size:13.5px;color:var(--muted);flex:1 1 140px}
+.tm .bar i{background:var(--c-be)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600}
+.btn:hover{border-color:var(--muted)}
+
+/* Heatmap tiến độ */
+.heat{display:grid;grid-template-columns:26px repeat(18,minmax(0,1fr));gap:2px;font-size:10.5px;color:var(--muted)}
+.heat .hl{display:flex;align-items:center;justify-content:center;min-height:14px}
+.heat .hr{justify-content:flex-start}
+.hc{aspect-ratio:1;border:0;border-radius:4px;padding:0;background:var(--heat-0);cursor:pointer;max-height:30px}
+.hc.l1{background:var(--heat-1)}.hc.l2{background:var(--heat-2)}.hc.l3{background:var(--heat-3)}.hc.l4{background:var(--heat-4)}
+.hc.fut{background:transparent;box-shadow:inset 0 0 0 1px var(--line)}
+.hc.off{visibility:hidden}
+.hc.today{box-shadow:0 0 0 2px var(--ink)}
+.hc.sel{box-shadow:0 0 0 2px var(--accent)}
+.heat-legend{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
+.heat-legend .hc{width:14px;height:14px;cursor:default}
+.heat-legend .sep{margin-left:10px}
+.heat-tip{position:fixed;z-index:30;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:12.5px;box-shadow:0 6px 18px rgba(0,0,0,.18);display:none;max-width:240px}
+.heat-tip b{display:block;font-size:13px}
+.stat-line{font-size:13.5px;color:var(--muted);margin-top:8px}
+.stat-line strong{color:var(--ink)}
+
+.hero .lag{display:inline-block;font-size:12px;font-weight:600;background:rgba(255,255,255,.14);border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:2px}
+.unsched{margin-top:10px;font-size:13.5px}
+.unsched summary{cursor:pointer;color:var(--muted);font-weight:600}
+
+/* Giai đoạn 2 */
+.p2-group{padding:8px 0;border-top:1px solid var(--line)}
+.p2-group:first-child{border-top:0;padding-top:0}
+.p2-when{font-size:12.5px;font-weight:700;color:var(--c-gold)}
+.p2-group{--c:var(--c-be)}
+
+/* Hộp phím tắt */
+dialog.help{border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);padding:18px 20px;max-width:360px;width:calc(100% - 32px)}
+dialog.help::backdrop{background:rgba(10,16,30,.45)}
+dialog.help h3{margin:0 0 10px;font-size:17px}
+dialog.help dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0 0 14px;font-size:14px}
+dialog.help dt{font-weight:700}
+kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;background:var(--box-bg)}
+
+.layout section{scroll-margin-top:12px}
+
+/* Máy tính bảng */
+@media (min-width:720px) and (max-width:1023px){
+  .wrap{max-width:780px}
+  #week{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #week .weekday{margin:0;display:flex;flex-direction:column;justify-content:flex-start}
+}
+/* PC / màn hình ngang: bố cục 2 cột */
+@media (min-width:1024px){
+  body{font-size:15.5px}
+  .wrap{max-width:1280px;padding:0 28px 64px}
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,420px);column-gap:36px;padding:26px 32px 28px}
+  .hero>*{grid-column:1}
+  .hero .nowcard{grid-column:2;grid-row:1 / span 4;align-self:center;margin-top:0}
+  .hero h1{font-size:42px}
+  .daynav{padding:16px 0 0}
+  .banner{margin:14px 0 0}
+  .layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:28px;align-items:start}
+  .split{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:28px;align-items:start}
+  .layout section{padding:0}
+  .col-side{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto;padding:0 2px 4px;scrollbar-width:thin}
+  .span-all{grid-column:1 / -1}
+  #week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+  #week .weekday{margin:0;height:100%;display:flex;flex-direction:column;justify-content:flex-start}
+  .notes{grid-column:1 / -1}
+}
+/* Điện thoại xoay ngang */
+@media (orientation:landscape) and (max-height:520px){
+  .hero{padding:14px 20px 16px}
+  .hero h1{font-size:26px;margin:6px 0 4px}
+  .nowcard{margin-top:10px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hero" id="hero"><p class="loading">Đang tải tiến độ…</p></header>
   <nav class="daynav" aria-label="Chọn ngày">
-    <button id="prev" type="button">‹ Hôm trước</button>
-    <button id="today" class="today" type="button">Hôm nay</button>
-    <button id="next" type="button">Hôm sau ›</button>
+    <button id="prev" type="button" title="Phím ←">‹ Hôm trước</button>
+    <button id="today" class="today" type="button" title="Phím T">Hôm nay</button>
+    <button id="next" type="button" title="Phím →">Hôm sau ›</button>
     <input id="pick" type="date" min="2026-09-11" max="2027-01-08" aria-label="Chọn ngày cụ thể">
+    <div class="tools">
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="Đổi giao diện sáng / tối" title="Sáng / tối (phím D)">◐</button>
+      <button id="helpBtn" class="icon-btn" type="button" aria-label="Xem phím tắt" title="Phím tắt (phím ?)">?</button>
+    </div>
   </nav>
-  <main>
-    <div id="banners"></div>
-    <section aria-labelledby="h-day"><h2 id="h-day">Lịch trong ngày</h2><div id="timeline"></div></section>
-    <section aria-labelledby="h-debt"><h2 id="h-debt">Việc còn nợ</h2><div id="debt"></div></section>
-    <section aria-labelledby="h-prog"><h2 id="h-prog">Tiến độ</h2><div id="progress"></div></section>
-    <section aria-labelledby="h-week"><h2 id="h-week">Cả tuần</h2><div id="week"></div></section>
+  <div id="banners"></div>
+  <main class="layout">
+    <div class="split span-all">
+    <div class="col-main">
+      <section aria-labelledby="h-day"><h2 id="h-day">Lịch trong ngày</h2><div id="timeline"></div></section>
+      <section aria-labelledby="h-note"><h2 id="h-note">Ghi chú trong ngày</h2>
+        <div class="card"><textarea id="dayNote" class="daynote" aria-labelledby="h-note" placeholder="Hôm nay học được gì, kẹt ở đâu, điểm đề kiểm tra…"></textarea><div class="note-meta" id="noteMeta"></div></div>
+      </section>
+    </div>
+    <aside class="col-side">
+      <section aria-labelledby="h-timer"><h2 id="h-timer">Hẹn giờ tập trung</h2><div id="timer" class="card tm"></div></section>
+      <section aria-labelledby="h-debt"><h2 id="h-debt">Việc còn nợ</h2><div id="debt"></div></section>
+      <section aria-labelledby="h-prog"><h2 id="h-prog">Tiến độ</h2><div id="progress"></div></section>
+    </aside>
+    </div>
+    <section class="span-all" aria-labelledby="h-week"><h2 id="h-week">Cả tuần</h2><div id="week"></div></section>
+    <section class="span-all" aria-labelledby="h-heat"><h2 id="h-heat">Bản đồ tiến độ</h2><div id="heat" class="card"></div></section>
+    <section aria-labelledby="h-p2"><h2 id="h-p2">Giai đoạn 2: Java Intensive → OJT NAB</h2><div id="phase2" class="card"></div></section>
+    <section aria-labelledby="h-bak"><h2 id="h-bak">Sao lưu tiến độ</h2>
+      <div class="card">
+        <p class="empty">Tiến độ chỉ nằm trong trình duyệt này. Xuất file JSON để lưu dự phòng hoặc chuyển sang máy khác (PC ↔ điện thoại).</p>
+        <div class="btnrow">
+          <button id="exportBtn" class="btn primary" type="button">Xuất file tiến độ</button>
+          <button id="importBtn" class="btn" type="button">Nhập file (gộp)</button>
+          <input id="importFile" type="file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+    </section>
     <section class="notes" id="notes">
+      <p>Lịch đã dời từ T5 24/9/2026: hôm nay tiếp đúng task “Deep dive: Effective Java chương 3”, từ mai đi lần lượt từng task, không gộp. Tuần 12–13 chuyển sang AWS (IAM, ECR, ECS, RDS, S3, SQS, CloudWatch, Terraform) cho hợp OJT NAB. Bị trễ nữa thì bấm “Dời lịch về hôm nay” ở mục Việc còn nợ.</p>
       <p>Tuần 14–15 là tuần thi cuối kỳ Fall 2026 theo ước lượng. Khi FAP có lịch thi thật, ưu tiên lịch thi và dời việc backend sang ô Buffer thứ Bảy.</p>
       <p>Link LeetCode mở thẳng bài. “Tìm nguồn” mở Google với tên nguồn chính xác, để tránh link sai. 7 bài Premium của NeetCode 150 không nằm trong danh sách (143 bài miễn phí).</p>
-      <p>Việc còn nợ lấy từ 14 ngày gần nhất: backend, LeetCode và Codility chưa tích.</p>
+      <p>Việc còn nợ lấy từ 14 ngày gần nhất và không trước lần dời lịch gần nhất: backend, LeetCode và Codility chưa tích.</p>
     </section>
   </main>
 </div>
+<div class="heat-tip" id="heatTip" role="tooltip"></div>
+<dialog class="help" id="helpDlg" aria-labelledby="h-help">
+  <h3 id="h-help">Phím tắt</h3>
+  <dl>
+    <dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Hôm trước / hôm sau</dd>
+    <dt><kbd>T</kbd></dt><dd>Về hôm nay</dd>
+    <dt><kbd>F</kbd></dt><dd>Bắt đầu / tạm dừng hẹn giờ</dd>
+    <dt><kbd>N</kbd></dt><dd>Viết ghi chú trong ngày</dd>
+    <dt><kbd>D</kbd></dt><dd>Đổi giao diện sáng / tối</dd>
+    <dt><kbd>?</kbd></dt><dd>Mở bảng này</dd>
+  </dl>
+  <form method="dialog"><button class="btn primary" type="submit">Đóng</button></form>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -210,7 +366,7 @@ const BE_BUF={1:[0],2:[1],3:[2],4:[3,4],5:[5,6]};
 
 /* ============ NỘI DUNG TỪNG TUẦN ============
    be[]: [T2, T3, T4, T5#1, T5#2, T6#1, T6#2, T7, CN#1, CN#2]
-   Mỗi task: "text" hoặc ["text", "url" | "cụm từ tìm kiếm"]  */
+   Mỗi task: "text" hoặc ["text", "url" | "cụm từ tìm kiếm", "ghi chú cách làm (tuỳ chọn)"]  */
 const WEEKS={
 0:{theme:"Setup và baseline",dsa:"Arrays & Hashing (khởi động)",goal:"Hello Spring Boot chạy được, có baseline.md tự chấm",
  be:[["Cài JDK 21 (Eclipse Temurin), IntelliJ IDEA Community, Git; tạo repo backend-journey","Eclipse Temurin JDK 21 download"],
@@ -229,8 +385,9 @@ const WEEKS={
      ["Wrapper class, autoboxing, Integer cache (-128..127): bẫy == với Integer","Java Integer cache autoboxing"],
      "Viết README module 1: 10 câu hỏi phỏng vấn kèm câu trả lời của bạn bằng tiếng Anh",
      "Dựng project java-core nhiều module (Maven hoặc Gradle), viết JUnit 5 test cho ví dụ trong tuần",
-     "Deep dive: Effective Java chương 3 (Items 10–14: equals, hashCode, toString, clone, Comparable)",
-     "Tổng hợp note Java Core Q&A tuần 1, push GitHub"],
+     ["Deep dive: Effective Java chương 3 (Items 10–14: equals, hashCode, toString, clone, Comparable)","Effective Java 3rd edition chapter 3 methods common to all objects",
+      "Lab: BrokenMoney (thiếu hashCode) → Money final chuẩn hoá scale BigDecimal, equals/hashCode/toString/compareTo + JUnit test contract; làm đề kiểm tra 12 câu (đạt ≥9/12)"],
+     "Tổng hợp note Java Core Q&A tuần 1 (kèm note EJ ch.3 bằng tiếng Anh), push GitHub"],
  en:["Speaking: giải thích equals/hashCode bằng tiếng Anh, ghi âm 3 phút","Mock với AI: 8 câu OOP, String, equals","Trình bày kiến trúc NitroCine 3 phút"],
  mock:"Mock interview tiếng Anh 45 phút: Java Core tuần 1 (cho ChatGPT đóng vai interviewer NAB)"},
 2:{theme:"Java Core II: Collections, Generics, Exception, Optional",dsa:"Sliding Window, Stack",goal:"Vẽ được sơ đồ HashMap khi có collision",
@@ -238,11 +395,10 @@ const WEEKS={
      ["Generics: bounded type, wildcard ? extends vs ? super (PECS), type erasure","Baeldung Java generics wildcards"],
      ["HashMap bên trong: hash(), chỉ số bucket (n-1) & hash, collision chaining, load factor 0.75, resize","Baeldung Java HashMap under the hood"],
      "Treeify từ Java 8: TREEIFY_THRESHOLD = 8, MIN_TREEIFY_CAPACITY = 64. Mở source HashMap.java trong IntelliJ, vẽ sơ đồ",
-     "Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test",
-     "Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap",
+     "Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test; dùng Money làm key",
+     "Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap; fail-fast iterator và ConcurrentModificationException",
      ["Exception: checked vs unchecked, custom exception, try-with-resources","Baeldung Java checked vs unchecked exceptions"],
-     ["Optional: cách dùng đúng và sai (không làm field/param); refactor code null-check sang Optional","Baeldung Guide to Java Optional"],
-     "Deep dive: fail-fast iterator và ConcurrentModificationException; Comparable vs Comparator",
+     ["Optional đúng và sai (không làm field/param); Comparator.comparing().thenComparing() thay cho compareTo viết tay","Baeldung Guide to Java Optional"],
      "Viết note HashMap bên trong (có sơ đồ), push GitHub"],
  en:["Speaking: giải thích HashMap internals","Mock với AI: Collections và Generics","Trình bày: khi nào dùng ArrayList, khi nào LinkedList"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy chưa làm trên LeetCode, bấm giờ như Codility"},
@@ -250,13 +406,12 @@ const WEEKS={
  be:["Lambda và functional interface (Function, Predicate, Supplier, Consumer), method reference",
      ["Stream API: map/filter/reduce, collect với groupingBy, partitioningBy; lazy evaluation","Baeldung Java 8 Streams introduction"],
      "Stream nâng cao: flatMap, Collectors.toMap khi trùng key, khi nào không nên dùng parallel stream",
-     ["JVM memory: heap (young/old), stack, metaspace. Object nằm đâu, biến local nằm đâu: vẽ sơ đồ","Baeldung Java stack memory and heap space"],
      "Bài tập: xử lý danh sách Transaction giả lập bằng Stream (tổng theo tháng, top 5 khách hàng)",
+     ["JVM memory: heap (young/old), stack, metaspace. Object nằm đâu, biến local nằm đâu: vẽ sơ đồ","Baeldung Java stack memory and heap space"],
      ["GC: mark-sweep-compact, generational, G1 là mặc định","Oracle HotSpot garbage collection tuning guide G1"],
-     "Chạy app với -Xmx nhỏ để gây OutOfMemoryError, quan sát heap bằng VisualVM hoặc jconsole",
-     "Class loader (bootstrap, platform, application) và JIT ở mức khái niệm",
-     ["Deep dive: Java Memory Model cơ bản, happens-before, visibility (chuẩn bị cho concurrency)","Java Memory Model happens-before explained"],
-     "Tự trả lời 10 câu phỏng vấn JVM, ghi note JVM memory"],
+     ["Gây OutOfMemoryError với -Xmx nhỏ, xem heap bằng VisualVM; JVM trong container: -XX:MaxRAMPercentage (chuẩn bị chạy trên AWS ECS)","JVM MaxRAMPercentage container memory"],
+     ["Class loader, JIT; Java Memory Model: happens-before, visibility (chuẩn bị cho concurrency)","Java Memory Model happens-before explained"],
+     "Tự trả lời 10 câu phỏng vấn JVM, ghi note JVM memory, push GitHub"],
  en:["Speaking: giải thích lazy evaluation của Stream","Mock với AI: JVM memory và GC","Trình bày: heap vs stack"],
  mock:"Mock interview tiếng Anh 45 phút: Collections + JVM"},
 4:{theme:"Concurrency",dsa:"Linked List",goal:"Giải thích được race condition và cách chặn",
@@ -272,17 +427,16 @@ const WEEKS={
      "Tự kiểm tháng 1: mock 20 câu Java Core với AI, chấm checklist Must-have"],
  en:["Speaking: giải thích race condition và deadlock","Mock với AI: concurrency","Trình bày: CompletableFuture khác gì tạo Thread thủ công"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-5:{theme:"Spring Boot I: IoC/DI, REST",dsa:"Linked List, Trees",goal:"Phân biệt được @Component vs @Bean và bean scope",
+5:{theme:"Spring Boot I: IoC/DI, REST, OpenAPI",dsa:"Linked List, Trees",goal:"Phân biệt được @Component vs @Bean và bean scope",
  be:["IoC/DI: viết DI thủ công bằng new trước, rồi chuyển sang Spring để thấy vì sao cần container",
-     ["Tạo project start.spring.io: Java 21, Boot 3.x, Web, Validation, Data JPA, PostgreSQL","https://www.baeldung.com/spring-boot-start"],
+     ["Tạo project start.spring.io: Java 21, Boot 3.x, Web, Validation, Data JPA, PostgreSQL, Actuator","https://www.baeldung.com/spring-boot-start"],
      "@Component/@Service/@Repository vs @Bean + @Configuration; constructor injection; bean scope",
      "Bean lifecycle (@PostConstruct, @PreDestroy); auto-configuration hoạt động thế nào sau @SpringBootApplication",
      "REST CRUD /api/accounts: Controller → Service → Repository (in-memory), dùng DTO",
-     ["application.yml, @ConfigurationProperties, profiles dev/test/prod","Baeldung Spring Boot profiles"],
-     "HTTP đúng chuẩn: status code, ResponseEntity, đặt tên REST endpoint",
-     "Cộng hưởng PRJ301: so sánh Servlet/JSP trên lớp với DispatcherServlet của Spring MVC, viết note",
-     ["Deep dive: IoC container và ApplicationContext","https://www.baeldung.com/spring-boot"],
-     "Hoàn thiện CRUD API và Postman collection, push repo"],
+     ["application.yml, @ConfigurationProperties, profiles dev/test/prod; cấu hình qua biến môi trường (12-factor) như khi chạy trên AWS","The Twelve-Factor App config"],
+     ["HTTP đúng chuẩn (status code, ResponseEntity, đặt tên endpoint) + OpenAPI/Swagger bằng springdoc","springdoc-openapi Spring Boot 3"],
+     ["Deep dive: IoC container và design pattern Spring dùng (Factory, Proxy, Template Method, Strategy); so sánh Servlet/JSP của PRJ301 với DispatcherServlet","Design patterns used in Spring Framework"],
+     "SOLID (Java Intensive): rà CRUD API theo SRP/DIP, hoàn thiện Postman collection, push repo"],
  en:["Speaking: giải thích IoC/DI","Mock với AI: Spring core (@Component vs @Bean, scope)","Trình bày: một request đi qua Spring MVC thế nào"],
  mock:"Mock interview tiếng Anh 45 phút: concurrency + Spring core"},
 6:{theme:"Spring Data JPA",dsa:"Trees, Heap",goal:"Tái hiện và fix được N+1",
@@ -294,22 +448,20 @@ const WEEKS={
      ["@Transactional: propagation REQUIRED vs REQUIRES_NEW, rollback rules, lỗi self-invocation do proxy","Baeldung Transactions with Spring and JPA"],
      "Isolation level: dirty read, non-repeatable read, phantom; thử 2 transaction song song trên PostgreSQL",
      "Chuyển CRUD sang JPA + PostgreSQL thật, mapping DTO",
-     ["Deep dive: bài của Vlad Mihalcea về @Transactional và hiệu năng JPA","Vlad Mihalcea Spring Transactional best practices"],
-     "Ghi note N+1, lazy/eager, self-invocation; push repo"],
+     ["Deep dive: Vlad Mihalcea về @Transactional và hiệu năng JPA; ghi note N+1, lazy/eager, self-invocation, push","Vlad Mihalcea Spring Transactional best practices"]],
  en:["Speaking: giải thích N+1 và cách fix","Mock với AI: JPA và @Transactional","Trình bày: các isolation level"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-7:{theme:"Security, JWT, validation, AOP",dsa:"Heap, Trie, Backtracking",goal:"Endpoint được bảo vệ bằng JWT, lỗi trả về thống nhất",
+7:{theme:"Security, JWT, OAuth2, AOP",dsa:"Heap, Trie, Backtracking",goal:"Endpoint được bảo vệ bằng JWT, lỗi trả về thống nhất",
  be:[["Bean Validation: @Valid, @NotNull, @Size, custom validator","Baeldung Spring Boot bean validation"],
      ["Global exception handling: @RestControllerAdvice + ProblemDetail (RFC 7807)","Spring Framework ProblemDetail error responses"],
      ["Spring Security: SecurityFilterChain, filter chain hoạt động thế nào, BCrypt","Spring Security servlet architecture reference"],
      "JWT: cấu trúc header.payload.signature; login cấp token, filter xác thực token",
-     "Phân quyền endpoint theo role, test bằng Postman",
+     "Phân quyền endpoint theo role, xử lý 401 vs 403 đúng, refresh token đơn giản",
+     ["OAuth2 Resource Server: xác thực JWT do IdP cấp (Keycloak chạy Docker; Amazon Cognito ở mức khái niệm)","Spring Security OAuth2 resource server JWT"],
      ["AOP: @Aspect, @Around log thời gian chạy method; proxy JDK vs CGLIB","Baeldung Introduction to Spring AOP"],
-     ["Actuator: /health, /metrics, /info; expose endpoint an toàn","Baeldung Spring Boot Actuator"],
-     "Refresh token đơn giản, xử lý 401 vs 403 đúng",
-     "Deep dive: session vs JWT (ưu nhược, cách thu hồi token)",
-     "Viết ADR-001 bản nháp: vì sao chọn JWT"],
- en:["Speaking: giải thích luồng JWT","Mock với AI: Spring Security","Trình bày: session vs JWT"],
+     ["Actuator: /health, /metrics, /info; expose an toàn (health check cho load balancer AWS sau này)","Baeldung Spring Boot Actuator"],
+     "Deep dive: session vs JWT vs OAuth2; viết ADR-001 bản nháp"],
+ en:["Speaking: giải thích luồng JWT","Mock với AI: Spring Security, OAuth2","Trình bày: session vs JWT"],
  mock:"Mock interview tiếng Anh 45 phút: JPA + Security"},
 8:{theme:"Database chuyên sâu",dsa:"Backtracking, Graphs",goal:"Đọc được execution plan và chỉ ra index thiếu",
  be:[["B-tree index hoạt động thế nào: Use The Index, Luke, chương Anatomy of an Index","Use The Index Luke anatomy of an index"],
@@ -320,19 +472,18 @@ const WEEKS={
      "ACID và locking: row lock, SELECT ... FOR UPDATE, deadlock trong DB",
      "Optimistic locking (@Version) vs pessimistic: demo 2 request cùng cập nhật một số dư",
      ["Flyway: V1__init.sql, V2__add_index.sql; bỏ ddl-auto","Baeldung Flyway Spring Boot"],
-     "Normalization 1NF–3NF và khi nào denormalize; đọc lướt DDIA chương 7 (Transactions)",
-     "Lưu ảnh execution plan vào repo kèm giải thích"],
+     "Normalization 1NF–3NF, khi nào denormalize; lướt DDIA chương 7; lưu ảnh execution plan vào repo"],
  en:["Speaking: giải thích B-tree index","Mock với AI: indexing, ACID, locking","Trình bày: optimistic vs pessimistic locking"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-9:{theme:"Testing",dsa:"Graphs, Advanced Graphs",goal:"Integration test chạy với PostgreSQL thật (Testcontainers)",
+9:{theme:"Testing: JUnit, Mockito, Testcontainers, LocalStack, TDD",dsa:"Graphs, Advanced Graphs",goal:"Integration test chạy với PostgreSQL thật và AWS giả lập (LocalStack)",
  be:[["JUnit 5: @Test, @ParameterizedTest, assertions, lifecycle; test domain Money/Account","JUnit 5 User Guide"],
      ["Mockito: mock, when/thenReturn, verify, ArgumentCaptor; test tầng Service","Baeldung Mockito series"],
      "@WebMvcTest cho controller (MockMvc) và @DataJpaTest cho repository",
      ["Testcontainers: PostgreSQL thật trong integration test (@SpringBootTest + @Testcontainers)","Testcontainers Spring Boot PostgreSQL guide"],
+     ["LocalStack + Testcontainers: test code gọi S3/SQS mà không tốn tiền AWS","Testcontainers LocalStack module"],
      "Test concurrency: 2 thread cùng rút tiền, assert số dư đúng (CountDownLatch, ExecutorService)",
-     ["JaCoCo: cấu hình report, đọc coverage; test pyramid","JaCoCo Maven plugin"],
-     "Viết test cho case lỗi: validation, 404, 409",
-     "Nâng coverage phần core lên ≥70%, dọn test chậm",
+     ["JaCoCo + test pyramid; viết test cho case lỗi 400/404/409","JaCoCo Maven plugin"],
+     ["TDD (NAB làm TDD/pair programming): red-green-refactor 1 tính năng nhỏ, viết test trước; coverage core ≥70%","Martin Fowler test driven development"],
      "Deep dive: mock vs stub vs fake, khi nào không nên mock",
      "Chuẩn bị MiniPay: domain model (Account, Transfer, LedgerEntry) và ERD vẽ bằng UML (kỹ năng SWR302)"],
  en:["Speaking: giải thích test pyramid","Mock với AI: testing (mock vs stub, Testcontainers)","Trình bày: cách test code có concurrency"],
@@ -350,44 +501,43 @@ const WEEKS={
      "Chạy 100 request song song, kiểm số dư, ghi kết quả vào README"],
  en:["Speaking: giải thích idempotency key","Mock với AI: transaction và concurrency trong payment","Trình bày: double-entry ledger"],
  mock:"Mock interview tiếng Anh 45 phút: DB + transaction"},
-11:{theme:"MiniPay: outbox, audit log, cache, rate limit",dsa:"1-D DP, 2-D DP",goal:"Giải thích được outbox giải quyết dual-write bằng tiếng Anh",
+11:{theme:"MiniPay: outbox + SQS, audit log, cache, rate limit",dsa:"1-D DP, 2-D DP",goal:"Giải thích được outbox + SQS giải quyết dual-write bằng tiếng Anh",
  be:["Audit log: bảng audit_events append-only (ai, làm gì, khi nào, correlationId)",
      ["Outbox pattern: bảng outbox ghi cùng transaction với transfer","microservices.io transactional outbox pattern"],
-     "Outbox relay: @Scheduled đọc outbox rồi publish (tạm thời log, tuần 12 nối Kafka)",
-     ["Redis cache bằng Spring Cache: cache số dư và tra cứu, invalidate khi có transfer","Baeldung Spring Boot cache with Redis"],
+     ["Outbox relay: @Scheduled đọc outbox, gửi Amazon SQS (LocalStack) bằng Spring Cloud AWS; consumer idempotent theo eventId","Spring Cloud AWS SQS reference"],
+     ["Redis cache bằng Spring Cache: cache số dư và tra cứu, invalidate khi có transfer (ElastiCache ở mức khái niệm)","Baeldung Spring Boot cache with Redis"],
      "Test cache hit/miss, dữ liệu cũ; giải thích cache-aside",
-     ["Rate limiting với Bucket4j cho POST /transfers theo user","Bucket4j Spring Boot rate limiting"],
-     "Trả 429 kèm header Retry-After, viết test",
-     "Refactor, tăng coverage; viết ADR-003: outbox vs gửi thẳng Kafka",
-     "Deep dive: dual-write problem; cache-aside vs write-through",
-     "Cập nhật README: sơ đồ luồng transfer → outbox → event"],
- en:["Speaking: giải thích outbox pattern","Mock với AI: caching và rate limiting","Trình bày: cache-aside"],
+     ["Rate limiting với Bucket4j cho POST /transfers theo user; trả 429 kèm Retry-After, viết test","Bucket4j Spring Boot rate limiting"],
+     "Refactor, tăng coverage; viết ADR-003: outbox + SQS vs gửi thẳng, SQS vs Kafka",
+     ["Deep dive: dual-write, at-least-once, visibility timeout và dead-letter queue (DLQ) của SQS","Amazon SQS dead-letter queues visibility timeout"],
+     "Cập nhật README: sơ đồ luồng transfer → outbox → SQS → consumer"],
+ en:["Speaking: giải thích outbox pattern","Mock với AI: caching, rate limiting, SQS","Trình bày: cache-aside"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-12:{theme:"Kafka, Docker, CI/CD, observability",dsa:"2-D DP, Greedy",goal:"docker compose up chạy toàn hệ, CI xanh",
- be:[["Kafka 101: topic, partition, offset, consumer group","Confluent Developer Kafka 101 course"],
-     ["Chạy Kafka bằng docker-compose; Spring Kafka producer: outbox relay đẩy vào topic transfer-events","Spring for Apache Kafka reference"],
-     "Consumer notification giả lập; idempotent consumer (loại trùng theo eventId)",
-     "Dockerfile multi-stage cho MiniPay; docker-compose gồm app, PostgreSQL, Redis, Kafka",
-     ["GitHub Actions: build, test (Testcontainers), JaCoCo report, badge","GitHub Actions building and testing Java with Maven"],
-     ["Actuator + Micrometer → Prometheus; dashboard Grafana (RPS, latency, error)","Spring Boot Micrometer Prometheus Grafana"],
-     "Log có correlationId (MDC) xuyên suốt request",
-     "Deploy thử lên một nền tảng free tier bạn chọn, hoặc bảo đảm chạy local bằng 1 lệnh",
-     "Deep dive: at-least-once vs exactly-once, consumer lag, vì sao cần idempotent consumer",
-     "Kiểm tra toàn hệ bằng 1 lệnh docker compose up, sửa lỗi còn lại"],
- en:["Speaking: giải thích consumer group","Mock với AI: Docker, CI/CD, observability","Trình bày kiến trúc MiniPay 5 phút"],
- mock:"Mock interview tiếng Anh 45 phút: Spring + Kafka"},
-13:{theme:"System design, load test, ADR",dsa:"Greedy, Intervals, Math",goal:"Có số liệu throughput/latency thật trong README",
- be:["System design 1: REST vs event-driven; vẽ kiến trúc MiniPay bằng kỹ năng UML của SWR302",
-     ["System design 2: caching, rate limiting, idempotency ở tầng hệ thống","donnemartin system-design-primer GitHub"],
-     "System design 3: DB scaling (replica, partition, sharding), CAP; ghi note",
+12:{theme:"AWS cho backend: IAM, ECR, ECS, RDS, S3, SQS",dsa:"2-D DP, Greedy",goal:"MiniPay chạy trên AWS qua CI/CD, có cảnh báo chi phí, xoá tài nguyên sau demo",
+ be:[["Tài khoản AWS an toàn: MFA cho root, IAM Identity Center/user riêng, AWS Budgets cảnh báo chi phí (làm trước mọi thứ)","AWS Budgets create cost budget alert"],
+     ["AWS nền tảng cho dev: Region/AZ, VPC, subnet public/private, security group, IAM policy least privilege; vẽ sơ đồ","AWS VPC subnets security groups explained"],
+     ["Dockerfile multi-stage cho MiniPay; docker-compose gồm app, PostgreSQL, Redis, LocalStack","Docker multi-stage build Spring Boot"],
+     ["GitHub Actions: build, test (Testcontainers), JaCoCo; đẩy image lên Amazon ECR bằng OIDC (không lưu access key)","GitHub Actions OIDC AWS configure-aws-credentials ECR"],
+     ["Amazon RDS PostgreSQL + mật khẩu DB trong Secrets Manager hoặc SSM Parameter Store","Spring Boot AWS Secrets Manager Parameter Store"],
+     ["Deploy MiniPay lên ECS Fargate sau Application Load Balancer, health check bằng Actuator","Deploy Spring Boot ECS Fargate"],
+     ["S3: lưu sao kê/biên lai bằng AWS SDK for Java v2, tạo presigned URL","AWS SDK for Java v2 S3 presigned URL"],
+     "Nối outbox relay với SQS thật + DLQ; kiểm tra message trên console, rồi xoá tài nguyên không dùng",
+     ["Deep dive: Kafka 101 (topic, partition, consumer group) chạy bằng Docker, so sánh với SQS/SNS và Kinesis","Confluent Developer Kafka 101 course"],
+     "Git flow: mỗi tính năng 1 PR, tự review theo checklist; ghi chi phí AWS thực tế vào README"],
+ en:["Speaking: IAM role vs user, least privilege","Mock với AI: AWS cho backend (ECS, RDS, SQS)","Trình bày kiến trúc MiniPay trên AWS 5 phút"],
+ mock:"Mock interview tiếng Anh 45 phút: Spring + AWS + messaging"},
+13:{theme:"Observability, IaC, system design, load test",dsa:"Greedy, Intervals, Math",goal:"Có số liệu throughput/latency thật + sơ đồ kiến trúc AWS trong README",
+ be:[["CloudWatch Logs: log JSON có correlationId (MDC), mask PII (số tài khoản, email) như chuẩn ngân hàng","Spring Boot structured logging JSON"],
+     ["Micrometer: metrics lên CloudWatch hoặc Prometheus + Grafana local; dashboard RPS, latency, error","Spring Boot Micrometer CloudWatch"],
+     ["IaC: dựng lại VPC + RDS + ECS tối thiểu bằng Terraform (hoặc AWS CDK Java), destroy sau demo","Terraform AWS ECS Fargate tutorial"],
+     "System design 1: REST vs event-driven; vẽ kiến trúc MiniPay trên AWS bằng kỹ năng UML của SWR302",
+     ["System design 2: caching, rate limiting, idempotency, DB scaling (read replica, partition), CAP","donnemartin system-design-primer GitHub"],
      ["Load test k6: 50/100/200 VUs transfer đồng thời; ghi RPS, p95, p99, error rate","k6 documentation get started"],
      "Tối ưu 1 điểm nghẽn (index, connection pool hoặc cache), chạy lại, so sánh số liệu",
-     ["Hoàn thiện ADR-001..003 theo mẫu Context / Decision / Consequences","Michael Nygard documenting architecture decisions"],
-     "README kể chuyện: vấn đề, quyết định, đánh đổi, số liệu, ảnh Grafana",
-     "Buffer dự án: fix bug, dọn code, viết mục What I'd do next",
-     "Deep dive: tự trình bày thiết kế payment system cấp junior 15 phút bằng tiếng Anh",
-     "Tự kiểm tháng 3: quay video demo MiniPay 10 phút tiếng Anh, chấm checklist Differentiator"],
- en:["Speaking: giải thích CAP","Mock với AI: system design fresher","Trình bày kết quả load test"],
+     ["Microservices cơ bản (service boundary, API gateway) + Agile/Scrum (sprint, standup, story point)","microservices.io patterns microservice architecture"],
+     ["Hoàn thiện ADR-001..003 và README kể chuyện: vấn đề, quyết định, đánh đổi, số liệu, chi phí AWS","Michael Nygard documenting architecture decisions"],
+     "Tự kiểm tháng 3: video demo MiniPay 10 phút tiếng Anh + trình bày thiết kế payment system 15 phút"],
+ en:["Speaking: giải thích CAP","Mock với AI: system design fresher","Trình bày kết quả load test và chi phí AWS"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
 14:{theme:"Tuần thi: PE PRJ301, PE CSD201",dsa:"Math, Bit (1 bài/ngày)",goal:"Sẵn sàng PE PRJ301 và CSD201",exam:true,
  be:["Ôn PE PRJ301: làm 1 đề PE mẫu (Servlet/JSP + SQL Server), bấm giờ 85 phút",
@@ -417,7 +567,7 @@ const WEEKS={
  mock:"Ôn thi (tuần thi, bỏ mock)"},
 16:{theme:"Đóng gói portfolio",dsa:"Làm lại bài từng sai",goal:"Repo kể chuyện được, CV sẵn sàng",
  be:["Hoàn thiện README MiniPay, badge CI và coverage",
-     "CV 1 trang tiếng Anh: MiniPay đứng đầu, NitroCine thứ hai, N-Body 1 dòng",
+     "CV 1 trang tiếng Anh cho OJT NAB: MiniPay đứng đầu, NitroCine thứ hai, N-Body 1 dòng; nêu Java/Spring/AWS/TDD",
      "Quay video demo MiniPay 3–5 phút tiếng Anh",
      "Rà checklist Must-have, vá 2 chủ đề yếu nhất",
      "Pin repo trên GitHub, viết profile README",
@@ -438,6 +588,28 @@ const BUF={theme:"Tuần đệm và tổng kiểm tra",dsa:"Làm lại bài sai,
      "Đóng gói: CV, repo, video demo",
      "Lên danh sách chương trình intern/fresher 2027 cần theo dõi"],
  en:["Speaking: tự giới thiệu + MiniPay","Mock với AI tổng hợp",""],mock:""};
+
+/* ============ GIAI ĐOẠN 2: KỲ 5 JAVA INTENSIVE → OJT NAB KỲ 6 ============
+   Mốc ước lượng; cập nhật khi có syllabus trên FLM và lịch OJT chính thức. */
+const PHASE2=[
+ {when:"Tháng 1/2027 · bắt đầu kỳ 5",items:[
+   "Tra FLM: danh sách môn chuyên ngành hẹp Java Intensive kỳ 5, đọc syllabus, map từng môn với MiniPay",
+   "Hỏi phòng Quan hệ doanh nghiệp: lịch đăng ký OJT kỳ 6 và đợt tuyển của NAB Innovation Centre Vietnam",
+   "CV + LinkedIn tiếng Anh: MiniPay, NitroCine, N-Body; nêu Java/Spring/AWS/TDD"]},
+ {when:"Tháng 2/2027",items:[
+   ["Thi AWS Certified Cloud Practitioner (nền đã học ở Tuần 12–13 với MiniPay), làm 2 đề thi thử trước","AWS Certified Cloud Practitioner exam guide"],
+   ["AWS Developer Associate (học, chưa cần thi): Lambda, DynamoDB, API Gateway, SNS/SQS, EventBridge","AWS Certified Developer Associate exam guide"],
+   ["Docker + Kubernetes cơ bản: deploy MiniPay lên minikube (Deployment, Service, ConfigMap)","Kubernetes basics tutorial minikube"],
+   "Giữ nhịp DSA: 5 bài/tuần, ưu tiên Medium hay gặp trong OA"]},
+ {when:"Tháng 3/2027",items:[
+   ["Microservices: tách MiniPay thành account-service + notification-service, Spring Cloud Gateway, giao tiếp qua Kafka","Spring Cloud Gateway getting started"],
+   "Contract test / integration test giữa 2 service; tracing bằng Micrometer Tracing",
+   "Nộp hồ sơ OJT NAB (theo lịch trường), chuẩn bị bài OA/Codility"]},
+ {when:"Tháng 4/2027 · trước OJT",items:[
+   "Mock technical interview tiếng Anh 3 buổi: Java Core, Spring, DB, MiniPay",
+   "Behavioral theo STAR (teamwork, conflict, failure): viết sẵn 5 câu chuyện",
+   ["Agile/Scrum thực hành: làm MiniPay theo sprint 1 tuần trên Jira/GitHub Projects","Scrum Guide"]]}
+];
 
 /* ============ DSA: NEETCODE 150 (143 BÀI MIỄN PHÍ) ============ */
 const LC=[
@@ -527,16 +699,94 @@ let DSA_ASSIGNED=0;
   DSA_ASSIGNED=p;
 })();
 
+/* ============ DỜI LỊCH: HÀNG ĐỢI TASK BACKEND ============
+   Task backend của Tuần 1–13, 16 và tuần đệm xếp thành một hàng đợi (SEQ) và rải lần lượt
+   vào các ô Backend theo ngày (SLOTS). Tuần thi 14–15 đứng ngoài hàng đợi.
+   Mỗi lần dời lịch {date, start, skip}: từ ngày date, ô đầu tiên nhận task SEQ[start],
+   các task trong skip (đã làm) được bỏ qua. Không gộp task: bị trễ thì cả lịch lùi lại. */
+const FLEX_WEEKS=[1,2,3,4,5,6,7,8,9,10,11,12,13,16,"B"];
+const BASE_SHIFTS=[{date:"2026-09-24",start:8,skip:[]}]; // T5 24/9: tiếp từ "Deep dive: Effective Java chương 3"
+let SEQ=[],SLOTS=[],SLOTMAP={},UNSCHED=[];
+function buildSeq(){
+  SEQ=[];
+  FLEX_WEEKS.forEach(w=>weekData(w).be.forEach(x=>{if(!/^(Nghỉ|Tết)/.test(taskOf(x).text)) SEQ.push({x,w});}));
+}
+function buildSlots(){
+  SLOTS=[];
+  FLEX_WEEKS.forEach(w=>{
+    const [rs,re]=weekRange(w), map=w==="B"?BE_BUF:BE_STD;
+    for(let t=rs;t<=re;t+=DAY){
+      if(HOLIDAYS[isoOf(t)]) continue;
+      const n=(map[dow(t)]||[]).length;
+      for(let i=0;i<n;i++) SLOTS.push({t,iso:isoOf(t),slot:i?"be2":"be1"});
+    }
+  });
+}
+function userShifts(){return Array.isArray(done.__shifts)?done.__shifts:[];}
+function allShifts(){return BASE_SHIFTS.concat(userShifts()).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);}
+function buildPlan(){
+  SLOTMAP={};
+  const sh=allShifts(); let si=0,ptr=0,skip=new Set();
+  SLOTS.forEach(sl=>{
+    while(si<sh.length&&sl.iso>=sh[si].date){ptr=sh[si].start;skip=new Set(sh[si].skip||[]);si++;}
+    while(skip.has(ptr)) ptr++;
+    SLOTMAP[sl.iso+"|"+sl.slot]=ptr<SEQ.length?ptr:-1;
+    ptr++;
+  });
+  UNSCHED=[];
+  for(;ptr<SEQ.length;ptr++) if(!skip.has(ptr)) UNSCHED.push(ptr);
+}
+// Mốc dời lịch gần nhất đã có hiệu lực: việc trước mốc này không tính nợ
+function lastShiftTime(){
+  const today=todayUTC(); let t=W0;
+  allShifts().forEach(x=>{const d=fromIso(x.date);if(d<=today&&d>t)t=d;});
+  return t;
+}
+function weekName(w){return w==="B"?"tuần đệm":"Tuần "+w;}
+function slotDone(sl){return !!done[sl.iso+"|"+sl.slot];}
+function shiftToToday(){
+  const today=todayUTC();
+  const startT=SLOTS.some(sl=>sl.t===today&&slotDone(sl))?today+DAY:today;
+  const from=lastShiftTime(); let e=Infinity; const doneIdx=[];
+  SLOTS.forEach(sl=>{
+    if(sl.t<from||sl.t>=startT) return;
+    const k=SLOTMAP[sl.iso+"|"+sl.slot]; if(k==null||k<0) return;
+    if(slotDone(sl)) doneIdx.push(k); else e=Math.min(e,k);
+  });
+  if(e===Infinity){toast("Không có task backend nào bị trễ");return;}
+  const iso=isoOf(startT);
+  const prev=allShifts().filter(x=>x.date<=iso).pop();
+  const skip=[...new Set((prev&&prev.skip||[]).concat(doneIdx))].filter(k=>k>e).sort((a,b)=>a-b);
+  done.__shifts=userShifts().filter(x=>x.date<iso).concat([{date:iso,start:e,skip}]);
+  saveDone(); buildPlan(); render();
+  toast("Đã dời lịch: từ "+dm(startT)+" làm tiếp “"+taskOf(SEQ[e].x).text.slice(0,40)+"…”");
+}
+function undoShift(){
+  const list=userShifts().slice().sort((a,b)=>a.date<b.date?-1:1);
+  if(!list.length) return;
+  list.pop(); done.__shifts=list;
+  saveDone(); buildPlan(); render(); toast("Đã hoàn tác lần dời lịch gần nhất");
+}
+// Tuần nội dung của lần đầu tiên có task backend từ ngày t trở đi
+function contentWeekFrom(t){
+  for(const sl of SLOTS){if(sl.t<t) continue;const k=SLOTMAP[sl.iso+"|"+sl.slot];if(k>=0) return SEQ[k].w;}
+  return null;
+}
+
 /* ============ DỰNG MỘT NGÀY ============ */
 function srch(q){return "https://www.google.com/search?q="+encodeURIComponent(q);}
 function linkOf(spec){if(!spec)return null;return spec.startsWith("http")?{href:spec,label:"Mở bài viết"}:{href:srch(spec),label:"Tìm nguồn"};}
-function taskOf(x){return Array.isArray(x)?{text:x[0],link:linkOf(x[1])}:{text:x,link:null};}
+function taskOf(x){return Array.isArray(x)?{text:x[0],link:linkOf(x[1]),sub:x[2]||""}:{text:x,link:null,sub:""};}
 function weekData(w){return w==="B"?BUF:WEEKS[w];}
-function nextWeek(w){if(w==="B")return null;if(w===16)return BUF;return WEEKS[w+1];}
 
 function buildDay(t){
   const w=weekOf(t); if(w===null) return null;
-  const wk=weekData(w), dw=dow(t), iso=isoOf(t);
+  const wd=weekData(w), dw=dow(t), iso=isoOf(t);
+  const flex=FLEX_WEEKS.includes(w);
+  // Tuần nội dung: tuần gốc của task backend đầu tiên trong ngày (có thể lùi so với tuần theo lịch)
+  let cw=w;
+  if(flex){const k0=SLOTMAP[iso+"|be1"];if(k0>=0)cw=SEQ[k0].w;}
+  const wk=weekData(cw);
   const idxMap=w===0?BE_W0:(w==="B"?BE_BUF:BE_STD);
   const beIdx=idxMap[dw]||[];
   const blocks=TPL[dw].map(b=>{
@@ -544,10 +794,19 @@ function buildDay(t){
     if(b.slot==="be1"||b.slot==="be2"){
       const i=beIdx[b.slot==="be1"?0:1];
       if(i===undefined){blk.cat="free";blk.title="Tự do";blk.slot="";return blk;}
-      const tk=taskOf(wk.be[i]);
-      if(/^(Nghỉ|Tết)/.test(tk.text)){blk.cat="free";blk.title="Nghỉ";blk.note=tk.text;blk.slot="";return blk;}
-      if(wk.exam){blk.cat="school";blk.title="Ôn thi (thay backend)";}
-      blk.items.push({id:iso+"|"+b.slot,kind:"be",text:tk.text,link:tk.link});
+      let tk;
+      if(flex){
+        if(HOLIDAYS[iso]){blk.cat="free";blk.title="Nghỉ lễ";blk.note=HOLIDAYS[iso];blk.slot="";return blk;}
+        const k=SLOTMAP[iso+"|"+b.slot];
+        if(k==null||k<0){blk.cat="free";blk.title="Buffer";blk.note="Hết task trong hàng đợi: bù việc nợ hoặc ôn lại";blk.slot="";return blk;}
+        tk=taskOf(SEQ[k].x);
+        if(SEQ[k].w!==w) blk.note="Nội dung "+weekName(SEQ[k].w);
+      } else {
+        tk=taskOf(wd.be[i]);
+        if(/^(Nghỉ|Tết)/.test(tk.text)){blk.cat="free";blk.title="Nghỉ";blk.note=tk.text;blk.slot="";return blk;}
+      }
+      if(wd.exam){blk.cat="school";blk.title="Ôn thi (thay backend)";}
+      blk.items.push({id:iso+"|"+b.slot,kind:"be",text:tk.text,link:tk.link,sub:tk.sub});
     } else if(b.slot==="dsa"){
       if(dw===4){
         const n=w==="B"?17:w;
@@ -566,7 +825,10 @@ function buildDay(t){
     } else if(b.slot==="review"){
       blk.items.push({id:iso+"|review",kind:"review",text:"Chấm theo tiêu chí tuần: "+wk.goal});
     } else if(b.slot==="plan"){
-      const nx=nextWeek(w);
+      const nw=weekOf(t+DAY);
+      let nx=null;
+      if(nw===14||nw===15) nx=WEEKS[nw];
+      else if(nw!==null){const c=contentWeekFrom(t+DAY);nx=c!==null?weekData(c):weekData(nw);}
       blk.items.push({id:iso+"|plan",kind:"plan",text:nx?"Xem trước tuần tới: "+nx.theme:"Hết lộ trình"});
     } else if(b.slot==="sch"){
       blk.items.push({id:iso+"|sch-"+b.s,kind:"sch",text:b.title});
@@ -574,7 +836,7 @@ function buildDay(t){
     }
     return blk;
   });
-  return {w,wk,dw,iso,t,blocks};
+  return {w,wk,wd,cw,dw,iso,t,blocks};
 }
 
 /* ============ LƯU TIẾN ĐỘ ============
@@ -648,8 +910,8 @@ function renderHero(day,t){
   const [rs,re]=weekRange(day.w);
   const wkLabel=(day.w==="B"?"Tuần đệm":"Tuần "+day.w)+", "+dm(rs)+" – "+dm(re);
   let h='<div class="hero-meta"><span>'+esc(wkLabel)+'</span><span>'+esc(DAYTYPE[day.dw])+'</span></div>'+
-        '<h1>'+esc(title)+'</h1><p class="theme">'+esc(day.wk.theme)+'</p>'+
-        '<p class="goal">DSA tuần này: '+esc(day.wk.dsa)+'. Coi như đạt: '+esc(day.wk.goal)+'</p>';
+        '<h1>'+esc(title)+'</h1><p class="theme">'+esc(day.wk.theme)+(day.cw!==day.w?' <span class="lag">nội dung '+esc(weekName(day.cw))+'</span>':'')+'</p>'+
+        '<p class="goal">DSA tuần này: '+esc(day.wd.dsa)+'. Coi như đạt: '+esc(day.wk.goal)+'</p>';
   const ci=currentIndex(day);
   const idx=ci.now>=0?ci.now:ci.next;
   if(day.t===todayUTC()){
@@ -670,7 +932,7 @@ function renderBanners(day,t){
   const el=document.getElementById("banners"); let h="";
   const iso=isoOf(t);
   if(HOLIDAYS[iso]) h+='<div class="banner">'+esc(HOLIDAYS[iso])+'. Lịch trên lớp có thể nghỉ.</div>';
-  if(day&&day.wk.exam) h+='<div class="banner">Chế độ tuần thi. Ngày thi là ước lượng; khi FAP có lịch thật, ưu tiên lịch thi và dời backend sang ô Buffer thứ Bảy.</div>';
+  if(day&&day.wd.exam) h+='<div class="banner">Chế độ tuần thi. Ngày thi là ước lượng; khi FAP có lịch thật, ưu tiên lịch thi và dời backend sang ô Buffer thứ Bảy.</div>';
   if(day&&day.w==="B") h+='<div class="banner info">Học kỳ Spring 2027 có thể đã bắt đầu. Nếu lịch học đổi, giữ nội dung, dời khung giờ.</div>';
   if(!storageOK) h+='<div class="banner info">Tiến độ chỉ được giữ trong phiên này vì trình duyệt không có bộ nhớ lưu.</div>';
   el.innerHTML=h;
@@ -696,7 +958,7 @@ function renderTimeline(day){
 
 function debtList(){
   const today=todayUTC(); const out=[]; const seen={};
-  const start=Math.max(W0,today-14*DAY);
+  const start=Math.max(W0,lastShiftTime(),today-14*DAY);
   for(let t=today-DAY;t>=start;t-=DAY){
     const d=buildDay(t); if(!d) continue;
     d.blocks.forEach(b=>b.items.forEach(it=>{
@@ -705,13 +967,31 @@ function debtList(){
   }
   return out;
 }
+function seqDoneCount(){
+  const s=new Set();
+  SLOTS.forEach(sl=>{const k=SLOTMAP[sl.iso+"|"+sl.slot];if(k>=0&&slotDone(sl))s.add(k);});
+  UNSCHED.forEach(k=>{if(done["seq-"+k])s.add(k);});
+  return s.size;
+}
 function renderDebt(){
   const el=document.getElementById("debt");
   const list=debtList();
-  if(!list.length){el.innerHTML='<div class="card"><p class="empty">Không có việc nợ trong 14 ngày qua.</p></div>';return;}
-  const shown=list.slice(0,12);
-  el.innerHTML='<div class="card">'+shown.map(it=>'<div class="debt-item c-'+it.cat+'"><div class="debt-date">'+DOW_SHORT[dow(it.t)]+" "+dm(it.t)+'</div>'+itemHTML(it)+'</div>').join("")+
-    (list.length>12?'<p class="empty" style="margin-top:8px">Còn '+(list.length-12)+' việc cũ hơn. Theo quy tắc 50%, chỉ bù phần quan trọng nhất.</p>':"")+'</div>';
+  const beLate=list.filter(it=>it.kind==="be").length;
+  let tools="";
+  if(beLate) tools+='<button class="btn primary" type="button" data-shift="today">Dời lịch về hôm nay ('+beLate+' task backend trễ)</button>';
+  if(userShifts().length) tools+='<button class="btn" type="button" data-shift="undo">Hoàn tác lần dời gần nhất</button>';
+  let h='';
+  if(!list.length) h+='<p class="empty">Không có việc nợ kể từ lần dời lịch gần nhất.</p>';
+  else {
+    const shown=list.slice(0,12);
+    h+=shown.map(it=>'<div class="debt-item c-'+it.cat+'"><div class="debt-date">'+DOW_SHORT[dow(it.t)]+" "+dm(it.t)+'</div>'+itemHTML(it)+'</div>').join("")+
+      (list.length>12?'<p class="empty" style="margin-top:8px">Còn '+(list.length-12)+' việc cũ hơn.</p>':"");
+  }
+  if(tools) h+='<div class="btnrow">'+tools+'</div>';
+  if(beLate) h+='<p class="stat-line">Dời lịch không gộp task: các task backend chưa làm được xếp lại lần lượt từ hôm nay, cả lịch phía sau lùi theo (tuần thi giữ nguyên).</p>';
+  if(UNSCHED.length) h+='<details class="unsched"><summary>'+UNSCHED.length+' task bị đẩy ra ngoài lộ trình</summary>'+
+    UNSCHED.map(k=>'<div class="debt-item c-be"><div class="debt-date">'+esc(weekName(SEQ[k].w))+'</div>'+itemHTML(Object.assign({id:"seq-"+k},taskOf(SEQ[k].x)))+'</div>').join("")+'</details>';
+  el.innerHTML='<div class="card">'+h+'</div>';
 }
 
 function renderProgress(day){
@@ -724,10 +1004,15 @@ function renderProgress(day){
     for(let t=rs;t<=re;t+=DAY){const d=buildDay(t);if(!d)continue;d.blocks.forEach(b=>b.items.forEach(it=>{if(it.kind==="be"){beTot++;if(done[it.id])beDone++;}}));}
   }
   const row=(cat,label,a,b)=>'<div class="prog-row c-'+cat+'"><div class="top"><span>'+label+'</span><span>'+a+" / "+b+'</span></div><div class="bar"><i style="width:'+(b?Math.round(a/b*100):0)+'%"></i></div></div>';
+  const ds=day?dayStats(day.t):null;
+  const sk=streak();
   el.innerHTML='<div class="card prog">'+
-    (day?row(day.wk.exam?"school":"be",day.wk.exam?"Ôn thi tuần này":"Backend tuần này",beDone,beTot):"")+
+    (ds?row("gold",(day.t===todayUTC()?"Việc hôm nay":"Việc ngày "+dm(day.t)),ds.dn,ds.tot):"")+
+    (day?row(day.wd.exam?"school":"be",day.wd.exam?"Ôn thi tuần này":"Backend tuần này",beDone,beTot):"")+
+    row("be","Backend cả lộ trình",seqDoneCount(),SEQ.length)+
     row("dsa","NeetCode 150 (bản miễn phí)",lcDone,LC.length)+
-    row("dsa","Codility Lessons",codDone,COD.length)+'</div>';
+    row("dsa","Codility Lessons",codDone,COD.length)+
+    '<p class="stat-line">Chuỗi ngày xong hết backend: <strong>'+sk+' ngày</strong>'+(sk?"":". Bắt đầu lại từ hôm nay.")+'</p></div>';
 }
 
 function renderWeek(day){
@@ -738,13 +1023,203 @@ function renderWeek(day){
     const d=buildDay(t); if(!d) continue;
     const lis=[];
     d.blocks.forEach(b=>b.items.forEach(it=>{
-      if(it.kind==="be") lis.push('<li class="'+(d.wk.exam?"ex":"be")+(done[it.id]?" dn":"")+'">'+esc(it.text)+'</li>');
+      if(it.kind==="be") lis.push('<li class="'+(d.wd.exam?"ex":"be")+(done[it.id]?" dn":"")+'">'+esc(it.text)+'</li>');
       if(it.kind==="lc"||it.kind==="cod") lis.push('<li class="dsa'+(done[it.id]?" dn":"")+'">'+esc(it.kind==="cod"?"Codility "+it.text:it.text)+'</li>');
     }));
     if(!lis.length) lis.push('<li>Nghỉ</li>');
     h+='<button type="button" class="weekday'+(t===day.t?" sel":"")+'" data-go="'+isoOf(t)+'"><div class="wd">'+DOW_SHORT[dow(t)]+" "+dm(t)+'<small>'+esc(DAYTYPE[dow(t)])+'</small></div><ul>'+lis.join("")+'</ul></button>';
   }
   el.innerHTML=h;
+}
+
+/* ============ THỐNG KÊ & BẢN ĐỒ TIẾN ĐỘ ============ */
+function dayStats(t){
+  const d=buildDay(t); if(!d) return null;
+  let tot=0,dn=0,beTot=0,beDone=0;
+  d.blocks.forEach(b=>b.items.forEach(it=>{tot++;if(done[it.id])dn++;if(it.kind==="be"){beTot++;if(done[it.id])beDone++;}}));
+  return {tot,dn,beTot,beDone};
+}
+// Số ngày liên tiếp (tính tới hôm nay nếu đã xong, không thì tới hôm qua) tích hết việc backend; ngày không có backend được bỏ qua
+function streak(){
+  const today=todayUTC(); let n=0, t=today;
+  const s0=dayStats(today);
+  if(!(s0&&s0.beTot&&s0.beDone===s0.beTot)) t=today-DAY;
+  for(;t>=W0;t-=DAY){
+    const st=dayStats(t); if(!st) break;
+    if(!st.beTot) continue;
+    if(st.beDone===st.beTot) n++; else break;
+  }
+  return n;
+}
+const HEAT_COLS=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,"B"];
+function mondayOf(w){return w===0?W1-7*DAY:(w==="B"?BUFSTART:W1+(w-1)*7*DAY);}
+function heatLevel(st){if(!st||!st.tot||!st.dn)return 0;const r=st.dn/st.tot;return r>=1?4:r>=0.67?3:r>=0.34?2:1;}
+function renderHeat(day){
+  const el=document.getElementById("heat");
+  const today=todayUTC();
+  let h='<div class="heat"><div class="hl"></div>'+HEAT_COLS.map(w=>'<div class="hl" title="'+(w==="B"?"Tuần đệm":"Tuần "+w)+'">'+(w==="B"?"Đ":w)+'</div>').join("");
+  let dueTot=0,dueDone=0;
+  [1,2,3,4,5,6,0].forEach(dw=>{
+    h+='<div class="hl hr">'+DOW_SHORT[dw]+'</div>';
+    HEAT_COLS.forEach(w=>{
+      const t=mondayOf(w)+((dw+6)%7)*DAY;
+      if(weekOf(t)!==w){h+='<span class="hc off" aria-hidden="true"></span>';return;}
+      const st=dayStats(t), fut=t>today;
+      if(!fut){dueTot+=st.tot;dueDone+=st.dn;}
+      const pct=st.tot?Math.round(st.dn/st.tot*100):0;
+      const head=DOW_SHORT[dw]+" "+dm(t)+" · "+(w==="B"?"Tuần đệm":"Tuần "+w);
+      const body=fut?"Chưa tới":(st.tot?st.dn+"/"+st.tot+" việc ("+pct+"%)":"Không có việc");
+      const cls="hc"+(fut?" fut":" l"+heatLevel(st))+(t===today?" today":"")+(day&&t===day.t&&t!==today?" sel":"");
+      h+='<button type="button" class="'+cls+'" data-go="'+isoOf(t)+'" data-h="'+esc(head)+'" data-b="'+esc(body)+'" aria-label="'+esc(head+": "+body)+'"></button>';
+    });
+  });
+  h+='</div><div class="heat-legend"><span>Ít</span>'+[0,1,2,3,4].map(l=>'<span class="hc l'+l+'" aria-hidden="true"></span>').join("")+'<span>Nhiều</span>'+
+     '<span class="sep">Viền đậm: hôm nay · Ô rỗng: chưa tới</span></div>'+
+     '<p class="stat-line">Đã tới hạn: <strong>'+dueDone+'/'+dueTot+' việc</strong> ('+(dueTot?Math.round(dueDone/dueTot*100):0)+'%). Nhấp vào ô để mở ngày đó.</p>';
+  el.innerHTML=h;
+}
+function showTip(btn,x,y){
+  const tip=document.getElementById("heatTip");
+  tip.innerHTML='<b>'+esc(btn.dataset.h)+'</b>'+esc(btn.dataset.b);
+  tip.style.display="block";
+  const w=tip.offsetWidth,hh=tip.offsetHeight;
+  let lx=x+14, ly=y-hh-10;
+  if(lx+w>window.innerWidth-8) lx=x-w-14;
+  if(ly<8) ly=y+18;
+  tip.style.left=Math.max(8,lx)+"px"; tip.style.top=ly+"px";
+}
+function hideTip(){document.getElementById("heatTip").style.display="none";}
+
+/* ============ GIAI ĐOẠN 2 ============ */
+function renderPhase2(){
+  document.getElementById("phase2").innerHTML=PHASE2.map((g,gi)=>'<div class="p2-group c-be"><div class="p2-when">'+esc(g.when)+'</div>'+
+    g.items.map((x,ii)=>{const tk=taskOf(x);return itemHTML({id:"p2-"+gi+"-"+ii,text:tk.text,link:tk.link});}).join("")+'</div>').join("")+
+    '<p class="stat-line">Mốc ước lượng. Khi có syllabus trên FLM và lịch OJT chính thức thì chỉnh lại cho khớp.</p>';
+}
+
+/* ============ GHI CHÚ TRONG NGÀY ============ */
+const noteKey=iso=>"note|"+iso;
+function renderNote(){
+  const ta=document.getElementById("dayNote"), iso=isoOf(state.view);
+  document.getElementById("h-note").textContent="Ghi chú ngày "+dm(state.view);
+  if(document.activeElement!==ta||ta.dataset.iso!==iso){
+    const v=done[noteKey(iso)];
+    ta.value=typeof v==="string"?v:"";
+    ta.dataset.iso=iso;
+    document.getElementById("noteMeta").textContent=ta.value?"Đã lưu trong trình duyệt":"";
+  }
+}
+let noteTimer=null;
+function onNoteInput(e){
+  const ta=e.target, iso=ta.dataset.iso, v=ta.value;
+  clearTimeout(noteTimer);
+  noteTimer=setTimeout(()=>{
+    if(v.trim()) done[noteKey(iso)]=v; else delete done[noteKey(iso)];
+    saveDone();
+    const n=new Date();
+    document.getElementById("noteMeta").textContent="Đã lưu lúc "+String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");
+  },400);
+}
+
+/* ============ HẸN GIỜ TẬP TRUNG ============ */
+const TKEY="hoang-timer-v1";
+const BASE_TITLE=document.title;
+let timer={dur:25*60000,left:25*60000,endAt:0,label:""};
+function loadTimer(){try{const v=JSON.parse(localStorage.getItem(TKEY)||"null");if(v&&typeof v.dur==="number")timer=Object.assign(timer,v);}catch(e){/* chưa có */}}
+function saveTimer(){try{localStorage.setItem(TKEY,JSON.stringify(timer));}catch(e){/* bị chặn */}}
+function timerLeft(){return timer.endAt?Math.max(0,timer.endAt-Date.now()):timer.left;}
+function fmtMs(ms){const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":"+String(m).padStart(2,"0"):String(m).padStart(2,"0"))+":"+String(x).padStart(2,"0");}
+function currentBlock(){const d=buildDay(todayUTC());if(!d)return null;const ci=currentIndex(d);return ci.now>=0?d.blocks[ci.now]:null;}
+function renderTimer(){
+  const el=document.getElementById("timer");
+  const running=!!timer.endAt, left=timerLeft();
+  const pct=timer.dur?Math.round((1-left/timer.dur)*100):0;
+  const cur=currentBlock(), toEnd=cur?toMin(cur.e)-nowMin():0;
+  const paused=!running&&left>0&&left<timer.dur;
+  el.innerHTML='<div class="tm-top"><div class="tm-clock" id="tmClock">'+fmtMs(left)+'</div><div class="tm-label">'+esc(timer.label||"Chọn thời lượng, hẹn giờ chạy ngay")+'</div></div>'+
+    '<div class="bar"><i id="tmBar" style="width:'+pct+'%"></i></div>'+
+    '<div class="btnrow"><button class="btn primary" type="button" data-tm="toggle">'+(running?"Tạm dừng":(paused?"Tiếp tục":"Bắt đầu"))+'</button>'+
+    '<button class="btn" type="button" data-tm="reset">Đặt lại</button></div>'+
+    '<div class="btnrow">'+[25,50,90].map(m=>'<button class="btn" type="button" data-tm="set" data-min="'+m+'">'+m+' phút</button>').join("")+
+    (cur&&toEnd>=5?'<button class="btn" type="button" data-tm="set" data-min="'+toEnd+'">Hết khung giờ ('+toEnd+' phút)</button>':"")+'</div>';
+}
+function timerLabel(min){
+  const cur=currentBlock();
+  if(cur){const f=cur.items[0];return cur.title+(f&&f.text!==cur.title?": "+f.text:"");}
+  return "Tập trung "+min+" phút";
+}
+function startTimer(){
+  if(timer.left<=0) timer.left=timer.dur;
+  timer.endAt=Date.now()+timer.left;
+  try{if(window.Notification&&Notification.permission==="default")Notification.requestPermission();}catch(e){/* không hỗ trợ */}
+}
+function timerAction(act,min){
+  if(act==="toggle"){ if(timer.endAt){timer.left=timerLeft();timer.endAt=0;} else startTimer(); }
+  else if(act==="reset"){timer.endAt=0;timer.left=timer.dur;}
+  else if(act==="set"){timer.dur=min*60000;timer.left=timer.dur;timer.label=timerLabel(min);timer.endAt=0;startTimer();}
+  saveTimer(); renderTimer(); tickTimer();
+}
+function beep(){
+  try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ac=new C();
+    [0,0.35,0.7].forEach(d=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.setValueAtTime(0.18,ac.currentTime+d);g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+d+0.3);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+d);o.stop(ac.currentTime+d+0.3);});
+  }catch(e){/* không phát được âm thanh */}
+}
+function finishTimer(){
+  const label=timer.label||"Hẹn giờ";
+  timer.endAt=0; timer.left=0; saveTimer(); renderTimer();
+  document.title=BASE_TITLE;
+  toast("Hết giờ: "+label); beep();
+  try{if(window.Notification&&Notification.permission==="granted")new Notification("Hết giờ",{body:label,icon:"icon-192.png"});}catch(e){/* bỏ qua */}
+}
+function tickTimer(){
+  if(!timer.endAt){document.title=BASE_TITLE;return;}
+  const left=timerLeft();
+  if(left<=0){finishTimer();return;}
+  const c=document.getElementById("tmClock"), b=document.getElementById("tmBar");
+  if(c) c.textContent=fmtMs(left);
+  if(b) b.style.width=Math.round((1-left/timer.dur)*100)+"%";
+  document.title=fmtMs(left)+" · Hôm nay làm gì";
+}
+
+/* ============ GIAO DIỆN SÁNG / TỐI ============ */
+function effectiveTheme(){const t=document.documentElement.dataset.theme;if(t)return t;return (window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";}
+function syncThemeMeta(){const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",effectiveTheme()==="dark"?"#1C3354":"#1F3A5F");}
+function toggleTheme(){
+  const nx=effectiveTheme()==="dark"?"light":"dark";
+  document.documentElement.dataset.theme=nx;
+  try{localStorage.setItem("hoang-theme",nx);}catch(e){/* bị chặn */}
+  syncThemeMeta(); toast(nx==="dark"?"Giao diện tối":"Giao diện sáng");
+}
+
+/* ============ SAO LƯU ============ */
+function exportDone(){
+  const data={app:"hoang-backend-tracker",version:1,exportedAt:new Date().toISOString(),done};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:"application/json"}));
+  const a=document.createElement("a"); a.href=url; a.download="tien-do-"+isoOf(todayUTC())+".json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast("Đã xuất file tiến độ");
+}
+function importDone(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const j=JSON.parse(r.result);
+      const src=j&&j.done&&typeof j.done==="object"?j.done:j;
+      if(!src||typeof src!=="object"||Array.isArray(src)) throw new Error("bad");
+      let n=0;
+      for(const k in src){
+        const v=src[k];
+        if(v===1||v===true){done[k]=1;n++;}
+        else if(typeof v==="string"&&k.startsWith("note|")){done[k]=v;n++;}
+      }
+      if(Array.isArray(src.__shifts)){
+        const byDate={}; userShifts().concat(src.__shifts).forEach(x=>{if(x&&typeof x.date==="string"&&Number.isInteger(x.start))byDate[x.date]={date:x.date,start:x.start,skip:Array.isArray(x.skip)?x.skip.filter(Number.isInteger):[]};});
+        done.__shifts=Object.values(byDate); n++;
+      }
+      saveDone(); buildPlan(); render(); toast("Đã gộp "+n+" mục từ file");
+    }catch(e){toast("File không hợp lệ");}
+  };
+  r.readAsText(file);
 }
 
 function render(){
@@ -756,28 +1231,74 @@ function render(){
   renderDebt();
   renderProgress(day);
   renderWeek(day);
+  renderHeat(day);
+  renderPhase2();
+  renderNote();
   document.getElementById("pick").value=isoOf(t);
 }
 
 function clampView(t){return Math.min(Math.max(t,W0),BUFEND);}
 
+function go(delta){state.view=clampView(state.view+delta*DAY);render();}
+function openHelp(){const d=document.getElementById("helpDlg");if(d.showModal){if(!d.open)d.showModal();}else alert("Phím tắt: ← → đổi ngày, T hôm nay, F hẹn giờ, N ghi chú, D sáng/tối");}
+
 async function init(){
   const td=todayUTC();
   state.view=(td<W0||td>BUFEND)?clampView(td):td;
   await loadDone();
+  buildSeq(); buildSlots(); buildPlan();
+  loadTimer();
+  syncThemeMeta();
   render();
+  renderTimer();
+  tickTimer();
   document.addEventListener("change",e=>{
     const id=e.target&&e.target.dataset&&e.target.dataset.id;
     if(!id) return;
     if(e.target.checked) done[id]=1; else delete done[id];
     saveDone(); render();
   });
-  document.getElementById("prev").onclick=()=>{state.view=clampView(state.view-DAY);render();};
-  document.getElementById("next").onclick=()=>{state.view=clampView(state.view+DAY);render();};
+  document.getElementById("prev").onclick=()=>go(-1);
+  document.getElementById("next").onclick=()=>go(1);
   document.getElementById("today").onclick=()=>{state.view=clampView(todayUTC());render();};
   document.getElementById("pick").onchange=e=>{if(e.target.value){state.view=clampView(fromIso(e.target.value));render();}};
-  document.getElementById("week").addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){state.view=fromIso(b.dataset.go);render();window.scrollTo({top:0,behavior:"auto"});}});
-  setInterval(()=>{if(state.view===todayUTC()){renderHero(buildDay(state.view),state.view);renderTimeline(buildDay(state.view));}},60000);
+  const goTo=e=>{const b=e.target.closest("[data-go]");if(b){hideTip();state.view=fromIso(b.dataset.go);render();window.scrollTo({top:0,behavior:"auto"});}};
+  document.getElementById("week").addEventListener("click",goTo);
+  const heat=document.getElementById("heat");
+  heat.addEventListener("click",goTo);
+  heat.addEventListener("mousemove",e=>{const b=e.target.closest(".hc[data-h]");if(b)showTip(b,e.clientX,e.clientY);else hideTip();});
+  heat.addEventListener("mouseleave",hideTip);
+  document.getElementById("dayNote").addEventListener("input",onNoteInput);
+  document.getElementById("timer").addEventListener("click",e=>{const b=e.target.closest("[data-tm]");if(b)timerAction(b.dataset.tm,Number(b.dataset.min));});
+  document.getElementById("debt").addEventListener("click",e=>{const b=e.target.closest("[data-shift]");if(!b)return;if(b.dataset.shift==="today")shiftToToday();else undoShift();});
+  document.getElementById("themeBtn").onclick=toggleTheme;
+  document.getElementById("helpBtn").onclick=openHelp;
+  document.getElementById("exportBtn").onclick=exportDone;
+  const fileIn=document.getElementById("importFile");
+  document.getElementById("importBtn").onclick=()=>fileIn.click();
+  fileIn.onchange=()=>{if(fileIn.files[0])importDone(fileIn.files[0]);fileIn.value="";};
+  if(window.matchMedia){const mq=matchMedia("(prefers-color-scheme: dark)");if(mq.addEventListener)mq.addEventListener("change",syncThemeMeta);}
+  document.addEventListener("keydown",e=>{
+    if(e.ctrlKey||e.metaKey||e.altKey) return;
+    const tg=e.target;
+    if(tg&&((tg.tagName==="INPUT"&&tg.type!=="checkbox")||tg.tagName==="TEXTAREA"||tg.isContentEditable)){if(e.key==="Escape")tg.blur();return;}
+    if(document.getElementById("helpDlg").open) return;
+    const k=e.key; let hit=true;
+    if(k==="ArrowLeft") go(-1);
+    else if(k==="ArrowRight") go(1);
+    else if(k==="t"||k==="T"){state.view=clampView(todayUTC());render();}
+    else if(k==="f"||k==="F") timerAction("toggle");
+    else if(k==="n"||k==="N"){const ta=document.getElementById("dayNote");ta.focus();ta.scrollIntoView({block:"center"});}
+    else if(k==="d"||k==="D") toggleTheme();
+    else if(k==="?") openHelp();
+    else hit=false;
+    if(hit) e.preventDefault();
+  });
+  setInterval(tickTimer,1000);
+  setInterval(()=>{
+    if(state.view===todayUTC()){renderHero(buildDay(state.view),state.view);renderTimeline(buildDay(state.view));}
+    if(!document.getElementById("timer").contains(document.activeElement)) renderTimer();
+  },60000);
 }
 if(typeof document!=="undefined") init();
 </script>
