@@ -23,11 +23,12 @@ Từ 6/10, nội dung từ Tuần 4 được làm lại theo chuẩn 2026 và th
 
 Lịch trước 6/10 giữ nguyên để xem lại. Task v1 chưa làm được gộp vào v2, vẫn xem được trong mục Lưu trữ.
 
-## Lịch cuộn (từ 6/10)
+## Lịch cuộn
 
-Không cần dời lịch bằng tay.
+Không cần dời lịch bằng tay. Áp dụng cho mọi ngày, kể cả trước 6/10.
 
-- **Việc chưa làm tự sang ngày hôm sau:** task backend, bài NeetCode và lesson Codility. Codility sang thứ Năm kế tiếp.
+- **Việc chưa làm của mọi ngày trước tự sang hôm nay, cũ nhất trước:** task backend, bài NeetCode và lesson Codility. Codility sang thứ Năm kế tiếp.
+- **Task cũ trùng nội dung:** task v1 (Tuần 2–3) đã có nội dung trong task Tuần 4–5 không chen vào hàng đợi để khỏi học lặp; xem ở Lưu trữ, mỗi mục ghi rõ đã gộp vào task nào. Task cũ không trùng ("Bảng so sánh các Map + fail-fast") vẫn được đẩy lên.
 - **Không dồn:** mỗi ngày chỉ nhận đủ số ô của ngày đó. Ví dụ hôm qua bỏ cả ngày thì hôm nay hiện việc của hôm qua, việc của hôm nay lùi sang mai, cả lịch lùi theo và **kéo dài qua 8/1 nếu cần** (Tuần 17, 18… "nối dài", tối đa tới 29/8/2027).
 - **Đã tích là xong hẳn:** lưu theo id, không quay lại, không phải tích lại. Tích sớm task của ngày sau thì nó hiện ở hôm nay, ngày sau nhận task kế tiếp.
 - **Ngày đã qua** hiện những gì đã làm hôm đó. Phần còn thiếu so với số ô vẫn tính vào bản đồ tiến độ và chuỗi ngày.

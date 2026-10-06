@@ -308,7 +308,7 @@ kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-wid
       <p>Lộ trình v2 từ T3 6/10/2026: nội dung từ Tuần 4 làm lại theo chuẩn 2026 (Java 25, Spring Boot 4.1) và theo cổng tuyển NAB (Codility, tiếng Anh, Java/JVM/DB). MiniPay bắt đầu ở Tuần 6, mỗi tuần một mốc M0–M8. Thứ Bảy là Buffer, không nhận task mới. Lịch trước 6/10 giữ nguyên để xem lại; task cũ chưa làm nằm trong Lưu trữ.</p>
       <p>Tuần 14–15 là tuần thi cuối kỳ Fall 2026 theo ước lượng. Khi FAP có lịch thi thật, ưu tiên lịch thi và dời việc backend sang ô Buffer thứ Bảy.</p>
       <p>Link LeetCode mở thẳng bài. “Tìm nguồn” mở Google với tên nguồn chính xác, để tránh link sai. 7 bài Premium của NeetCode 150 không nằm trong danh sách (143 bài miễn phí). Từ 6/10 lịch chỉ xếp bài Easy/Medium; 20 bài Hard nằm trong Kho Hard ở mục Giai đoạn 2.</p>
-      <p>Lịch cuộn từ 6/10: task backend, bài NeetCode và lesson Codility chưa làm tự sang ngày kế tiếp (Codility sang thứ Năm kế tiếp). Mỗi ngày chỉ nhận đủ số ô của ngày đó nên không dồn; cả lịch lùi theo và kéo qua 8/1 nếu cần. Ngày đã qua hiện những gì bạn đã làm hôm đó. Task backend cần link bằng chứng (hoặc lý do) khi tích.</p>
+      <p>Lịch cuộn: task backend, bài NeetCode và lesson Codility chưa làm của mọi ngày trước tự sang hôm nay, cũ nhất trước (Codility sang thứ Năm kế tiếp). Mỗi ngày chỉ nhận đủ số ô của ngày đó nên không dồn; cả lịch lùi theo và kéo qua 8/1 nếu cần. Ngày đã qua chỉ hiện những gì bạn đã làm hôm đó. Task cũ mà nội dung đã có trong task mới nằm ở Lưu trữ để khỏi học lặp. Task backend cần link bằng chứng (hoặc lý do) khi tích.</p>
     </section>
   </main>
 </div>
@@ -443,7 +443,8 @@ const WEEKS={
      K("w02-hashmap-internals",2,"HashMap bên trong: hash(), chỉ số bucket (n-1) & hash, collision chaining, load factor 0.75, resize","Baeldung Java HashMap under the hood"),
      K("w02-treeify",2,"Treeify từ Java 8: TREEIFY_THRESHOLD = 8, MIN_TREEIFY_CAPACITY = 64. Mở source HashMap.java trong IntelliJ, vẽ sơ đồ"),
      K("w02-myhashmap",2,"Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test; dùng Money làm key"),
-     K("w02-map-comparison",2,"Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap; fail-fast iterator và ConcurrentModificationException"),
+     K("w02-map-comparison",2,"Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap; fail-fast iterator và ConcurrentModificationException","Java ConcurrentModificationException modCount fail-fast iterator",
+       "Đạt khi: bảng 5 Map tự viết (thứ tự, null, thread-safe, độ phức tạp, khi nào dùng) + test tái hiện ConcurrentModificationException và giải thích bằng modCount; LinkedHashMap làm LRU được không, vì sao"),
      K("w02-exceptions",2,"Exception: checked vs unchecked, custom exception, try-with-resources","Baeldung Java checked vs unchecked exceptions"),
      K("w02-optional-comparator",2,"Optional đúng và sai (không làm field/param); Comparator.comparing().thenComparing() thay cho compareTo viết tay","Baeldung Guide to Java Optional"),
      K("w02-hashmap-note",2,"Viết note HashMap bên trong (có sơ đồ), push GitHub")],
@@ -476,7 +477,7 @@ const WEEKS={
      K("w04-stream-advanced",2,"Stream nâng cao: toMap gặp key trùng (IllegalStateException → cần merge function), value null → NPE, flatMap; Stream Gatherers (JEP 485, final ở JDK 24): Gatherers.windowSliding phát hiện giao dịch trùng trong 60 giây",
        "https://openjdk.org/jeps/485",
        "Đạt khi: test cho toMap trùng key / null và cho bộ phát hiện trùng; giải thích intermediate vs terminal, vì sao stream không dùng lại được"),
-     K("w04-errors-money",2,"Lỗi & tiền (bù Exception/Optional): checked vs unchecked, try-with-resources + suppressed, Optional đúng/sai; sealed interface TransferResult (Success | InsufficientFunds | AccountFrozen) + switch pattern matching; BigDecimal: equals của 2.0 và 2.00 là false, compareTo là 0; HALF_EVEN",
+     K("w04-errors-money",2,"Lỗi & tiền (bù Exception/Optional): checked vs unchecked, try-with-resources + suppressed, Optional đúng/sai, Comparator.comparing().thenComparing(); sealed interface TransferResult (Success | InsufficientFunds | AccountFrozen) + switch pattern matching; BigDecimal: equals của 2.0 và 2.00 là false, compareTo là 0; HALF_EVEN",
        "Java sealed interface record pattern matching switch",
        "Đạt khi: test chứng minh HashSet giữ 2 phần tử 2.0/2.00 còn TreeSet giữ 1; thêm 1 subtype mới thì switch (không có default) báo lỗi compile"),
      K("w04-jmh-parallel",2,"JMH: sequential vs parallel stream trên 10⁶ phần tử, ArrayList vs LinkedList; chạy trong Docker với --cpus=1 và --cpus=4. Parallel stream dùng ForkJoin common pool (cores − 1): không chạy I/O blocking trong đó",
@@ -1050,35 +1051,56 @@ function buildPlan(){
 }
 function slotIdx(iso,slot){const k=SLOTMAP[iso+"|"+slot];return k==null?-1:k;}
 
-/* ============ LỊCH CUỘN (TỪ 6/10) ============
-   Việc chưa làm tự sang ngày kế tiếp, không cần dời tay và không dồn: mỗi ngày chỉ nhận đúng số ô của ngày đó,
-   phần sau lùi theo (kéo dài qua 8/1 nếu cần, tối đa tới HORIZON).
-   - Ngày đã qua: hiện việc đã làm trong ngày đó (theo ngày tích).
-   - Hôm nay: việc đã làm hôm nay + việc chưa làm kế tiếp trong hàng đợi cho đủ số ô.
+/* ============ LỊCH CUỘN ============
+   Áp dụng cho mọi ngày (trừ tuần thi 14–15). Việc chưa làm tự sang ngày kế tiếp, cũ nhất trước, không cần dời tay
+   và không dồn: mỗi ngày chỉ nhận đúng số ô của ngày đó, phần sau lùi theo (kéo qua 8/1 nếu cần, tối đa tới HORIZON).
+   - Ngày đã qua: chỉ hiện việc đã làm trong ngày đó (theo ngày tích).
+   - Hôm nay: việc đã làm hôm nay + việc chưa làm cũ nhất trong hàng đợi cho đủ số ô.
    - Ngày tới: rải tiếp phần còn lại.
    Ngày đánh dấu nghỉ (ôn thi) không nhận việc mới. Đã tích là xong hẳn (lưu theo id), không quay lại, không phải tích lại.
-   Ba hàng đợi chạy song song: task backend, bài NeetCode (DSA_Q), lesson Codility (COD_ORDER, chỉ thứ Năm). */
-let ROLL={be:{},lc:{},cod:{}}, ROLL_LEFT={be:[],lc:[],cod:[]}, END_T=BUFEND;
+   Ba hàng đợi chạy song song: task backend, bài NeetCode, lesson Codility (chỉ thứ Năm). */
+// Task v1 (Tuần 2–3) chưa làm mà nội dung đã nằm trong task v2: không đưa vào hàng đợi để khỏi học lặp (xem ở Lưu trữ)
+const SUPERSEDED={
+  "w02-treeify":"w04-hashmap-note","w02-hashmap-note":"w04-hashmap-note",
+  "w02-exceptions":"w04-errors-money","w02-optional-comparator":"w04-errors-money",
+  "w03-lambda":"w04-lambda","w03-stream-api":"w04-stream-lab","w03-transaction-lab":"w04-stream-lab","w03-stream-advanced":"w04-stream-advanced",
+  "w03-jvm-memory":"w04-jvm-note","w03-gc":"w04-jvm-note","w03-oom-container":"w04-oom-lab","w03-classloader-jmm":"w04-oom-lab",
+  "w03-jvm-qa":"w05-month1-check"
+};
+let ROLL={be:{},w0:{},lc:{},cod:{}}, ROLL_LEFT={be:[],lc:[],cod:[]}, END_T=BUFEND, V1CAP={};
 function isOff(t){return !!data.off[isoOf(t)];}
-function rollDay(t){const w=weekOf(t);return t>=REBASE&&w!==null&&!isExam(w);}
+function rollDay(t){const w=weekOf(t);return w!==null&&!isExam(w);}
+// Số ô mỗi ngày: trước 6/10 theo lịch v1 (để tính phần thiếu của ngày đã qua), từ 6/10 theo lịch v2
 function beCap(t){
-  if(!rollDay(t)||isOff(t)||HOLIDAYS[isoOf(t)]||dow(t)===6) return 0;
+  if(!rollDay(t)||HOLIDAYS[isoOf(t)]) return 0;
+  if(t<REBASE) return weekOf(t)===0?(BE_W0[dow(t)]||[]).length:(V1CAP[isoOf(t)]||0);
+  if(isOff(t)||dow(t)===6) return 0;
   return (BE_STD[dow(t)]||[]).length;
 }
 function lcCap(t){
-  if(!rollDay(t)||isOff(t)||HOLIDAYS[isoOf(t)]) return 0;
+  if(!rollDay(t)||HOLIDAYS[isoOf(t)]) return 0;
+  if(t<REBASE) return (DSA_MAP[isoOf(t)]||[]).length;
+  if(isOff(t)) return 0;
   const d=dow(t); return weekOf(t)===4?([2,3,5].includes(d)?2:0):([1,2,3,5].includes(d)?1:0);
 }
-function codCap(t){return rollDay(t)&&!isOff(t)&&!HOLIDAYS[isoOf(t)]&&dow(t)===4?1:0;}
-// Việc đã làm từ 6/10 nhóm theo ngày tích
+function codCap(t){
+  if(!rollDay(t)||HOLIDAYS[isoOf(t)]||dow(t)!==4) return 0;
+  if(t<REBASE) return codOf(t)?1:0;
+  return isOff(t)?0:1;
+}
+// Ngày làm của 1 việc là ngày tích; dữ liệu chuyển từ v1 không lưu ngày tích của bài DSA thì lấy ngày bài đó được xếp ở v1
+const V1_LC_DATE={}, V1_COD_DATE={};
+Object.keys(DSA_MAP).forEach(iso=>DSA_MAP[iso].forEach(i=>{V1_LC_DATE["lc-"+LC[i][0]]=iso;}));
+for(let n=1;n<=13;n++) V1_COD_DATE["cod-"+n]=isoOf(W1+(n-1)*7*DAY+3*DAY);
+function doneDate(id){return data.at[id]||V1_LC_DATE[id]||V1_COD_DATE[id]||null;}
 function doneOnMap(keys,idOf){
   const m={};
-  keys.forEach(k=>{const id=idOf(k),a=data.at[id];if(isDone(id)&&a&&a>=REBASE_ISO)(m[a]=m[a]||[]).push(k);});
+  keys.forEach(k=>{const id=idOf(k),a=isDone(id)&&doneDate(id);if(a)(m[a]=m[a]||[]).push(k);});
   return m;
 }
 function rollQueue(pending,doneOn,cap,out){
   const today=todayUTC(); let p=0;
-  for(let t=REBASE;t<=HORIZON;t+=DAY){
+  for(let t=W0;t<=HORIZON;t+=DAY){
     const iso=isoOf(t), done=doneOn[iso]||[];
     if(t<today){out[iso]=done.slice();continue;}
     const list=t===today?done.slice():[];
@@ -1090,12 +1112,22 @@ function rollQueue(pending,doneOn,cap,out){
 }
 function buildRoll(){
   CUTSET=new Set(data.cut);
-  ROLL={be:{},lc:{},cod:{}};
+  V1CAP={}; SLOTS.forEach(sl=>{if(sl.t<REBASE)V1CAP[sl.iso]=(V1CAP[sl.iso]||0)+1;});
+  ROLL={be:{},w0:{},lc:{},cod:{}};
+  // Tuần 0 đứng ngoài hàng đợi: chỉ hiện ở ngày đã làm
+  WEEKS[0].be.forEach(task=>{const a=isDone(task.id)&&doneDate(task.id);if(a)(ROLL.w0[a]=ROLL.w0[a]||[]).push(task.id);});
+  // Backend: mọi task chưa làm theo thứ tự hàng đợi, cũ nhất trước (trừ task đã cắt và task v1 đã gộp vào v2)
   const all=SEQ.map((s,i)=>i);
-  const bePending=all.filter(i=>isV2Week(SEQ[i].w)&&!isDone(SEQ[i].task.id)&&!CUTSET.has(SEQ[i].task.id));
+  const bePending=all.filter(i=>{const id=SEQ[i].task.id;return !isDone(id)&&!CUTSET.has(id)&&!SUPERSEDED[id];});
   ROLL_LEFT.be=rollQueue(bePending,doneOnMap(all,i=>SEQ[i].task.id),beCap,ROLL.be);
-  ROLL_LEFT.lc=rollQueue(DSA_Q.filter(i=>!isDone("lc-"+LC[i][0])),doneOnMap(LC.map((p,i)=>i),i=>"lc-"+LC[i][0]),lcCap,ROLL.lc);
-  ROLL_LEFT.cod=rollQueue(COD_ORDER.filter(n=>!isDone("cod-"+n)),doneOnMap(COD.map(c=>c[0]),n=>"cod-"+n),codCap,ROLL.cod);
+  // NeetCode: bài Easy/Medium đã xếp ở lịch v1 mà chưa làm (cũ nhất trước), rồi tới hàng đợi v2; bài Hard ở Kho Hard
+  const lcOld=[]; Object.keys(DSA_MAP).sort().forEach(iso=>DSA_MAP[iso].forEach(i=>{if(LC[i][3]!=="H")lcOld.push(i);}));
+  const lcPending=[...new Set(lcOld.concat(DSA_Q))].filter(i=>!isDone("lc-"+LC[i][0]));
+  ROLL_LEFT.lc=rollQueue(lcPending,doneOnMap(LC.map((p,i)=>i),i=>"lc-"+LC[i][0]),lcCap,ROLL.lc);
+  // Codility: lesson v1 chưa làm trước, rồi tới thứ tự v2
+  const codOld=Object.keys(V1_COD_DATE).filter(k=>V1_COD_DATE[k]<REBASE_ISO).map(k=>Number(k.slice(4)));
+  const codPending=[...new Set(codOld.concat(COD_ORDER))].filter(n=>!isDone("cod-"+n));
+  ROLL_LEFT.cod=rollQueue(codPending,doneOnMap(COD.map(c=>c[0]),n=>"cod-"+n),codCap,ROLL.cod);
   // Lịch kéo tới ngày cuối còn việc (ít nhất tới hết tuần đệm)
   END_T=EXT1-DAY;
   for(let t=HORIZON;t>END_T;t-=DAY){const iso=isoOf(t);if((ROLL.be[iso]||[]).length||(ROLL.lc[iso]||[]).length||(ROLL.cod[iso]||[]).length){END_T=t;break;}}
@@ -1139,11 +1171,7 @@ function setOff(t,toSunday,on){
 }
 // Tuần nội dung của lần đầu tiên có task backend từ ngày t trở đi
 function contentWeekFrom(t){
-  if(t>=REBASE){
-    for(let x=t;x<=HORIZON;x+=DAY){const l=ROLL.be[isoOf(x)];if(l&&l.length)return SEQ[l[0]].w;}
-    return null;
-  }
-  for(const sl of SLOTS){if(sl.t<t) continue;const k=slotIdx(sl.iso,sl.slot);if(k>=0) return SEQ[k].w;}
+  for(let x=Math.max(t,W0);x<=HORIZON;x+=DAY){const l=ROLL.be[isoOf(x)];if(l&&l.length)return SEQ[l[0]].w;}
   return null;
 }
 
@@ -1310,12 +1338,12 @@ function mockKind(t){const w=weekOf(t);if(w===14||w===15) return "";return typeo
 function buildDay(t){
   const w=weekOf(t); if(w===null) return null;
   const wd=weekData(w), dw=dow(t), iso=isoOf(t), v2=t>=REBASE, roll=rollDay(t), off=roll&&isOff(t);
-  const flex=FLEX_WEEKS.includes(w), today=todayUTC();
-  const beList=v2?(ROLL.be[iso]||[]):[];
-  // Tuần nội dung: tuần gốc của task backend đầu tiên trong ngày (có thể lùi so với tuần theo lịch)
+  const today=todayUTC();
+  const beList=ROLL.be[iso]||[];
+  // Tuần nội dung: tuần gốc của task backend đầu tiên trong ngày (có thể lùi so với tuần theo lịch).
+  // Từ 6/10 chỉ lấy theo task v2, để tiếng Anh / mock của ngày đi theo nội dung mới.
   let cw=w;
-  if(roll){const k0=beList.find(k=>isV2Week(SEQ[k].w));if(k0!==undefined)cw=SEQ[k0].w;}
-  else if(flex){let k0=slotIdx(iso,"be1");if(k0<0)k0=slotIdx(iso,"be2");if(k0>=0)cw=SEQ[k0].w;}
+  if(roll){const k0=beList.find(k=>!v2||isV2Week(SEQ[k].w));if(k0!==undefined)cw=SEQ[k0].w;}
   const wk=weekData(cw);
   const idxMap=w===0?BE_W0:(w==="B"?BE_BUF:BE_STD);
   const beIdx=idxMap[dw]||[];
@@ -1327,49 +1355,30 @@ function buildDay(t){
       blk.beSlot=true;
       if(off){blk.cat="free";blk.title=b.slot==="be1"?"Nghỉ backend (ôn thi)":"Nghỉ";blk.slot="";return blk;}
       if(HOLIDAYS[iso]){blk.cat="free";blk.title="Nghỉ lễ";blk.note=b.slot==="be1"?HOLIDAYS[iso]:"";blk.slot="";return blk;}
-      if(dw===6){blk.cat="free";blk.title="Buffer: nghỉ, ôn lại hoặc làm trước";blk.slot="buffer";return blk;}
+      if(dw===6&&v2){blk.cat="free";blk.title="Buffer: nghỉ, ôn lại hoặc làm trước";blk.slot="buffer";return blk;}
       blk.cat="be";
       return blk;
     }
     if(roll&&b.slot==="buffer"){blk.title="Nghỉ hoặc ôn lại";return blk;}
     if(newTerm&&(b.cat==="class"||b.slot==="sch")){blk.cat="class";blk.title="Lịch học kỳ mới (cập nhật khi có thời khoá biểu)";blk.slot="";return blk;}
     if(b.slot==="be1"||b.slot==="be2"){
-      // Lịch theo ô (trước 6/10 và tuần thi)
+      // Tuần thi: việc ôn thi cố định theo ngày
       const i=beIdx[b.slot==="be1"?0:1];
       if(i===undefined){blk.cat="free";blk.title="Tự do";blk.slot="";return blk;}
-      let task;
-      if(flex){
-        if(HOLIDAYS[iso]){blk.cat="free";blk.title="Nghỉ lễ";blk.note=HOLIDAYS[iso];blk.slot="";return blk;}
-        const k=slotIdx(iso,b.slot);
-        if(k<0){blk.cat="free";blk.title="Buffer";blk.note="Hết task trong hàng đợi: bù việc nợ hoặc ôn lại";blk.slot="";return blk;}
-        task=SEQ[k].task;
-        if(SEQ[k].w!==w) blk.note="Nội dung "+weekName(SEQ[k].w);
-      } else {
-        task=wd.be[i];
-        if(isRest(task)){blk.cat="free";blk.title="Nghỉ";blk.note=task.t;blk.slot="";return blk;}
-      }
-      if(wd.exam){blk.cat="school";blk.title="Ôn thi (thay backend)";}
+      const task=wd.be[i];
+      if(isRest(task)){blk.cat="free";blk.title="Nghỉ";blk.note=task.t;blk.slot="";return blk;}
+      blk.cat="school";blk.title="Ôn thi (thay backend)";
       blk.items.push(beItem(task));
     } else if(b.slot==="dsa"){
-      if(v2){
-        // Lịch cuộn: bài đã làm trong ngày + bài kế tiếp trong hàng đợi; thứ Bảy và tuần thi làm lại bài ☆
-        (ROLL.cod[iso]||[]).forEach(n=>blk.items.push(codItem(n)));
-        (ROLL.lc[iso]||[]).forEach(pi=>blk.items.push(lcItem(pi)));
-        if(!blk.items.length){
-          if(HOLIDAYS[iso]) blk.note="Nghỉ lễ";
-          else if(off){blk.cat="free";blk.title="Nghỉ DSA (ôn thi)";}
-          else if(dw===6||isExam(w)) blk.items.push({id:iso+"|dsarev",kind:"rev",text:REV_TEXT});
-          else if(t<today) blk.note="Không làm bài DSA";
-          else blk.note="Không có bài hôm nay";
-        }
-      } else {
-        if(dw===4){const n=codOf(t);if(n)blk.items.push(codItem(n));}
-        const list=DSA_MAP[iso];
-        if(list&&dw!==4) list.forEach(pi=>blk.items.push(lcItem(pi)));
-        if(!blk.items.length){
-          if(w===16||w==="B") blk.items.push({id:iso+"|dsarev",kind:"rev",text:REV_TEXT});
-          else blk.note="Không có bài hôm nay";
-        }
+      // Bài đã làm trong ngày + bài cũ nhất chưa làm cho đủ số bài; thứ Bảy (từ 6/10) và tuần thi làm lại bài ☆
+      (ROLL.cod[iso]||[]).forEach(n=>blk.items.push(codItem(n)));
+      (ROLL.lc[iso]||[]).forEach(pi=>blk.items.push(lcItem(pi)));
+      if(!blk.items.length){
+        if(HOLIDAYS[iso]) blk.note="Nghỉ lễ";
+        else if(off){blk.cat="free";blk.title="Nghỉ DSA (ôn thi)";}
+        else if((dw===6&&v2)||isExam(w)) blk.items.push({id:iso+"|dsarev",kind:"rev",text:REV_TEXT});
+        else if(t<today) blk.note=lcCap(t)+codCap(t)?"Không làm bài DSA":"Không có bài hôm này";
+        else blk.note="Không có bài hôm nay";
       }
     } else if(b.slot==="en"){
       const i={2:0,4:1,6:2}[dw]; const txt=(wk.en||[])[i];
@@ -1394,24 +1403,29 @@ function buildDay(t){
     return blk;
   });
   // Đổ việc backend của ngày vào các khối backend: lần lượt từng khối, dư thì dồn vào khối cuối
+  const cap=beCap(t);
   if(roll){
     const tg=blocks.filter(b=>b.beSlot);
-    beList.forEach((k,j)=>{
+    const list=(ROLL.w0[iso]||[]).map(id=>TASKS[id]).concat(beList.map(k=>SEQ[k].task));
+    list.forEach((task,j)=>{
       const b=tg[Math.min(j,tg.length-1)];
-      b.items.push(beItem(SEQ[k].task));
-      if(SEQ[k].w!==w&&isV2Week(SEQ[k].w)&&!b.note) b.note="Nội dung "+weekName(SEQ[k].w);
+      b.items.push(beItem(task));
+      const k=IDX[task.id];
+      if(k!==undefined&&SEQ[k].w!==w&&!b.note) b.note="Nội dung "+weekName(SEQ[k].w);
     });
     if(!off&&!HOLIDAYS[iso]) tg.forEach((b,j)=>{
       if(b.items.length||b.slot==="buffer") return;
-      if(t<today){b.title=j?"Backend #2":b.title;b.note=j||beList.length?"":"Không làm task backend hôm này";}
-      else {b.cat="free";b.title="Buffer";b.note=j?"":"Hàng đợi backend đã hết: ôn lại hoặc nghỉ";}
+      if(t<today){
+        if(cap<=j){b.cat="free";b.title="Tự do";}
+        else if(j===0&&!list.length) b.note="Không làm task backend hôm này";
+      } else {b.cat="free";b.title=cap>j?"Buffer":"Tự do";b.note=cap>j&&j===0?"Hàng đợi backend đã hết: ôn lại hoặc nghỉ":"";}
     });
-  } else if(v2){
+  } else {
     // Tuần thi: task backend làm thêm trong ngày gắn vào khối backend đầu tiên
     const b=blocks.find(x=>x.slot==="be1"||x.slot==="be2"||x.rv);
     if(b) beList.forEach(k=>b.items.push(beItem(SEQ[k].task)));
   }
-  return {w,wk,wd,cw,dw,iso,t,v2,roll,off,blocks,beCap:beCap(t),dsCap:lcCap(t)+codCap(t)};
+  return {w,wk,wd,cw,dw,iso,t,v2,roll,off,blocks,beCap:cap,dsCap:lcCap(t)+codCap(t)};
 }
 
 /* ============ GIAO DIỆN ============ */
@@ -1549,9 +1563,11 @@ function renderTimeline(day){
   const el=document.getElementById("timeline");
   if(!day){el.innerHTML='<p class="empty">Chọn một ngày trong khoảng 11/9/2026 – '+esc(endLabel())+'.</p>';return;}
   const ci=currentIndex(day);
-  const isToday=day.t===todayUTC();
+  const isToday=day.t===todayUTC(), past=day.t<todayUTC();
   el.innerHTML='<div class="tl">'+day.blocks.map((b,i)=>{
-    const isStatic=!b.items.length&&b.slot!=="buffer"&&!(b.rv&&isToday&&dueCards(day.t).length);
+    // Ngày đã qua chỉ hiện việc đã làm; việc chưa làm của hàng đợi đã tự sang ngày sau
+    const items=past?b.items.filter(it=>isDone(it.id)):b.items;
+    const isStatic=!items.length&&b.slot!=="buffer"&&!(b.rv&&isToday&&dueCards(day.t).length);
     let tag="";
     if(i===ci.now) tag='<span class="tag">Đang diễn ra</span>';
     else if(i===ci.next) tag='<span class="tag next">Tiếp theo</span>';
@@ -1564,7 +1580,8 @@ function renderTimeline(day){
       body+='<div class="note">Không nhận việc mới.'+(isToday?(nx?" Rảnh thì làm trước:":" Hàng đợi backend đã hết."):"")+'</div>';
       if(nx) body+=itemHTML(beItem(SEQ[nx.i].task));
     } else if(b.slot==="buffer") body+='<div class="note">Dùng giờ này để bù việc, ôn hoặc nghỉ.</div>';
-    body+=b.items.map(itemHTML).join("");
+    if(past&&b.items.length&&!items.length&&!b.note) body+='<div class="note">Không làm</div>';
+    body+=items.map(itemHTML).join("");
     if(b.slot==="review"&&day.v2) body+=retroHTML(day);
     return '<div class="row c-'+b.cat+(isStatic?" static":"")+(i===ci.now?" is-now":"")+'"><div class="time">'+b.s+'<span class="end">'+b.e+'</span></div><div class="rail"></div><div class="body">'+body+'</div></div>';
   }).join("")+'</div>';
@@ -1575,7 +1592,7 @@ function archiveList(){
   SEQ.forEach(s=>{
     const id=s.task.id;
     if(isDone(id)) return;
-    if((s.w===2||s.w===3)) out.push({it:beItem(s.task),why:"Bản v1, đã gộp vào Tuần 4–5 của lộ trình v2"});
+    if(SUPERSEDED[id]) out.push({it:beItem(s.task),why:"Task cũ, nội dung đã gộp vào: "+TASKS[SUPERSEDED[id]].t.slice(0,60)+"…"});
     else if(CUTSET.has(id)) out.push({it:beItem(s.task),why:"Đã cắt (task tuỳ chọn P"+s.task.pri+")"});
   });
   Object.keys(data.archive).sort().forEach(k=>out.push({text:data.archive[k].text,why:"Dữ liệu cũ"}));
@@ -1618,10 +1635,11 @@ function renderQueue(){
 function beTotals(){
   let tot=0,dn=0;
   WEEKS[0].be.forEach(x=>{if(isDone(x.id)){tot++;dn++;}});
+  // Đã làm + còn trong hàng đợi (không tính task đã cắt và task cũ đã gộp vào v2)
   SEQ.forEach(s=>{
-    const d=isDone(s.task.id), v2w=s.w==="B"||s.w>=4;
-    if(v2w){if(CUTSET.has(s.task.id)&&!d)return;tot++;if(d)dn++;}
-    else if(d){tot++;dn++;}
+    const id=s.task.id;
+    if(isDone(id)){tot++;dn++;return;}
+    if(!CUTSET.has(id)&&!SUPERSEDED[id]) tot++;
   });
   return {tot,dn};
 }
@@ -1680,12 +1698,13 @@ function renderWeek(day){
   const [rs,re]=weekRange(day.w); let h="";
   for(let t=rs;t<=re;t+=DAY){
     const d=buildDay(t); if(!d) continue;
-    const lis=[];
+    const lis=[], past=t<todayUTC();
     d.blocks.forEach(b=>b.items.forEach(it=>{
+      if(past&&!isDone(it.id)) return; // ngày đã qua chỉ hiện việc đã làm
       if(it.kind==="be") lis.push('<li class="'+(d.wd.exam?"ex":"be")+(isDone(it.id)?" dn":"")+'">'+esc(it.text)+'</li>');
       if(it.kind==="lc"||it.kind==="cod") lis.push('<li class="dsa'+(isDone(it.id)?" dn":"")+'">'+esc(it.kind==="cod"?"Codility "+it.text:it.text)+'</li>');
     }));
-    if(!lis.length) lis.push(d.off?'<li>Nghỉ backend (ôn thi)</li>':(d.blocks.some(b=>b.slot==="buffer"&&b.s==="13:30")?'<li>Buffer: không nhận việc mới</li>':'<li>Nghỉ</li>'));
+    if(!lis.length) lis.push(d.off?'<li>Nghỉ backend (ôn thi)</li>':(d.blocks.some(b=>b.slot==="buffer"&&b.s==="13:30")?'<li>Buffer: không nhận việc mới</li>':(past&&d.beCap+d.dsCap?'<li>Không làm</li>':'<li>Nghỉ</li>')));
     h+='<button type="button" class="weekday'+(t===day.t?" sel":"")+'" data-go="'+isoOf(t)+'"><div class="wd">'+DOW_SHORT[dow(t)]+" "+dm(t)+'<small>'+esc(DAYTYPE[dow(t)])+'</small></div><ul>'+lis.join("")+'</ul></button>';
   }
   el.innerHTML=h;

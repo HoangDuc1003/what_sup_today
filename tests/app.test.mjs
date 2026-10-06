@@ -17,7 +17,7 @@ globalThis.__app={
   get ROLL(){return ROLL}, get ROLL_LEFT(){return ROLL_LEFT}, get END_T(){return END_T},
   get data(){return data}, set data(v){data=v}, get IDX(){return IDX}, get TASKS(){return TASKS},
   buildSeq,buildSlots,buildPlan,buildRoll,buildDay,dayStats,streak,heatCols,migrateV1toV2,v1SlotIndexMap,mergeData,normalize,emptyData,importPayload,
-  cutLowPriority,restoreCut,setOff,lagCounts,beFinishDate,aheadTasks,beTotals,scoreCard,seedCards,dueCards,slotIdx,
+  cutLowPriority,restoreCut,setOff,lagCounts,beFinishDate,aheadTasks,beTotals,scoreCard,seedCards,dueCards,slotIdx,SUPERSEDED,
   DSA2,DSA_Q,COD_ORDER,LC,WEEKS,BUF,PHASE2,FLEX_WEEKS,REBASE,REBASE_ISO,BUFEND,EXT1,isoOf,fromIso,weekOf,dow,DAY
 };`;
 
@@ -92,7 +92,22 @@ test("lịch sử trước 6/10 giữ nguyên như v1", () => {
   }
   assert.ok(n > 30);
   assert.equal(app.SEQ[app.slotIdx("2026-09-26", "be1")].task.id, "w02-hashmap-internals");
+});
+
+test("ngày đã qua chỉ hiện việc đã làm hôm đó, việc chưa làm không nằm lại", () => {
+  const app = load("2026-10-06");
+  assert.deepEqual(J(beIds(app.buildDay(app.fromIso("2026-09-11")))), ["w00-setup", "w00-hello-boot"]);
   assert.deepEqual(J(beIds(app.buildDay(app.fromIso("2026-09-26")))), ["w02-hashmap-internals"]);
+  // 30/9 không làm task nào: không còn task chưa làm nằm lại ở ngày đó
+  assert.deepEqual(J(beIds(app.buildDay(app.fromIso("2026-09-30")))), []);
+  assert.equal(app.buildDay(app.fromIso("2026-09-30")).blocks.find(b => b.rv).note, "Không làm task backend hôm này");
+  // Bài DSA làm ở v1 hiện đúng ngày được xếp; bài chưa làm (153, 33…) đã cuộn sang hôm nay
+  assert.deepEqual(lcRoll(app, "2026-09-14"), [49, 347]);
+  assert.deepEqual(lcRoll(app, "2026-10-01"), []);
+  assert.deepEqual(J(app.ROLL.cod["2026-09-17"]), [1]);
+  // Ngày đã qua vẫn tính phần thiếu (30/9 có 1 ô backend, 2 bài DSA theo lịch v1)
+  const st = J(app.dayStats(app.fromIso("2026-09-30")));
+  assert.equal(st.beTot, 1); assert.equal(st.beDone, 0); assert.equal(st.dsTot, 2); assert.equal(st.dsDone, 2);
 });
 
 test("migration chạy lại và gộp nhiều lần cho cùng kết quả", () => {
@@ -130,24 +145,28 @@ test("import: nhận file v1 lẫn v2, luật gộp, lần dời tay cũ chuyể
   assert.deepEqual(n.cut, ["w12-lambda"]);
 });
 
-test("lịch cuộn: 6/10 bắt đầu Tuần 4, 103 task xếp hết tới 8/1", () => {
+// Việc xếp từ hôm nay trở đi (ngày đã qua chỉ là việc đã làm)
+const futureIds = (app, from) => Object.entries(J(app.ROLL.be)).filter(([iso]) => iso >= from).flatMap(([, l]) => l).map(i => app.SEQ[i].task.id);
+
+test("lịch cuộn: việc cũ nhất chưa làm lên hôm nay trước, task cũ đã gộp không chen vào", () => {
   const app = load("2026-10-06");
-  assert.deepEqual(ids(app, "2026-10-06"), ["w04-hashmap-note"]);
-  assert.deepEqual(ids(app, "2026-10-08"), ["w04-stream-lab", "w04-stream-advanced"]);
+  assert.deepEqual(ids(app, "2026-10-06"), ["w02-map-comparison"], "task cũ nhất chưa làm (Tuần 2) lên hôm nay");
+  assert.deepEqual(ids(app, "2026-10-07"), ["w04-hashmap-note"]);
+  assert.deepEqual(ids(app, "2026-10-08"), ["w04-lambda", "w04-stream-lab"]);
   assert.deepEqual(ids(app, "2026-10-10"), [], "thứ Bảy không nhận việc");
-  assert.deepEqual(ids(app, "2026-10-12"), ["w05-race-lab"]);
-  assert.deepEqual(ids(app, "2026-10-19"), ["w06-di-from-scratch"]);
-  assert.deepEqual(ids(app, "2026-12-28"), ["w16-m8-k6"]);
-  assert.deepEqual(ids(app, "2027-01-08"), ["b-fpt-starcamp", "b-plan-phase2"]);
-  const all = Object.values(J(app.ROLL.be)).flat();
-  assert.equal(all.length, 103);
-  assert.equal(new Set(all).size, 103);
+  assert.deepEqual(ids(app, "2026-10-12"), ["w04-oom-lab"]);
+  assert.deepEqual(ids(app, "2026-10-19"), ["w05-month1-check"]);
+  const all = futureIds(app, "2026-10-06");
+  assert.equal(all.length, 104);
+  assert.equal(new Set(all).size, 104);
+  assert.ok(!all.some(id => app.SUPERSEDED[id]), "task cũ đã gộp vào v2 không nằm trong hàng đợi");
   assert.equal(app.ROLL_LEFT.be.length, 0);
-  assert.equal(app.isoOf(app.beFinishDate()), "2027-01-08");
+  assert.equal(app.isoOf(app.beFinishDate()), "2027-01-10");
+  assert.deepEqual(ids(app, "2027-01-10"), ["b-plan-phase2"]);
   // Kế hoạch gốc (để đo độ chậm) vẫn xếp như cũ
   assert.equal(app.SEQ[app.slotIdx("2026-10-06", "be1")].task.id, "w04-hashmap-note");
   assert.deepEqual(J(app.lagCounts()), { be: 0, lc: 0 });
-  assert.deepEqual(J(app.beTotals()), { tot: 122, dn: 19 });
+  assert.deepEqual(J(app.beTotals()), { tot: 123, dn: 19 });
 });
 
 test("việc chưa làm tự sang hôm nay, không dồn", () => {
@@ -155,8 +174,8 @@ test("việc chưa làm tự sang hôm nay, không dồn", () => {
   const app = load("2026-10-08");
   assert.deepEqual(ids(app, "2026-10-06"), [], "ngày đã qua chỉ hiện việc đã làm");
   assert.deepEqual(ids(app, "2026-10-07"), []);
-  assert.deepEqual(ids(app, "2026-10-08"), ["w04-hashmap-note", "w04-lambda"], "hôm nay nhận việc của 6/10 và 7/10, chỉ đủ 2 ô");
-  assert.deepEqual(ids(app, "2026-10-09"), ["w04-stream-lab", "w04-stream-advanced"]);
+  assert.deepEqual(ids(app, "2026-10-08"), ["w02-map-comparison", "w04-hashmap-note"], "hôm nay nhận việc của 6/10 và 7/10, chỉ đủ 2 ô");
+  assert.deepEqual(ids(app, "2026-10-09"), ["w04-lambda", "w04-stream-lab"]);
   assert.deepEqual(J(app.lagCounts()), { be: 2, lc: 4 });
   // DSA cũng cuộn: thứ Năm làm Codility, bài 6/10–7/10 sang thứ Sáu (2 bài/ngày ở Tuần 4)
   assert.deepEqual(J(app.ROLL.cod["2026-10-08"]), [3]);
@@ -173,15 +192,15 @@ test("đã tích là xong hẳn, làm trước được, không phải tích l�
   tick(app, "w04-stream-lab", "2026-10-07");   // hôm qua làm trước 1 task
   tick(app, "w04-lambda", "2026-10-08");       // hôm nay làm 1 task
   assert.deepEqual(ids(app, "2026-10-07"), ["w04-stream-lab"], "ngày đã qua hiện việc đã làm hôm đó");
-  assert.deepEqual(ids(app, "2026-10-08"), ["w04-lambda", "w04-hashmap-note"]);
-  assert.deepEqual(ids(app, "2026-10-09"), ["w04-stream-advanced", "w04-errors-money"]);
-  const later = Object.entries(J(app.ROLL.be)).filter(([iso]) => iso > "2026-10-08").flatMap(([, l]) => l).map(i => app.SEQ[i].task.id);
+  assert.deepEqual(ids(app, "2026-10-08"), ["w04-lambda", "w02-map-comparison"]);
+  assert.deepEqual(ids(app, "2026-10-09"), ["w04-hashmap-note", "w04-stream-advanced"]);
+  const later = futureIds(app, "2026-10-09");
   assert.ok(!later.includes("w04-lambda") && !later.includes("w04-stream-lab"), "task đã tích không quay lại");
-  assert.equal(J(app.aheadTasks(1))[0].i, app.IDX["w04-stream-advanced"]);
+  assert.equal(J(app.aheadTasks(1))[0].i, app.IDX["w04-hashmap-note"]);
   // Tích task của ngày mai ngay hôm nay: nó hiện ở hôm nay, mai nhận task kế tiếp
-  tick(app, "w04-stream-advanced", "2026-10-08");
-  assert.deepEqual(ids(app, "2026-10-08"), ["w04-lambda", "w04-stream-advanced"]);
-  assert.deepEqual(ids(app, "2026-10-09"), ["w04-hashmap-note", "w04-errors-money"]);
+  tick(app, "w04-hashmap-note", "2026-10-08");
+  assert.deepEqual(ids(app, "2026-10-08"), ["w04-hashmap-note", "w04-lambda"], "việc đã làm trong ngày xếp theo thứ tự hàng đợi");
+  assert.deepEqual(ids(app, "2026-10-09"), ["w02-map-comparison", "w04-stream-advanced"]);
 });
 
 test("ngày nghỉ ôn thi: không nhận việc, việc lùi sang ngày sau", () => {
@@ -189,22 +208,22 @@ test("ngày nghỉ ôn thi: không nhận việc, việc lùi sang ngày sau", (
   app.setOff(app.fromIso("2026-10-08"), false, true);
   assert.deepEqual(ids(app, "2026-10-08"), []);
   assert.deepEqual(J(app.ROLL.cod["2026-10-08"]), []);
-  assert.deepEqual(ids(app, "2026-10-09"), ["w04-hashmap-note", "w04-lambda"]);
+  assert.deepEqual(ids(app, "2026-10-09"), ["w02-map-comparison", "w04-hashmap-note"]);
   const day = app.buildDay(app.fromIso("2026-10-08"));
   assert.ok(day.off && day.blocks.some(b => b.title === "Nghỉ backend (ôn thi)"));
   assert.equal(J(app.dayStats(app.fromIso("2026-10-08"))).beTot, 0, "ngày nghỉ không tính thiếu");
   // Nghỉ tới hết Chủ nhật
   app.setOff(app.fromIso("2026-10-09"), true, true);
   for (const iso of ["2026-10-09", "2026-10-10", "2026-10-11"]) assert.deepEqual(ids(app, iso), [], iso);
-  assert.deepEqual(ids(app, "2026-10-12"), ["w04-hashmap-note"]);
+  assert.deepEqual(ids(app, "2026-10-12"), ["w02-map-comparison"]);
   // Bỏ nghỉ
   app.setOff(app.fromIso("2026-10-09"), false, false);
-  assert.deepEqual(ids(app, "2026-10-09"), ["w04-hashmap-note", "w04-lambda"]);
+  assert.deepEqual(ids(app, "2026-10-09"), ["w02-map-comparison", "w04-hashmap-note"]);
 });
 
 test("chậm nhiều tuần: lịch kéo dài qua 8/1, tuần thi giữ trống, cắt và khôi phục task tuỳ chọn", () => {
   const app = load("2026-11-16");
-  assert.deepEqual(ids(app, "2026-11-16"), ["w04-hashmap-note"]);
+  assert.deepEqual(ids(app, "2026-11-16"), ["w02-map-comparison"]);
   assert.equal(app.ROLL_LEFT.be.length, 0);
   const fin = app.beFinishDate();
   assert.ok(fin > app.BUFEND, "dự kiến xong sau 8/1");
@@ -231,10 +250,10 @@ test("DSA: chỉ Easy/Medium, Codility chưa làm sang thứ Năm kế tiếp, x
   for (const i of J(app.DSA_Q)) assert.notEqual(app.LC[i][3], "H");
   // Lịch cuộn: toàn bộ 98 bài và 15 lesson được xếp, mỗi bài 1 lần
   assert.deepEqual(lcRoll(app, "2026-10-06"), [153, 33]);
-  const lc = Object.values(J(app.ROLL.lc)).flat();
+  const lc = Object.entries(J(app.ROLL.lc)).filter(([iso]) => iso >= "2026-10-06").flatMap(([, l]) => l);
   assert.equal(lc.length, 98); assert.equal(new Set(lc).size, 98);
   assert.equal(app.ROLL_LEFT.lc.length, 0);
-  const cod = Object.entries(J(app.ROLL.cod)).filter(([, l]) => l.length);
+  const cod = Object.entries(J(app.ROLL.cod)).filter(([iso, l]) => iso >= "2026-10-06" && l.length);
   assert.deepEqual(cod.map(([, l]) => l[0]), J(app.COD_ORDER));
   assert.ok(cod.every(([iso]) => app.dow(app.fromIso(iso)) === 4));
   assert.ok(cod.every(([iso]) => iso < "2026-12-14" || iso > "2026-12-27"), "tuần thi không có Codility");
