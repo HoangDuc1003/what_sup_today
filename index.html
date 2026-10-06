@@ -225,6 +225,34 @@ kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-wid
   #week .weekday{margin:0;height:100%;display:flex;flex-direction:column;justify-content:flex-start}
   .notes{grid-column:1 / -1}
 }
+/* Lộ trình v2: ưu tiên, bằng chứng, ôn ngắt quãng, retro, cách học */
+.pri{font-size:10.5px;font-weight:700;border:1px solid currentColor;border-radius:6px;padding:0 5px;margin-left:6px;vertical-align:1px;white-space:nowrap;color:var(--muted)}
+.pri.p1{color:var(--c-class)}
+.field{width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--box-bg);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
+.field.ta{min-height:64px;resize:vertical}
+.proof{margin:8px 0 4px 30px;display:grid;gap:6px}
+.rv{margin:8px 0 6px;padding:8px 12px 10px;border:1px dashed color-mix(in srgb,var(--c) 45%,var(--line));border-radius:12px}
+.rv-head{font-size:13px;font-weight:700;color:var(--c)}
+.rv-card{padding:8px 0 2px;border-top:1px solid var(--line);display:grid;gap:5px}
+.rv-head + .rv-card{border-top:0}
+.rv-q{font-size:14px}
+.rv-qs{margin:0;padding-left:18px;font-size:13.5px}
+.rv-src{font-size:12.5px;color:var(--muted)}
+.score{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.score .btn{min-width:36px;padding:6px 10px}
+.retro{margin:8px 0 0 30px;display:grid;gap:6px}
+.small{font-size:12.5px;color:var(--muted)}
+.archive,.p2-more{margin-top:10px;font-size:13.5px}
+.archive summary,.p2-more summary{cursor:pointer;color:var(--muted);font-weight:600}
+.p2-group.c-dsa{--c:var(--c-dsa)}
+.method summary{cursor:pointer;font-weight:700}
+.method h3{font-size:14.5px;margin:14px 0 4px}
+.method ol,.method ul{margin:4px 0;padding-left:20px;font-size:14px}
+.method li{margin:3px 0}
+.method p{margin:4px 0}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.banner .btnrow{margin-top:8px}
+
 /* Điện thoại xoay ngang */
 @media (orientation:landscape) and (max-height:520px){
   .hero{padding:14px 20px 16px}
@@ -252,8 +280,9 @@ kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-wid
     <div class="col-main">
       <section aria-labelledby="h-day"><h2 id="h-day">Lịch trong ngày</h2><div id="timeline"></div></section>
       <section aria-labelledby="h-note"><h2 id="h-note">Ghi chú trong ngày</h2>
-        <div class="card"><textarea id="dayNote" class="daynote" aria-labelledby="h-note" placeholder="Hôm nay học được gì, kẹt ở đâu, điểm đề kiểm tra…"></textarea><div class="note-meta" id="noteMeta"></div></div>
+        <div class="card"><textarea id="dayNote" class="daynote" aria-labelledby="h-note" placeholder="Dự đoán trước khi chạy, chỗ sai, chỗ kẹt, điểm đề kiểm tra…"></textarea><div class="note-meta" id="noteMeta"></div></div>
       </section>
+      <section aria-labelledby="h-method"><h2 id="h-method">Cách học</h2><div id="method" class="card method"></div></section>
     </div>
     <aside class="col-side">
       <section aria-labelledby="h-timer"><h2 id="h-timer">Hẹn giờ tập trung</h2><div id="timer" class="card tm"></div></section>
@@ -263,22 +292,23 @@ kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-wid
     </div>
     <section class="span-all" aria-labelledby="h-week"><h2 id="h-week">Cả tuần</h2><div id="week"></div></section>
     <section class="span-all" aria-labelledby="h-heat"><h2 id="h-heat">Bản đồ tiến độ</h2><div id="heat" class="card"></div></section>
-    <section aria-labelledby="h-p2"><h2 id="h-p2">Giai đoạn 2: Java Intensive → OJT NAB</h2><div id="phase2" class="card"></div></section>
+    <section aria-labelledby="h-p2"><h2 id="h-p2">Giai đoạn 2: kỳ 5 → OJT / StarCamp NAB</h2><div id="phase2" class="card"></div></section>
     <section aria-labelledby="h-bak"><h2 id="h-bak">Sao lưu tiến độ</h2>
       <div class="card">
-        <p class="empty">Tiến độ chỉ nằm trong trình duyệt này. Xuất file JSON để lưu dự phòng hoặc chuyển sang máy khác (PC ↔ điện thoại).</p>
+        <p class="empty">Tiến độ chỉ nằm trong trình duyệt này. Xuất file JSON (định dạng v2) để lưu dự phòng hoặc chuyển sang máy khác (PC ↔ điện thoại). Nhập được cả file v1 cũ: app tự chuyển sang v2 rồi gộp (việc đã làm thắng, ghi chú nối không trùng).</p>
         <div class="btnrow">
           <button id="exportBtn" class="btn primary" type="button">Xuất file tiến độ</button>
           <button id="importBtn" class="btn" type="button">Nhập file (gộp)</button>
+          <button class="btn" type="button" data-act="backup-v1">Tải bản sao lưu v1</button>
           <input id="importFile" type="file" accept="application/json,.json" hidden>
         </div>
       </div>
     </section>
     <section class="notes" id="notes">
-      <p>Lịch đã dời từ T5 24/9/2026: hôm nay tiếp đúng task “Deep dive: Effective Java chương 3”, từ mai đi lần lượt từng task, không gộp. Tuần 12–13 chuyển sang AWS (IAM, ECR, ECS, RDS, S3, SQS, CloudWatch, Terraform) cho hợp OJT NAB. Bị trễ nữa thì bấm “Dời lịch về hôm nay” ở mục Việc còn nợ.</p>
+      <p>Lộ trình v2 từ T3 6/10/2026: nội dung từ Tuần 4 làm lại theo chuẩn 2026 (Java 25, Spring Boot 4.1) và theo cổng tuyển NAB (Codility, tiếng Anh, Java/JVM/DB). MiniPay bắt đầu ở Tuần 6, mỗi tuần một mốc M0–M8. Thứ Bảy là Buffer, không nhận task mới. Lịch trước 6/10 giữ nguyên để xem lại; task cũ chưa làm nằm trong Lưu trữ.</p>
       <p>Tuần 14–15 là tuần thi cuối kỳ Fall 2026 theo ước lượng. Khi FAP có lịch thi thật, ưu tiên lịch thi và dời việc backend sang ô Buffer thứ Bảy.</p>
-      <p>Link LeetCode mở thẳng bài. “Tìm nguồn” mở Google với tên nguồn chính xác, để tránh link sai. 7 bài Premium của NeetCode 150 không nằm trong danh sách (143 bài miễn phí).</p>
-      <p>Việc còn nợ lấy từ 14 ngày gần nhất và không trước lần dời lịch gần nhất: backend, LeetCode và Codility chưa tích.</p>
+      <p>Link LeetCode mở thẳng bài. “Tìm nguồn” mở Google với tên nguồn chính xác, để tránh link sai. 7 bài Premium của NeetCode 150 không nằm trong danh sách (143 bài miễn phí). Từ 6/10 lịch chỉ xếp bài Easy/Medium; 20 bài Hard nằm trong Kho Hard ở mục Giai đoạn 2.</p>
+      <p>Việc còn nợ lấy từ 14 ngày gần nhất và không trước lần dời lịch gần nhất: backend, LeetCode và Codility chưa tích. Task backend cần link bằng chứng (hoặc lý do) khi tích.</p>
     </section>
   </main>
 </div>
@@ -305,6 +335,10 @@ const W1 = Date.UTC(2026,8,14);      // T2 14/9/2026: Tuần 1
 const W16END = Date.UTC(2027,0,3);   // CN 3/1/2027: hết Tuần 16
 const BUFSTART = Date.UTC(2027,0,4); // T2 4/1/2027: tuần đệm
 const BUFEND = Date.UTC(2027,0,8);   // T6 8/1/2027
+// Lộ trình v2 bắt đầu từ T3 6/10/2026: từ ngày này dùng nội dung, luật lịch và hàng đợi DSA mới.
+// Ngày trước mốc này giữ nguyên lịch v1 để xem lại lịch sử.
+const REBASE_ISO = "2026-10-06";
+const REBASE = Date.UTC(2026,9,6);
 const HOLIDAYS = {"2027-01-01":"Tết Dương lịch, nghỉ lễ"};
 
 function isoOf(t){const d=new Date(t);return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0");}
@@ -312,6 +346,7 @@ function fromIso(s){const [y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1
 function todayUTC(){const n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());}
 function dow(t){return new Date(t).getUTCDay();}
 function dm(t){const d=new Date(t);return d.getUTCDate()+"/"+(d.getUTCMonth()+1);}
+function byDate(a,b){return a.date<b.date?-1:a.date>b.date?1:0;}
 function weekOf(t){
   if(t<W0||t>BUFEND) return null;
   if(t<W1) return 0;
@@ -323,6 +358,7 @@ function weekRange(w){
   if(w==="B") return [BUFSTART,BUFEND];
   const s=W1+(w-1)*7*DAY; return [s,s+6*DAY];
 }
+function mondayOfT(t){return t-((dow(t)+6)%7)*DAY;}
 const DOW_LONG=["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"];
 const DOW_SHORT=["CN","T2","T3","T4","T5","T6","T7"];
 const DAYTYPE={1:"Ngày bận, 2 tiết",2:"1 tiết ở NVH",3:"Ngày bận, 2 tiết",4:"1 tiết ở campus",5:"1 tiết ở NVH",6:"Ngày bận, 2 tiết",0:"Trống cả ngày"};
@@ -359,256 +395,464 @@ const TPL={
      T("13:30","15:30","be","Backend #2","be2"),T("15:45","17:15","en","Mock OA hoặc mock interview","mock"),DINNER,GYM,
      T("19:15","20:00","gold","Review tuần, chấm 0–5","review"),T("20:15","21:15","gold","Lập kế hoạch tuần tới","plan"),WIND]
 };
-// Vị trí task backend trong mảng be[] theo thứ trong tuần
+// Vị trí task backend trong mảng be[] theo thứ trong tuần (tuần 0, 14, 15 xếp cố định theo vị trí)
 const BE_STD={1:[0],2:[1],3:[2],4:[3,4],5:[5,6],6:[7],0:[8,9]};
 const BE_W0={5:[0,1],6:[2],0:[3,4]};
 const BE_BUF={1:[0],2:[1],3:[2],4:[3,4],5:[5,6]};
 
 /* ============ NỘI DUNG TỪNG TUẦN ============
-   be[]: [T2, T3, T4, T5#1, T5#2, T6#1, T6#2, T7, CN#1, CN#2]
-   Mỗi task: "text" hoặc ["text", "url" | "cụm từ tìm kiếm", "ghi chú cách làm (tuỳ chọn)"]  */
+   Task backend: K(id, ưu tiên, nội dung, nguồn, "Đạt khi …").
+   - id: slug cố định, tiến độ lưu theo id (không theo vị trí), nên sửa nội dung không làm lệch tiến độ.
+   - Ưu tiên: 1 = MiniPay / lab có sản phẩm · 2 = nền tảng hay hỏi phỏng vấn · 3 = luyện nói, trình bày, đọc có sản phẩm
+              4 = lý thuyết sâu hoặc tuỳ chọn · 5 = chứng chỉ. Khi trễ, cắt P5 rồi P4 trước.
+   - Nguồn: URL, hoặc cụm từ tìm kiếm (mở Google) để tránh link chết.
+   Tuần 0–3 là lịch sử v1 (giữ nguyên nội dung, chỉ thêm id). Từ Tuần 4 là lộ trình v2 (từ 6/10/2026).
+   Mỗi tuần v2 có 9 task cho 9 ô: T2 · T3 · T4 · T5#1 · T5#2 · T6#1 · T6#2 · CN#1 · CN#2 (thứ Bảy là Buffer). */
+function K(id,pri,t,src,dod){return {id,pri,t,src:src||"",dod:dod||""};}
 const WEEKS={
 0:{theme:"Setup và baseline",dsa:"Arrays & Hashing (khởi động)",goal:"Hello Spring Boot chạy được, có baseline.md tự chấm",
- be:[["Cài JDK 21 (Eclipse Temurin), IntelliJ IDEA Community, Git; tạo repo backend-journey","Eclipse Temurin JDK 21 download"],
-     ["Tạo project trên start.spring.io (Java 21, Spring Boot 3.x, Spring Web), viết GET /hello chạy được","https://www.baeldung.com/spring-boot-start"],
-     "Chẩn đoán Java Core: tự trả lời 20 câu Must-have trong roadmap, không tra cứu, chấm 0–5, ghi vào baseline.md",
-     ["Chẩn đoán DB: chạy PostgreSQL bằng Docker, viết 5 query JOIN / GROUP BY, giải thích index là gì, ghi vào baseline.md","PostgreSQL Docker official image"],
-     "Tạo khung repo MiniPay: README ghi mục tiêu, tính năng dự kiến, lịch 16 tuần"],
+ be:[K("w00-setup",2,"Cài JDK 21 (Eclipse Temurin), IntelliJ IDEA Community, Git; tạo repo backend-journey","Eclipse Temurin JDK 21 download"),
+     K("w00-hello-boot",2,"Tạo project trên start.spring.io (Java 21, Spring Boot 3.x, Spring Web), viết GET /hello chạy được","https://www.baeldung.com/spring-boot-start"),
+     K("w00-baseline-java",2,"Chẩn đoán Java Core: tự trả lời 20 câu Must-have trong roadmap, không tra cứu, chấm 0–5, ghi vào baseline.md"),
+     K("w00-baseline-db",2,"Chẩn đoán DB: chạy PostgreSQL bằng Docker, viết 5 query JOIN / GROUP BY, giải thích index là gì, ghi vào baseline.md","PostgreSQL Docker official image"),
+     K("w00-minipay-readme",2,"Tạo khung repo MiniPay: README ghi mục tiêu, tính năng dự kiến, lịch 16 tuần")],
  en:["","","Luyện tự giới thiệu 2 phút bằng tiếng Anh, ghi âm lại"],
  mock:"Chẩn đoán speaking: ghi âm 3 phút giải thích kiến trúc NitroCine bằng tiếng Anh, ghi 5 lỗi cần sửa"},
 1:{theme:"Java Core I: OOP, equals/hashCode, String",dsa:"Arrays & Hashing, Two Pointers",goal:"Giải thích được hashCode contract bằng lời",
- be:["OOP sâu: overloading vs overriding, interface vs abstract class. Code ví dụ trong java-core/m1-oop",
-     "== vs equals(), Java luôn pass-by-value: viết test chứng minh bằng hàm swap object",
-     ["String pool, immutability, StringBuilder vs nối chuỗi: đo thời gian với vòng lặp 100k","Baeldung Java String Pool"],
-     ["equals()/hashCode() contract: viết class Money(amount, currency) đúng chuẩn; bỏ hashCode rồi cho vào HashSet để thấy lỗi","Baeldung Java equals hashCode contracts"],
-     "static, final, immutable class: viết Money bằng class rồi bằng record, so sánh",
-     ["Wrapper class, autoboxing, Integer cache (-128..127): bẫy == với Integer","Java Integer cache autoboxing"],
-     "Viết README module 1: 10 câu hỏi phỏng vấn kèm câu trả lời của bạn bằng tiếng Anh",
-     "Dựng project java-core nhiều module (Maven hoặc Gradle), viết JUnit 5 test cho ví dụ trong tuần",
-     ["Deep dive: Effective Java chương 3 (Items 10–14: equals, hashCode, toString, clone, Comparable)","Effective Java 3rd edition chapter 3 methods common to all objects",
-      "Lab: BrokenMoney (thiếu hashCode) → Money final chuẩn hoá scale BigDecimal, equals/hashCode/toString/compareTo + JUnit test contract; làm đề kiểm tra 12 câu (đạt ≥9/12)"],
-     "Tổng hợp note Java Core Q&A tuần 1 (kèm note EJ ch.3 bằng tiếng Anh), push GitHub"],
+ be:[K("w01-oop",2,"OOP sâu: overloading vs overriding, interface vs abstract class. Code ví dụ trong java-core/m1-oop"),
+     K("w01-equals-pass-by-value",2,"== vs equals(), Java luôn pass-by-value: viết test chứng minh bằng hàm swap object"),
+     K("w01-string-pool",2,"String pool, immutability, StringBuilder vs nối chuỗi: đo thời gian với vòng lặp 100k","Baeldung Java String Pool"),
+     K("w01-equals-hashcode",2,"equals()/hashCode() contract: viết class Money(amount, currency) đúng chuẩn; bỏ hashCode rồi cho vào HashSet để thấy lỗi","Baeldung Java equals hashCode contracts"),
+     K("w01-immutable-record",2,"static, final, immutable class: viết Money bằng class rồi bằng record, so sánh"),
+     K("w01-integer-cache",2,"Wrapper class, autoboxing, Integer cache (-128..127): bẫy == với Integer","Java Integer cache autoboxing"),
+     K("w01-readme-qa",2,"Viết README module 1: 10 câu hỏi phỏng vấn kèm câu trả lời của bạn bằng tiếng Anh"),
+     K("w01-multimodule-junit",2,"Dựng project java-core nhiều module (Maven hoặc Gradle), viết JUnit 5 test cho ví dụ trong tuần"),
+     K("w01-effective-java-ch3",2,"Deep dive: Effective Java chương 3 (Items 10–14: equals, hashCode, toString, clone, Comparable)","Effective Java 3rd edition chapter 3 methods common to all objects",
+       "Lab: BrokenMoney (thiếu hashCode) → Money final chuẩn hoá scale BigDecimal, equals/hashCode/toString/compareTo + JUnit test contract; làm đề kiểm tra 12 câu (đạt ≥9/12)"),
+     K("w01-notes",2,"Tổng hợp note Java Core Q&A tuần 1 (kèm note EJ ch.3 bằng tiếng Anh), push GitHub")],
  en:["Speaking: giải thích equals/hashCode bằng tiếng Anh, ghi âm 3 phút","Mock với AI: 8 câu OOP, String, equals","Trình bày kiến trúc NitroCine 3 phút"],
  mock:"Mock interview tiếng Anh 45 phút: Java Core tuần 1 (cho ChatGPT đóng vai interviewer NAB)"},
 2:{theme:"Java Core II: Collections, Generics, Exception, Optional",dsa:"Sliding Window, Stack",goal:"Vẽ được sơ đồ HashMap khi có collision",
- be:["Collections tổng quan: List/Set/Map/Queue; ArrayList vs LinkedList (Big-O, cache locality), benchmark nhỏ",
-     ["Generics: bounded type, wildcard ? extends vs ? super (PECS), type erasure","Baeldung Java generics wildcards"],
-     ["HashMap bên trong: hash(), chỉ số bucket (n-1) & hash, collision chaining, load factor 0.75, resize","Baeldung Java HashMap under the hood"],
-     "Treeify từ Java 8: TREEIFY_THRESHOLD = 8, MIN_TREEIFY_CAPACITY = 64. Mở source HashMap.java trong IntelliJ, vẽ sơ đồ",
-     "Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test; dùng Money làm key",
-     "Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap; fail-fast iterator và ConcurrentModificationException",
-     ["Exception: checked vs unchecked, custom exception, try-with-resources","Baeldung Java checked vs unchecked exceptions"],
-     ["Optional đúng và sai (không làm field/param); Comparator.comparing().thenComparing() thay cho compareTo viết tay","Baeldung Guide to Java Optional"],
-     "Viết note HashMap bên trong (có sơ đồ), push GitHub"],
+ be:[K("w02-collections",2,"Collections tổng quan: List/Set/Map/Queue; ArrayList vs LinkedList (Big-O, cache locality), benchmark nhỏ"),
+     K("w02-generics",2,"Generics: bounded type, wildcard ? extends vs ? super (PECS), type erasure","Baeldung Java generics wildcards"),
+     K("w02-hashmap-internals",2,"HashMap bên trong: hash(), chỉ số bucket (n-1) & hash, collision chaining, load factor 0.75, resize","Baeldung Java HashMap under the hood"),
+     K("w02-treeify",2,"Treeify từ Java 8: TREEIFY_THRESHOLD = 8, MIN_TREEIFY_CAPACITY = 64. Mở source HashMap.java trong IntelliJ, vẽ sơ đồ"),
+     K("w02-myhashmap",2,"Tự viết MyHashMap<K,V> (chaining + resize) kèm unit test; dùng Money làm key"),
+     K("w02-map-comparison",2,"Bảng so sánh HashMap, Hashtable, ConcurrentHashMap, LinkedHashMap, TreeMap; fail-fast iterator và ConcurrentModificationException"),
+     K("w02-exceptions",2,"Exception: checked vs unchecked, custom exception, try-with-resources","Baeldung Java checked vs unchecked exceptions"),
+     K("w02-optional-comparator",2,"Optional đúng và sai (không làm field/param); Comparator.comparing().thenComparing() thay cho compareTo viết tay","Baeldung Guide to Java Optional"),
+     K("w02-hashmap-note",2,"Viết note HashMap bên trong (có sơ đồ), push GitHub")],
  en:["Speaking: giải thích HashMap internals","Mock với AI: Collections và Generics","Trình bày: khi nào dùng ArrayList, khi nào LinkedList"],
  mock:"Mock OA 90 phút: 2 Medium + 1 Easy chưa làm trên LeetCode, bấm giờ như Codility"},
 3:{theme:"Java Core III: Stream API, JVM",dsa:"Stack, Binary Search",goal:"Trả lời được câu “GC hoạt động thế nào”",
- be:["Lambda và functional interface (Function, Predicate, Supplier, Consumer), method reference",
-     ["Stream API: map/filter/reduce, collect với groupingBy, partitioningBy; lazy evaluation","Baeldung Java 8 Streams introduction"],
-     "Stream nâng cao: flatMap, Collectors.toMap khi trùng key, khi nào không nên dùng parallel stream",
-     "Bài tập: xử lý danh sách Transaction giả lập bằng Stream (tổng theo tháng, top 5 khách hàng)",
-     ["JVM memory: heap (young/old), stack, metaspace. Object nằm đâu, biến local nằm đâu: vẽ sơ đồ","Baeldung Java stack memory and heap space"],
-     ["GC: mark-sweep-compact, generational, G1 là mặc định","Oracle HotSpot garbage collection tuning guide G1"],
-     ["Gây OutOfMemoryError với -Xmx nhỏ, xem heap bằng VisualVM; JVM trong container: -XX:MaxRAMPercentage (chuẩn bị chạy trên AWS ECS)","JVM MaxRAMPercentage container memory"],
-     ["Class loader, JIT; Java Memory Model: happens-before, visibility (chuẩn bị cho concurrency)","Java Memory Model happens-before explained"],
-     "Tự trả lời 10 câu phỏng vấn JVM, ghi note JVM memory, push GitHub"],
+ be:[K("w03-lambda",2,"Lambda và functional interface (Function, Predicate, Supplier, Consumer), method reference"),
+     K("w03-stream-api",2,"Stream API: map/filter/reduce, collect với groupingBy, partitioningBy; lazy evaluation","Baeldung Java 8 Streams introduction"),
+     K("w03-stream-advanced",2,"Stream nâng cao: flatMap, Collectors.toMap khi trùng key, khi nào không nên dùng parallel stream"),
+     K("w03-transaction-lab",2,"Bài tập: xử lý danh sách Transaction giả lập bằng Stream (tổng theo tháng, top 5 khách hàng)"),
+     K("w03-jvm-memory",2,"JVM memory: heap (young/old), stack, metaspace. Object nằm đâu, biến local nằm đâu: vẽ sơ đồ","Baeldung Java stack memory and heap space"),
+     K("w03-gc",2,"GC: mark-sweep-compact, generational, G1 là mặc định","Oracle HotSpot garbage collection tuning guide G1"),
+     K("w03-oom-container",2,"Gây OutOfMemoryError với -Xmx nhỏ, xem heap bằng VisualVM; JVM trong container: -XX:MaxRAMPercentage (chuẩn bị chạy trên AWS ECS)","JVM MaxRAMPercentage container memory"),
+     K("w03-classloader-jmm",2,"Class loader, JIT; Java Memory Model: happens-before, visibility (chuẩn bị cho concurrency)","Java Memory Model happens-before explained"),
+     K("w03-jvm-qa",2,"Tự trả lời 10 câu phỏng vấn JVM, ghi note JVM memory, push GitHub")],
  en:["Speaking: giải thích lazy evaluation của Stream","Mock với AI: JVM memory và GC","Trình bày: heap vs stack"],
  mock:"Mock interview tiếng Anh 45 phút: Collections + JVM"},
-4:{theme:"Concurrency",dsa:"Linked List",goal:"Giải thích được race condition và cách chặn",
- be:["Thread vs Runnable vs Callable, vòng đời thread; demo race condition counter++ với 2 thread",
-     "Sửa race condition bằng 3 cách: synchronized, AtomicInteger, ReentrantLock; so sánh",
-     ["ExecutorService: fixed/cached pool, submit vs execute, Future, shutdown đúng cách","Baeldung Java ExecutorService guide"],
-     "Deadlock: tái hiện chuyển tiền A→B và B→A cùng lúc, fix bằng lock ordering (dùng lại ở MiniPay)",
-     "volatile vs synchronized, tryLock; ConcurrentHashMap hoạt động thế nào ở mức khái niệm",
-     ["CompletableFuture: supplyAsync, thenApply, thenCombine, allOf, exceptionally","Baeldung Guide to CompletableFuture"],
-     "Gọi 3 service giả lập song song bằng CompletableFuture, đo thời gian so với chạy tuần tự",
-     ["Virtual Threads (Java 21): tạo 10k virtual thread vs platform thread, so sánh","https://www.baeldung.com/spring-6-virtual-threads"],
-     "Deep dive: Java Concurrency in Practice chương 2–3 (Thread Safety, Sharing Objects)",
-     "Tự kiểm tháng 1: mock 20 câu Java Core với AI, chấm checklist Must-have"],
- en:["Speaking: giải thích race condition và deadlock","Mock với AI: concurrency","Trình bày: CompletableFuture khác gì tạo Thread thủ công"],
- mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-5:{theme:"Spring Boot I: IoC/DI, REST, OpenAPI",dsa:"Linked List, Trees",goal:"Phân biệt được @Component vs @Bean và bean scope",
- be:["IoC/DI: viết DI thủ công bằng new trước, rồi chuyển sang Spring để thấy vì sao cần container",
-     ["Tạo project start.spring.io: Java 21, Boot 3.x, Web, Validation, Data JPA, PostgreSQL, Actuator","https://www.baeldung.com/spring-boot-start"],
-     "@Component/@Service/@Repository vs @Bean + @Configuration; constructor injection; bean scope",
-     "Bean lifecycle (@PostConstruct, @PreDestroy); auto-configuration hoạt động thế nào sau @SpringBootApplication",
-     "REST CRUD /api/accounts: Controller → Service → Repository (in-memory), dùng DTO",
-     ["application.yml, @ConfigurationProperties, profiles dev/test/prod; cấu hình qua biến môi trường (12-factor) như khi chạy trên AWS","The Twelve-Factor App config"],
-     ["HTTP đúng chuẩn (status code, ResponseEntity, đặt tên endpoint) + OpenAPI/Swagger bằng springdoc","springdoc-openapi Spring Boot 3"],
-     ["Deep dive: IoC container và design pattern Spring dùng (Factory, Proxy, Template Method, Strategy); so sánh Servlet/JSP của PRJ301 với DispatcherServlet","Design patterns used in Spring Framework"],
-     "SOLID (Java Intensive): rà CRUD API theo SRP/DIP, hoàn thiện Postman collection, push repo"],
- en:["Speaking: giải thích IoC/DI","Mock với AI: Spring core (@Component vs @Bean, scope)","Trình bày: một request đi qua Spring MVC thế nào"],
- mock:"Mock interview tiếng Anh 45 phút: concurrency + Spring core"},
-6:{theme:"Spring Data JPA",dsa:"Trees, Heap",goal:"Tái hiện và fix được N+1",
- be:["JPA mapping: @Entity, @Id, @GeneratedValue, @OneToMany/@ManyToOne; kết nối PostgreSQL chạy Docker",
-     "Spring Data repository: derived query, @Query, phân trang và sắp xếp",
-     "Tái hiện N+1: bật show-sql, đếm số query khi load Account kèm Transactions",
-     ["Fix N+1: JOIN FETCH, @EntityGraph, batch size; lazy vs eager và LazyInitializationException","Vlad Mihalcea N+1 query problem"],
-     "Viết test đếm số query (Hibernate statistics) trước và sau khi fix",
-     ["@Transactional: propagation REQUIRED vs REQUIRES_NEW, rollback rules, lỗi self-invocation do proxy","Baeldung Transactions with Spring and JPA"],
-     "Isolation level: dirty read, non-repeatable read, phantom; thử 2 transaction song song trên PostgreSQL",
-     "Chuyển CRUD sang JPA + PostgreSQL thật, mapping DTO",
-     ["Deep dive: Vlad Mihalcea về @Transactional và hiệu năng JPA; ghi note N+1, lazy/eager, self-invocation, push","Vlad Mihalcea Spring Transactional best practices"]],
- en:["Speaking: giải thích N+1 và cách fix","Mock với AI: JPA và @Transactional","Trình bày: các isolation level"],
- mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-7:{theme:"Security, JWT, OAuth2, AOP",dsa:"Heap, Trie, Backtracking",goal:"Endpoint được bảo vệ bằng JWT, lỗi trả về thống nhất",
- be:[["Bean Validation: @Valid, @NotNull, @Size, custom validator","Baeldung Spring Boot bean validation"],
-     ["Global exception handling: @RestControllerAdvice + ProblemDetail (RFC 7807)","Spring Framework ProblemDetail error responses"],
-     ["Spring Security: SecurityFilterChain, filter chain hoạt động thế nào, BCrypt","Spring Security servlet architecture reference"],
-     "JWT: cấu trúc header.payload.signature; login cấp token, filter xác thực token",
-     "Phân quyền endpoint theo role, xử lý 401 vs 403 đúng, refresh token đơn giản",
-     ["OAuth2 Resource Server: xác thực JWT do IdP cấp (Keycloak chạy Docker; Amazon Cognito ở mức khái niệm)","Spring Security OAuth2 resource server JWT"],
-     ["AOP: @Aspect, @Around log thời gian chạy method; proxy JDK vs CGLIB","Baeldung Introduction to Spring AOP"],
-     ["Actuator: /health, /metrics, /info; expose an toàn (health check cho load balancer AWS sau này)","Baeldung Spring Boot Actuator"],
-     "Deep dive: session vs JWT vs OAuth2; viết ADR-001 bản nháp"],
- en:["Speaking: giải thích luồng JWT","Mock với AI: Spring Security, OAuth2","Trình bày: session vs JWT"],
- mock:"Mock interview tiếng Anh 45 phút: JPA + Security"},
-8:{theme:"Database chuyên sâu",dsa:"Backtracking, Graphs",goal:"Đọc được execution plan và chỉ ra index thiếu",
- be:[["B-tree index hoạt động thế nào: Use The Index, Luke, chương Anatomy of an Index","Use The Index Luke anatomy of an index"],
-     "Tạo bảng 1 triệu dòng bằng generate_series trên PostgreSQL, đo query khi chưa có index",
-     ["EXPLAIN / EXPLAIN ANALYZE: Seq Scan, Index Scan, Index Only Scan; đọc cost và rows","PostgreSQL documentation Using EXPLAIN"],
-     "Composite index và thứ tự cột (leftmost prefix), covering index với INCLUDE; chụp plan trước và sau",
-     "Tối ưu query: tránh hàm trên cột có index, LIKE '%x', OR; phân trang keyset vs OFFSET",
-     "ACID và locking: row lock, SELECT ... FOR UPDATE, deadlock trong DB",
-     "Optimistic locking (@Version) vs pessimistic: demo 2 request cùng cập nhật một số dư",
-     ["Flyway: V1__init.sql, V2__add_index.sql; bỏ ddl-auto","Baeldung Flyway Spring Boot"],
-     "Normalization 1NF–3NF, khi nào denormalize; lướt DDIA chương 7; lưu ảnh execution plan vào repo"],
- en:["Speaking: giải thích B-tree index","Mock với AI: indexing, ACID, locking","Trình bày: optimistic vs pessimistic locking"],
- mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-9:{theme:"Testing: JUnit, Mockito, Testcontainers, LocalStack, TDD",dsa:"Graphs, Advanced Graphs",goal:"Integration test chạy với PostgreSQL thật và AWS giả lập (LocalStack)",
- be:[["JUnit 5: @Test, @ParameterizedTest, assertions, lifecycle; test domain Money/Account","JUnit 5 User Guide"],
-     ["Mockito: mock, when/thenReturn, verify, ArgumentCaptor; test tầng Service","Baeldung Mockito series"],
-     "@WebMvcTest cho controller (MockMvc) và @DataJpaTest cho repository",
-     ["Testcontainers: PostgreSQL thật trong integration test (@SpringBootTest + @Testcontainers)","Testcontainers Spring Boot PostgreSQL guide"],
-     ["LocalStack + Testcontainers: test code gọi S3/SQS mà không tốn tiền AWS","Testcontainers LocalStack module"],
-     "Test concurrency: 2 thread cùng rút tiền, assert số dư đúng (CountDownLatch, ExecutorService)",
-     ["JaCoCo + test pyramid; viết test cho case lỗi 400/404/409","JaCoCo Maven plugin"],
-     ["TDD (NAB làm TDD/pair programming): red-green-refactor 1 tính năng nhỏ, viết test trước; coverage core ≥70%","Martin Fowler test driven development"],
-     "Deep dive: mock vs stub vs fake, khi nào không nên mock",
-     "Chuẩn bị MiniPay: domain model (Account, Transfer, LedgerEntry) và ERD vẽ bằng UML (kỹ năng SWR302)"],
- en:["Speaking: giải thích test pyramid","Mock với AI: testing (mock vs stub, Testcontainers)","Trình bày: cách test code có concurrency"],
- mock:"Tự kiểm tháng 2: mock OA 90 phút + chấm checklist Strong-plus"},
-10:{theme:"MiniPay: ledger, idempotency, locking",dsa:"1-D DP",goal:"Retry không double-charge; 100 request song song vẫn đúng số dư",
- be:["Tạo repo MiniPay, chia package domain/application/infra; Flyway schema accounts, ledger_entries",
-     "Double-entry ledger: mỗi transfer tạo 2 bút toán debit/credit; số dư = SUM(ledger)",
-     "API POST /transfers kèm validation: số tiền > 0, cùng currency, đủ số dư",
-     "Idempotency: header Idempotency-Key, bảng idempotency_keys có unique constraint; retry trả lại đúng response cũ",
-     "Test: gửi cùng key 2 lần chỉ ra 1 transfer; gửi song song vẫn chỉ 1",
-     "Optimistic locking (@Version) trên account, retry khi OptimisticLockException",
-     "So sánh với pessimistic (SELECT FOR UPDATE) + lock ordering; viết ADR-002",
-     "Integration test Testcontainers cho transfer và idempotency",
-     "Deep dive: ranh giới transaction, 1 transfer = 1 DB transaction, chọn isolation level",
-     "Chạy 100 request song song, kiểm số dư, ghi kết quả vào README"],
- en:["Speaking: giải thích idempotency key","Mock với AI: transaction và concurrency trong payment","Trình bày: double-entry ledger"],
- mock:"Mock interview tiếng Anh 45 phút: DB + transaction"},
-11:{theme:"MiniPay: outbox + SQS, audit log, cache, rate limit",dsa:"1-D DP, 2-D DP",goal:"Giải thích được outbox + SQS giải quyết dual-write bằng tiếng Anh",
- be:["Audit log: bảng audit_events append-only (ai, làm gì, khi nào, correlationId)",
-     ["Outbox pattern: bảng outbox ghi cùng transaction với transfer","microservices.io transactional outbox pattern"],
-     ["Outbox relay: @Scheduled đọc outbox, gửi Amazon SQS (LocalStack) bằng Spring Cloud AWS; consumer idempotent theo eventId","Spring Cloud AWS SQS reference"],
-     ["Redis cache bằng Spring Cache: cache số dư và tra cứu, invalidate khi có transfer (ElastiCache ở mức khái niệm)","Baeldung Spring Boot cache with Redis"],
-     "Test cache hit/miss, dữ liệu cũ; giải thích cache-aside",
-     ["Rate limiting với Bucket4j cho POST /transfers theo user; trả 429 kèm Retry-After, viết test","Bucket4j Spring Boot rate limiting"],
-     "Refactor, tăng coverage; viết ADR-003: outbox + SQS vs gửi thẳng, SQS vs Kafka",
-     ["Deep dive: dual-write, at-least-once, visibility timeout và dead-letter queue (DLQ) của SQS","Amazon SQS dead-letter queues visibility timeout"],
-     "Cập nhật README: sơ đồ luồng transfer → outbox → SQS → consumer"],
- en:["Speaking: giải thích outbox pattern","Mock với AI: caching, rate limiting, SQS","Trình bày: cache-aside"],
- mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-12:{theme:"AWS cho backend: IAM, ECR, ECS, RDS, S3, SQS",dsa:"2-D DP, Greedy",goal:"MiniPay chạy trên AWS qua CI/CD, có cảnh báo chi phí, xoá tài nguyên sau demo",
- be:[["Tài khoản AWS an toàn: MFA cho root, IAM Identity Center/user riêng, AWS Budgets cảnh báo chi phí (làm trước mọi thứ)","AWS Budgets create cost budget alert"],
-     ["AWS nền tảng cho dev: Region/AZ, VPC, subnet public/private, security group, IAM policy least privilege; vẽ sơ đồ","AWS VPC subnets security groups explained"],
-     ["Dockerfile multi-stage cho MiniPay; docker-compose gồm app, PostgreSQL, Redis, LocalStack","Docker multi-stage build Spring Boot"],
-     ["GitHub Actions: build, test (Testcontainers), JaCoCo; đẩy image lên Amazon ECR bằng OIDC (không lưu access key)","GitHub Actions OIDC AWS configure-aws-credentials ECR"],
-     ["Amazon RDS PostgreSQL + mật khẩu DB trong Secrets Manager hoặc SSM Parameter Store","Spring Boot AWS Secrets Manager Parameter Store"],
-     ["Deploy MiniPay lên ECS Fargate sau Application Load Balancer, health check bằng Actuator","Deploy Spring Boot ECS Fargate"],
-     ["S3: lưu sao kê/biên lai bằng AWS SDK for Java v2, tạo presigned URL","AWS SDK for Java v2 S3 presigned URL"],
-     "Nối outbox relay với SQS thật + DLQ; kiểm tra message trên console, rồi xoá tài nguyên không dùng",
-     ["Deep dive: Kafka 101 (topic, partition, consumer group) chạy bằng Docker, so sánh với SQS/SNS và Kinesis","Confluent Developer Kafka 101 course"],
-     "Git flow: mỗi tính năng 1 PR, tự review theo checklist; ghi chi phí AWS thực tế vào README"],
- en:["Speaking: IAM role vs user, least privilege","Mock với AI: AWS cho backend (ECS, RDS, SQS)","Trình bày kiến trúc MiniPay trên AWS 5 phút"],
- mock:"Mock interview tiếng Anh 45 phút: Spring + AWS + messaging"},
-13:{theme:"Observability, IaC, system design, load test",dsa:"Greedy, Intervals, Math",goal:"Có số liệu throughput/latency thật + sơ đồ kiến trúc AWS trong README",
- be:[["CloudWatch Logs: log JSON có correlationId (MDC), mask PII (số tài khoản, email) như chuẩn ngân hàng","Spring Boot structured logging JSON"],
-     ["Micrometer: metrics lên CloudWatch hoặc Prometheus + Grafana local; dashboard RPS, latency, error","Spring Boot Micrometer CloudWatch"],
-     ["IaC: dựng lại VPC + RDS + ECS tối thiểu bằng Terraform (hoặc AWS CDK Java), destroy sau demo","Terraform AWS ECS Fargate tutorial"],
-     "System design 1: REST vs event-driven; vẽ kiến trúc MiniPay trên AWS bằng kỹ năng UML của SWR302",
-     ["System design 2: caching, rate limiting, idempotency, DB scaling (read replica, partition), CAP","donnemartin system-design-primer GitHub"],
-     ["Load test k6: 50/100/200 VUs transfer đồng thời; ghi RPS, p95, p99, error rate","k6 documentation get started"],
-     "Tối ưu 1 điểm nghẽn (index, connection pool hoặc cache), chạy lại, so sánh số liệu",
-     ["Microservices cơ bản (service boundary, API gateway) + Agile/Scrum (sprint, standup, story point)","microservices.io patterns microservice architecture"],
-     ["Hoàn thiện ADR-001..003 và README kể chuyện: vấn đề, quyết định, đánh đổi, số liệu, chi phí AWS","Michael Nygard documenting architecture decisions"],
-     "Tự kiểm tháng 3: video demo MiniPay 10 phút tiếng Anh + trình bày thiết kế payment system 15 phút"],
- en:["Speaking: giải thích CAP","Mock với AI: system design fresher","Trình bày kết quả load test và chi phí AWS"],
- mock:"Mock OA 90 phút: 2 Medium + 1 Easy mới"},
-14:{theme:"Tuần thi: PE PRJ301, PE CSD201",dsa:"Math, Bit (1 bài/ngày)",goal:"Sẵn sàng PE PRJ301 và CSD201",exam:true,
- be:["Ôn PE PRJ301: làm 1 đề PE mẫu (Servlet/JSP + SQL Server), bấm giờ 85 phút",
-     "Ôn CSD201: tự cài đặt lại BST, heap, BFS/DFS, sorting bằng Java không nhìn tài liệu",
-     "Ôn PE CSD201: 1 đề mẫu, bấm giờ",
-     "Ôn SWR302: requirements, use case, UML theo đề cương",
-     "Ôn IOT102 và JPD123 theo đề cương",
-     "PE PRJ301 mẫu thứ 2",
-     "MiniPay: chỉ fix bug nhỏ, tối đa 1 giờ",
-     "Ôn JPD123 (kanji, ngữ pháp) và IOT102",
-     "Ôn tổng hợp môn có lịch thi sớm nhất",
-     "Nghỉ nhẹ hoặc ôn tiếp nếu cần"],
+
+/* ---------- Lộ trình v2 (từ T3 6/10/2026) ---------- */
+4:{theme:"Java Core III → 3 sản phẩm (bù nợ Tuần 2–3)",goal:"Có repo java-core-labs/streams có test, note HashMap và note JVM kèm 3 lệnh docker chứng minh GC nào được chọn",
+ be:[K("w04-hashmap-note",2,"Note HashMap hoàn chỉnh: hash spreading h ^ (h >>> 16), chỉ số (n − 1) & hash, resize ở 0.75, treeify khi bucket ≥ 8 node và bảng ≥ 64 (nhỏ hơn thì resize), bug key bị đổi sau khi put. Mở đầu bằng quiz W1–W2 15 phút không nhìn note",
+       "Java HashMap TREEIFY_THRESHOLD MIN_TREEIFY_CAPACITY source code",
+       "Đạt khi: test key có hashCode hằng (mọi key chung 1 bucket) đo get() trước/sau treeify; giải thích được vì sao ngưỡng là 8 (comment Poisson trong HashMap.java) mà không nhìn note"),
+     K("w04-lambda",2,"Lambda bên trong: effectively final và capture, this trong lambda vs anonymous class, 4 dạng method reference, Function.andThen/compose; javap -c để thấy invokedynamic",
+       "Java lambda invokedynamic LambdaMetafactory explained",
+       "Đạt khi: Validator pipeline cho Transaction bằng Predicate.and/or/negate có unit test; ghi dự đoán output javap trước khi chạy"),
+     K("w04-stream-lab",2,"Lab Stream (repo java-core-labs/streams): record Transaction (amountMinor long, Currency, YearMonth…), tổng theo tháng, top-5 khách, groupingBy / partitioningBy / teeing; predict → run → explain với peek (thực thi theo chiều dọc, short-circuit)",
+       "Java Stream lazy evaluation peek order short-circuit",
+       "Đạt khi: test xanh cho 3 truy vấn; note ghi 1 lần dự đoán sai thứ tự peek và giải thích vì sao"),
+     K("w04-stream-advanced",2,"Stream nâng cao: toMap gặp key trùng (IllegalStateException → cần merge function), value null → NPE, flatMap; Stream Gatherers (JEP 485, final ở JDK 24): Gatherers.windowSliding phát hiện giao dịch trùng trong 60 giây",
+       "https://openjdk.org/jeps/485",
+       "Đạt khi: test cho toMap trùng key / null và cho bộ phát hiện trùng; giải thích intermediate vs terminal, vì sao stream không dùng lại được"),
+     K("w04-errors-money",2,"Lỗi & tiền (bù Exception/Optional): checked vs unchecked, try-with-resources + suppressed, Optional đúng/sai; sealed interface TransferResult (Success | InsufficientFunds | AccountFrozen) + switch pattern matching; BigDecimal: equals của 2.0 và 2.00 là false, compareTo là 0; HALF_EVEN",
+       "Java sealed interface record pattern matching switch",
+       "Đạt khi: test chứng minh HashSet giữ 2 phần tử 2.0/2.00 còn TreeSet giữ 1; thêm 1 subtype mới thì switch (không có default) báo lỗi compile"),
+     K("w04-jmh-parallel",2,"JMH: sequential vs parallel stream trên 10⁶ phần tử, ArrayList vs LinkedList; chạy trong Docker với --cpus=1 và --cpus=4. Parallel stream dùng ForkJoin common pool (cores − 1): không chạy I/O blocking trong đó",
+       "https://github.com/openjdk/jmh",
+       "Đạt khi: bảng số liệu JMH (không dùng System.nanoTime tự đo) + giải thích khi nào parallel chậm hơn"),
+     K("w04-jvm-note",2,"Note JVM: heap (young/old), stack frame, Metaspace (PermGen bỏ từ JDK 8), escape analysis; đo object bằng JOL có/không -XX:+UseCompactObjectHeaders (JEP 519). GC được chọn: trước JDK 27, JVM dùng Serial nếu chỉ 1 CPU hoặc dưới 1792 MB RAM; từ JDK 27 (JEP 523) luôn là G1. MaxRAMPercentage (mặc định 25%) + NMT",
+       "https://openjdk.org/jeps/523",
+       "Đạt khi: 3 lệnh docker chạy ra đúng (temurin:25 với --cpus=1 --memory=1g → \"Using Serial\"; --cpus=2 --memory=2g → G1; image JDK 27 → G1); bảng MaxHeapSize ở 512 MB / 1 GB / 2 GB; sơ đồ bộ nhớ trong note"),
+     K("w04-oom-lab",2,"Lab OOM: -Xmx64m + -XX:+HeapDumpOnOutOfMemoryError → mở dump bằng Eclipse MAT (dominator tree, retained size); ghi JFR, xem bằng JDK Mission Control; jcmd. 45 phút cuối (P4): class loader delegation, JIT tiered C1/C2, AOT cache (Leyden) ở mức khái niệm; demo JMM: while(!flag) không dừng khi thiếu volatile",
+       "Eclipse MAT dominator tree heap dump analysis",
+       "Đạt khi: ảnh dominator tree chỉ ra object gây leak (tìm từ dump, không nhìn code); giải thích happens-before bằng ví dụ volatile vừa chạy")],
+ en:["Shadowing 15 phút + giải thích bằng tiếng Anh vì sao capacity HashMap là luỹ thừa của 2 (ghi âm 2 phút)",
+     "Mock F3 30 phút: Java core (HashMap, equals/hashCode, Stream lazy)",
+     "Vòng tiếng Anh NAB: tự giới thiệu 2 phút + “Where do you see yourself in 2 years?” + “What do you do at weekends?” (ghi âm, sửa 5 lỗi)"],
+ mock:""},
+5:{theme:"Concurrency: 3 lab (race · deadlock + virtual threads · CompletableFuture)",goal:"Tái hiện và sửa race + deadlock chuyển tiền có số liệu; giải thích virtual threads sau JEP 491",
+ be:[K("w05-race-lab",2,"Lab 1a: race condition counter++ (2 thread × 1.000.000 lần, chạy 10 lần); javap -c thấy getfield/iadd/putfield (read-modify-write); xem trạng thái thread bằng jstack",
+       "Java race condition counter++ not atomic javap",
+       "Đạt khi: ghi dự đoán khoảng kết quả trước khi chạy; giải thích bằng bytecode vì sao count++ không atomic"),
+     K("w05-fix-jmh",2,"Lab 1b: sửa bằng synchronized, AtomicInteger (CAS), ReentrantLock, LongAdder; đo bằng JMH ở 1 / 4 / 16 thread",
+       "Java LongAdder vs AtomicLong contention benchmark",
+       "Đạt khi: bảng throughput 4 cách × 3 mức tranh chấp + giải thích vì sao LongAdder thắng khi tranh chấp cao"),
+     K("w05-chm-note",2,"Đọc ConcurrentHashMap.putVal: CAS cho bin rỗng + synchronized trên node đầu bin, counter cells cho size(), computeIfAbsent atomic, vì sao cấm key/value null; volatile vs synchronized, safe publication (final field)",
+       "Java ConcurrentHashMap putVal implementation explained",
+       "Đạt khi: note 1 trang tự viết + test chứng minh computeIfAbsent chỉ gọi hàm 1 lần dưới 8 thread"),
+     K("w05-deadlock-lab",1,"Lab 2a (dùng lại ở MiniPay): deadlock chuyển tiền A→B và B→A cùng lúc; bắt bằng jcmd <pid> Thread.print; sửa bằng lock ordering theo id + tryLock có timeout",
+       "Java deadlock detection jcmd Thread.print lock ordering",
+       "Đạt khi: thread dump chụp được deadlock; sau khi sửa, 10.000 lệnh chuyển ngẫu nhiên giữa 10 tài khoản không treo và tổng tiền không đổi"),
+     K("w05-pool-virtual",2,"Lab 2b: ThreadPoolExecutor (core/max/queue/rejection, shutdown đúng) + virtual threads: 10.000 tác vụ sleep(100 ms) trên fixed pool 200 vs newVirtualThreadPerTaskExecutor. JEP 491 (JDK 24): synchronized không còn pin, lời khuyên “đổi sang ReentrantLock” đã cũ; không pool virtual thread, giới hạn bằng Semaphore; JFR jdk.VirtualThreadPinned",
+       "https://openjdk.org/jeps/491",
+       "Đạt khi: bảng thời gian + số thread OS của 2 cách; giải thích được vì sao virtual thread không giúp việc CPU-bound"),
+     K("w05-completablefuture",2,"Lab 3a: CompletableFuture gọi 3 mock service (200/300/500 ms): tuần tự ≈ 1 s vs song song ≈ 0,5 s; executor riêng (không dùng common pool cho I/O), orTimeout + exceptionally làm fallback; thenApply vs thenCompose",
+       "Baeldung Guide to CompletableFuture",
+       "Đạt khi: test thời gian chạy + test timeout trả fallback"),
+     K("w05-scoped-structured",4,"Lab 3b: viết lại 3a bằng virtual threads; ScopedValue (final ở JDK 25, JEP 506) vs ThreadLocal (MDC vẫn dựa trên ThreadLocal); Structured Concurrency vẫn preview ở JDK 27: chỉ demo khái niệm với --enable-preview",
+       "https://openjdk.org/jeps/506",
+       "Đạt khi: so sánh code 2 cách + giải thích vì sao ThreadLocal dễ rò rỉ trong thread pool"),
+     K("w05-cheatsheet",3,"Cheat-sheet concurrency 1 trang tiếng Anh + 10 câu tự hỏi từ JCiP ch.2–3 và Effective Java ch.11 (đọc có mục tiêu, không đọc lướt)",
+       "Java Concurrency in Practice chapter 2 thread safety summary",
+       "Đạt khi: trả lời 10 câu không nhìn sách, tự chấm 0–3; câu dưới 2 điểm thành câu hỏi ôn"),
+     K("w05-month1-check",3,"Tự kiểm tháng 1: quiz 20 câu viết tay không nhìn note (Java core + JVM + concurrency), chấm theo checklist Must-have, vá ngay lỗ hổng lớn nhất",
+       "",
+       "Đạt khi: bảng điểm theo chủ đề + 1 lỗ hổng đã vá có link commit/note")],
+ en:["Speaking: race condition & deadlock bằng ví dụ chuyển tiền (ghi âm 2 phút)",
+     "Mock F3 30 phút: concurrency + virtual threads",
+     "Pitch “Tell me about yourself” bản 60 giây + 1 câu STAR (giá trị Proactive learner)"],
+ mock:"Mock interview F3 45 phút: Java core + JVM + concurrency; chấm 1–5 theo 4 tiêu chí, viết lại 3 câu yếu nhất"},
+6:{theme:"Spring Boot 4 nền tảng + MiniPay M0",goal:"M0: CI xanh, ADR-001 (modular monolith), README chạy được bằng docker compose up",
+ be:[K("w06-di-from-scratch",2,"Tự viết DI container khoảng 60 dòng bằng reflection (constructor injection theo type, singleton) để hiểu vì sao cần IoC",
+       "Java reflection simple dependency injection container",
+       "Đạt khi: test container dựng được đồ thị 3 tầng; giải thích được vòng tròn phụ thuộc gây lỗi gì"),
+     K("w06-m0-init",1,"M0 khởi tạo MiniPay: Java 25, Spring Boot 4.1.x, Gradle; Spring Modulith (tự pin version tương thích Boot 4, BOM của Boot không quản lý Modulith) với module account, ledger, transfer, payment, risk, statement, notification, audit; ADR-001 “modular monolith”; board GitHub Projects chạy sprint 1 tuần",
+       "https://start.spring.io",
+       "Đạt khi: repo public, ADR-001 theo mẫu Context / Decision / Consequences, board có sprint đầu"),
+     K("w06-beans",2,"Bean: @Component vs @Bean + @Configuration (proxyBeanMethods, CGLIB: gọi @Bean method 2 lần ra mấy instance?), scope, lifecycle, constructor injection; JSpecify @NullMarked/@Nullable",
+       "Spring Framework 7 JSpecify null safety",
+       "Đạt khi: test chứng minh full mode vs lite mode, đã ghi dự đoán trước"),
+     K("w06-autoconfig-mvc",2,"Auto-configuration Boot 4 (@AutoConfiguration, @Conditional…, condition report bằng --debug) + đi hết 1 request bằng breakpoint: DispatcherServlet → HandlerMapping → HandlerAdapter → argument resolver → HttpMessageConverter (Jackson 3); so với Servlet/JSP của PRJ301",
+       "Spring Boot auto-configuration condition evaluation report",
+       "Đạt khi: sơ đồ luồng request tự vẽ + giải thích vì sao thêm starter JPA là có DataSource"),
+     K("w06-m0-db",1,"M0: PostgreSQL 18 + Flyway (V1__accounts.sql) + Docker Compose support của Boot; ddl-auto=validate",
+       "Spring Boot Docker Compose support Flyway PostgreSQL",
+       "Đạt khi: docker compose up là app + DB chạy; chạy migration lần 2 không lỗi"),
+     K("w06-m0-accounts-api",1,"M0: /accounts với DTO record, Bean Validation, lỗi trả ProblemDetail (RFC 9457, thay RFC 7807), API versioning qua header (có sẵn ở Spring Framework 7), status code 201 + Location / 400 / 404 / 409",
+       "https://www.rfc-editor.org/rfc/rfc9457",
+       "Đạt khi: gọi bằng curl/Postman ra đúng mã lỗi và JSON ProblemDetail"),
+     K("w06-m0-tests",1,"M0: @WebMvcTest cho controller (kiểm JSON ProblemDetail) + integration test Testcontainers 2 (@ServiceConnection) + JUnit 6; không dùng H2",
+       "https://docs.spring.io/spring-boot/reference/testing/testcontainers.html",
+       "Đạt khi: test chạy bằng 1 lệnh; giải thích vì sao H2 “nói dối” về SQL và locking"),
+     K("w06-m0-ci",1,"M0: CI GitHub Actions (build + test + Testcontainers), ApplicationModules.verify() của Modulith + 1 luật ArchUnit, PR template có checklist review (prompt F4) và mục “AI đã giúp gì / mình đã kiểm gì”",
+       "Spring Modulith verify application module structure",
+       "Đạt khi: CI xanh trên PR đầu tiên; cố tình vi phạm ranh giới module thì CI đỏ"),
+     K("w06-aop-m0-readme",2,"AOP & proxy: @Around đo thời gian, JDK dynamic proxy vs CGLIB, tự viết Proxy.newProxyInstance; bẫy self-invocation (chuẩn bị cho @Transactional). Viết README M0",
+       "Spring AOP self-invocation proxy explained",
+       "Đạt khi: test chứng minh self-invocation không đi qua proxy; README chạy được bằng docker compose up")],
+ en:["Speaking: IoC/DI là gì, vì sao cần container (ghi âm 2 phút)",
+     "Mock F3 30 phút: Spring core (bean, scope, proxy, auto-config)",
+     "Trình bày 3 phút: life of a request trong Spring Boot (vẽ lên giấy)"],
+ mock:""},
+7:{theme:"PostgreSQL + JPA + ledger kép → MiniPay M1",goal:"M1: test bất biến ledger xanh; test lost update có/không lock; đọc EXPLAIN chỉ ra index thiếu",
+ be:[K("w07-pg-index",2,"PostgreSQL index: B-tree (Use The Index, Luke), seed 5 triệu dòng bằng generate_series, EXPLAIN (ANALYZE, BUFFERS): Seq / Index / Index Only / Bitmap scan; composite (equality trước, range sau), covering INCLUDE, partial index",
+       "https://use-the-index-luke.com/sql/anatomy",
+       "Đạt khi: ảnh plan trước/sau cho 4 query + giải thích vì sao planner vẫn chọn Seq Scan khi selectivity thấp"),
+     K("w07-pg-mvcc-isolation",2,"MVCC (xmin/xmax, ctid, VACUUM) + tái hiện lost update, non-repeatable read, phantom, write skew bằng 2 phiên psql ở READ COMMITTED / REPEATABLE READ / SERIALIZABLE (SSI)",
+       "https://www.postgresql.org/docs/current/transaction-iso.html",
+       "Đạt khi: bảng anomaly × level tự điền từ thí nghiệm (Postgres REPEATABLE READ chặn cả phantom); chỉ ra lỗi 40001 xuất hiện ở đâu"),
+     K("w07-pg-locking",2,"Lock: SELECT … FOR UPDATE / FOR NO KEY UPDATE / SKIP LOCKED; deadlock trong DB (đọc pg_locks và lỗi 40P01); 3 cách chống lost update bằng SQL thuần: UPDATE có điều kiện, FOR UPDATE, cột version",
+       "https://www.postgresql.org/docs/current/explicit-locking.html",
+       "Đạt khi: script SQL tái hiện được deadlock + cả 3 cách sửa chạy được"),
+     K("w07-m1-money",1,"M1: Money = record(long minor, Currency) theo ISO 4217 (VND 0 số lẻ, USD 2); DB lưu amount_minor BIGINT + currency CHAR(3); BigDecimal + HALF_EVEN chỉ dùng khi đổi tỉ giá / tính phí, làm tròn đúng 1 chỗ",
+       "ISO 4217 minor unit currency exponent",
+       "Đạt khi: test cộng khác loại tiền bị chặn, làm tròn HALF_EVEN đúng các ca biên; trong code không có double/float"),
+     K("w07-m1-ledger",1,"M1: ledger kép bất biến: journal_entry(id, type, created_at, idempotency_key) + posting(entry_id, account_id, amount_minor, currency); tổng mỗi entry theo từng loại tiền = 0; REVOKE UPDATE, DELETE (hoặc trigger); sửa sai bằng entry đảo (reversal); Flyway V2",
+       "double entry ledger database design immutable postings",
+       "Đạt khi: test UPDATE/DELETE posting bị DB từ chối; entry lệch tổng bị từ chối"),
+     K("w07-jpa-basics",2,"Nền JPA/Hibernate 7: @ManyToOne(fetch = LAZY) (mặc định là EAGER!), persistence context, dirty checking (UPDATE không cần save()), tắt open-in-view, equals/hashCode cho entity (nối Tuần 1)",
+       "Vlad Mihalcea JPA entity equals hashCode",
+       "Đạt khi: log SQL chứng minh dirty checking; giải thích vì sao tắt open-in-view"),
+     K("w07-m1-transfer",1,"M1: account_balance(account_id, balance_minor, version) cập nhật cùng transaction với posting; chuyển tiền khoá 2 tài khoản bằng FOR UPDATE theo id tăng dần (lock ordering từ lab Tuần 5); bẫy @Transactional: checked exception không rollback mặc định, self-invocation",
+       "Spring Transactional rollback checked exception self invocation",
+       "Đạt khi: POST /transfers chạy; có test rollback khi ném checked exception"),
+     K("w07-m1-tests",1,"M1 tests: bất biến ledger (mọi entry tổng = 0, số dư = SUM posting) + test lost update: 2 thread chuyển cùng lúc khi KHÔNG khoá và KHI khoá, Postgres thật qua Testcontainers",
+       "",
+       "Đạt khi: test “không khoá” đỏ ổn định, “có khoá” xanh; giải thích bằng timeline 2 transaction"),
+     K("w07-n-plus-1-statement",2,"N+1: test đếm số query (Hibernate statistics) → sửa bằng JOIN FETCH / @EntityGraph / DTO projection; module statement: sao kê theo tháng, tái dùng lab Stream Tuần 4",
+       "Vlad Mihalcea N+1 query problem",
+       "Đạt khi: test khẳng định số query cố định (không phải N+1); sao kê có test")],
+ en:["Speaking: B-tree index và vì sao thứ tự cột quan trọng (ghi âm 2 phút)",
+     "Mock F3 30 phút: ACID, isolation, MVCC, locking",
+     "Vòng tiếng Anh NAB: tình huống “bất đồng với đồng đội về thiết kế” theo STAR"],
+ mock:"Mock interview F3 45 phút: DB + concurrency; viết lại 3 câu yếu nhất"},
+8:{theme:"Security cho API ngân hàng → MiniPay M2",goal:"M2: test 401 / 403 / BOLA xanh, mỗi lệnh chuyển có audit log, CI chặn CVE mức High",
+ be:[K("w08-security-chain",2,"Spring Security 7: DelegatingFilterProxy → FilterChainProxy → SecurityFilterChain; bật TRACE xem từng filter cho 1 request; SecurityContextHolder dựa trên ThreadLocal (nối Tuần 5)",
+       "Spring Security servlet architecture reference",
+       "Đạt khi: sơ đồ filter chain tự vẽ từ log TRACE"),
+     K("w08-jwt-manual",2,"JWT: tự ký và verify RS256 bằng Nimbus trong unit test; kiểm iss / aud / exp, ghim thuật toán, từ chối alg=none; access token ngắn hạn; session vs token (thu hồi thế nào)",
+       "Nimbus JOSE JWT RS256 sign verify example",
+       "Đạt khi: test 4 ca: hợp lệ, hết hạn, sai aud, alg=none"),
+     K("w08-oauth2-keycloak",2,"OAuth2/OIDC: authorization code + PKCE (người dùng), client credentials (service-to-service); Keycloak bằng Docker: realm, client, role, user; lấy token bằng curl, đọc claim",
+       "Keycloak docker getting started realm client",
+       "Đạt khi: sơ đồ giải thích vì sao cần PKCE"),
+     K("w08-m2-resource-server",1,"M2: MiniPay là OAuth2 Resource Server (issuer-uri / JWKS), map role/scope → authority, phân biệt 401 vs 403 trả ProblemDetail; test bằng jwt() của spring-security-test",
+       "Spring Security OAuth2 resource server JWT",
+       "Đạt khi: test 401 (không token), 403 (thiếu quyền), 200"),
+     K("w08-m2-bola",1,"M2: chống BOLA (OWASP API1:2023): kiểm quyền sở hữu trên mọi tài nguyên (@PreAuthorize hoặc trong domain); API6: luồng nghiệp vụ nhạy cảm (chuyển tiền) không bị lạm dụng",
+       "https://owasp.org/API-Security/editions/2023/en/0x11-t10/",
+       "Đạt khi: test user A đọc / chuyển từ ví của user B → bị chặn"),
+     K("w08-m2-rate-limit",1,"M2: rate limit bằng Bucket4j (token bucket) cho POST /transfers và đăng nhập: trả 429 + Retry-After; so token bucket với fixed / sliding window",
+       "Bucket4j Spring Boot rate limiting",
+       "Đạt khi: test bắn quá hạn mức nhận 429 đúng lúc"),
+     K("w08-m2-audit-pii",1,"M2: audit log append-only (ai, làm gì, lúc nào, IP, correlationId) + che PII trong log (số tài khoản chỉ hiện 4 số cuối), không bao giờ log token",
+       "",
+       "Đạt khi: test mỗi lệnh chuyển sinh đúng 1 audit event; log không chứa số tài khoản đầy đủ"),
+     K("w08-supply-chain",2,"Chuỗi cung ứng: Dependabot + OWASP dependency-check (hoặc GitHub dependency review) + CodeQL + secret scanning; CI chặn merge khi có CVE mức High",
+       "GitHub dependency review action CodeQL Java",
+       "Đạt khi: PR thử thêm thư viện có CVE bị CI chặn"),
+     K("w08-threat-model",2,"Threat model 1 trang (STRIDE rút gọn): tài sản, ranh giới tin cậy, top 5 mối đe doạ và cách chặn, map OWASP API Top 10 2023; ADR: Keycloak + Resource Server vs tự phát JWT",
+       "STRIDE threat modeling lightweight",
+       "Đạt khi: threat model + ADR nằm trong repo")],
+ en:["Speaking: JWT validation gồm những bước nào (ghi âm 2 phút)",
+     "Mock F3 30 phút: Spring Security, OAuth2, OWASP API",
+     "Trình bày 3 phút: threat model MiniPay"],
+ mock:""},
+9:{theme:"Chứng minh concurrency → MiniPay M3",goal:"M3: 10.000 lệnh chuyển / 64 virtual threads giữ nguyên tổng tiền, không âm; ADR-002 có số liệu 3 chiến lược",
+ be:[K("w09-m3-optimistic",1,"M3 chiến lược 2: @Version + retry bằng @Retryable (có sẵn Spring Framework 7, bật @EnableResilientMethods)",
+       "Spring Framework 7 Retryable EnableResilientMethods",
+       "Đạt khi: test xung đột → retry thành công, có giới hạn số lần"),
+     K("w09-m3-conditional-update",1,"M3 chiến lược 3: UPDATE account_balance SET balance = balance − :x WHERE id = :id AND balance >= :x; kiểm số dòng bị ảnh hưởng",
+       "",
+       "Đạt khi: test rút quá số dư → 0 dòng, trả lỗi nghiệp vụ"),
+     K("w09-m3-retry-rules",1,"Retry đúng: chỉ khi SQLSTATE 40001 (serialization_failure) / 40P01 (deadlock_detected), backoff + jitter, tối đa 3 lần, dùng chung idempotency key để retry không ghi đôi",
+       "PostgreSQL error codes 40001 40P01",
+       "Đạt khi: test lỗi khác không retry; 40001 retry tối đa 3 lần"),
+     K("w09-m3-10k-test",1,"M3 test chứng minh #1: 10 tài khoản, 10.000 lệnh chuyển ngẫu nhiên trên 64 virtual threads, Postgres thật (Testcontainers)",
+       "",
+       "Đạt khi: assert tổng tiền không đổi, không tài khoản âm, mỗi entry tổng = 0, số entry = số lệnh thành công"),
+     K("w09-m3-skew-chaos",1,"M3 test #2: write skew dưới REPEATABLE READ và SERIALIZABLE chặn được; test #3 chaos: kill connection giữa transaction (Toxiproxy), sau retry không ghi đôi",
+       "Testcontainers Toxiproxy module",
+       "Đạt khi: 2 test xanh + giải thích bằng timeline"),
+     K("w09-m3-random-invariant",1,"M3 test #4: tự viết test invariant ngẫu nhiên (seed cố định, in seed khi fail, thu nhỏ ca lỗi bằng tay): với mọi chuỗi lệnh hợp lệ, số dư tính lại từ ledger = account_balance (thay jqwik vì jqwik chưa chạy trên JUnit 6)",
+       "",
+       "Đạt khi: 500 chuỗi ngẫu nhiên xanh; cố tình cài bug thì test bắt được và in seed tái hiện"),
+     K("w09-m3-benchmark-adr",1,"Benchmark 3 chiến lược (pessimistic / optimistic / conditional) với hot account vs phân tán: throughput, số retry, deadlock → ADR-002 “Chiến lược khoá số dư”",
+       "",
+       "Đạt khi: bảng số liệu + ADR-002 nêu rõ đánh đổi"),
+     K("w09-m3-query-tuning",2,"EXPLAIN cho query thật của MiniPay (sao kê, posting theo account + thời gian): thêm index đúng, keyset pagination cho lịch sử giao dịch",
+       "keyset pagination seek method PostgreSQL",
+       "Đạt khi: ảnh plan trước/sau trong README; trang 1 và trang 1000 nhanh như nhau"),
+     K("w09-m3-readme",2,"README mục “Correctness evidence” (4 test chứng minh + số liệu) + ghi âm 3 phút “how MiniPay prevents double-spend”; tự kiểm tháng 2: quiz 20 câu không nhìn note",
+       "",
+       "Đạt khi: README cập nhật + file ghi âm + điểm quiz")],
+ en:["Speaking: optimistic vs pessimistic locking (ghi âm 2 phút)",
+     "Mock F3 30 phút: transaction, isolation, retry",
+     "Trình bày 3 phút: MiniPay chống double-spend thế nào"],
+ mock:"Mock interview F3 45 phút: Spring + JPA + transaction + MiniPay; viết lại 3 câu yếu nhất"},
+10:{theme:"Idempotency + payment → MiniPay M4",goal:"M4: 50 request cùng Idempotency-Key → đúng 1 journal entry; webhook có chữ ký HMAC; state machine có test",
+ be:[K("w10-m4-idempotency",1,"M4: Idempotency-Key (kiểu Stripe + draft IETF): bảng idempotency_record(key, user_id, request_hash, status, response_body, created_at), UNIQUE(user_id, key); gửi lại cùng key → trả response đã lưu; cùng key khác body → 422; đang xử lý → 409; giữ ít nhất 24 giờ",
+       "https://docs.stripe.com/api/idempotent_requests",
+       "Đạt khi: test 3 ca: gửi lại, khác body, đang xử lý"),
+     K("w10-m4-idem-concurrency",1,"M4: test 50 request đồng thời cùng Idempotency-Key → đúng 1 journal entry; inject java.time.Clock (fake) để test hết hạn",
+       "https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/",
+       "Đạt khi: test xanh 20 lần liên tiếp (không flaky)"),
+     K("w10-m4-state-machine",1,"M4: payment state machine CREATED → PENDING_PROVIDER → SUCCEEDED | FAILED | EXPIRED; chỉ cho chuyển hợp lệ; test bảng chuyển trạng thái bằng @ParameterizedTest",
+       "",
+       "Đạt khi: mọi cặp trạng thái đều có test"),
+     K("w10-m4-provider-client",1,"M4: mock provider + HTTP Service Client (@HttpExchange, RestClient): luôn đặt timeout, @Retryable + jitter chỉ cho call idempotent, @ConcurrencyLimit làm bulkhead; WireMock giả lập chậm / lỗi 5xx",
+       "Spring Framework 7 HTTP service client HttpExchange",
+       "Đạt khi: test provider chậm → timeout đúng; 5xx → retry rồi thất bại có kiểm soát"),
+     K("w10-m4-saga",1,"M4: top-up / withdraw bằng saga có bước bù (compensation), không dùng 2PC; ADR ngắn",
+       "https://microservices.io/patterns/data/saga.html",
+       "Đạt khi: test provider lỗi sau khi đã giữ tiền → bước bù trả lại đúng"),
+     K("w10-m4-webhook",1,"M4: webhook từ provider: chữ ký HMAC-SHA256 + timestamp (lệch quá 5 phút thì từ chối), loại trùng theo provider_event_id",
+       "",
+       "Đạt khi: test sai chữ ký, timestamp cũ, gửi lại lần 2 đều xử lý đúng"),
+     K("w10-m4-risk-tdd",1,"M4 module risk (TDD, commit theo từng bước red-green-refactor): hạn mức/ngày theo KYC tier (biên ngày UTC+7!), tối đa N giao dịch/phút, cảnh báo người nhận mới + số tiền lớn",
+       "",
+       "Đạt khi: lịch sử commit thể hiện TDD; có test ca 23:59 / 00:00 giờ Việt Nam"),
+     K("w10-pit",2,"Mutation testing PIT cho ledger/transfer: so line coverage (JaCoCo) với mutation score, diệt mutant sống sót",
+       "https://pitest.org/",
+       "Đạt khi: mutation score module ledger ≥ 70%; có 1 ví dụ test “phủ dòng nhưng không bắt được bug”"),
+     K("w10-m4-readme",2,"README M4 + mini system design “idempotent money-transfer API” (API, bảng, luồng lỗi) viết bằng tiếng Anh",
+       "",
+       "Đạt khi: sơ đồ + 1 trang giải thích")],
+ en:["Speaking: idempotency key hoạt động thế nào (ghi âm 2 phút)",
+     "Mock F3 30 phút: mini system design “idempotent money-transfer API”",
+     "Vòng tiếng Anh NAB: “Tell me about a time you made a mistake” (STAR, giá trị Accountable)"],
+ mock:""},
+11:{theme:"Outbox → SQS → notification → MiniPay M5",goal:"M5: gửi trùng message không gửi trùng thông báo; DLQ có runbook; ADR-003 SQS vs Kafka",
+ be:[K("w11-m5-outbox",1,"M5: demo dual-write (crash giữa commit DB và publish → mất event) → transactional outbox: ghi outbox_event cùng transaction với ledger",
+       "https://microservices.io/patterns/data/transactional-outbox.html",
+       "Đạt khi: test chứng minh event không mất khi app chết ngay sau commit"),
+     K("w11-m5-relay",1,"M5: relay polling SELECT … FOR UPDATE SKIP LOCKED (an toàn khi chạy nhiều instance), batch, đánh dấu đã gửi; thứ tự theo tài khoản; at-least-once",
+       "",
+       "Đạt khi: test 2 relay chạy song song không gửi trùng 1 event"),
+     K("w11-m5-sqs-local",1,"M5: SQS bằng Spring Cloud AWS 4 (SqsTemplate / @SqsListener); local và CI dùng ElasticMQ qua Testcontainers (LocalStack từ 3/2026 cần tài khoản + token); Standard vs FIFO (MessageGroupId = accountId)",
+       "https://github.com/softwaremill/elasticmq",
+       "Đạt khi: integration test gửi/nhận qua ElasticMQ xanh"),
+     K("w11-m5-idempotent-consumer",1,"M5: notification consumer idempotent: bảng processed_message(message_id) UNIQUE; xử lý + ghi processed trong cùng 1 transaction",
+       "https://microservices.io/patterns/communication-style/idempotent-consumer.html",
+       "Đạt khi: test gửi trùng message → chỉ 1 thông báo"),
+     K("w11-m5-dlq",1,"M5: DLQ: redrive policy maxReceiveCount = 5, poison message, runbook 1 trang xử lý DLQ (xem, sửa, redrive)",
+       "Amazon SQS dead-letter queue redrive policy",
+       "Đạt khi: test poison message vào DLQ sau 5 lần; runbook nằm trong repo"),
+     K("w11-exactly-once-adr",2,"“Exactly-once” là hiểu sai phổ biến: thực tế là at-least-once + xử lý idempotent; ADR-003 “SQS FIFO vs Kafka” (partition key, offset, replay, consumer group, KIP-848)",
+       "",
+       "Đạt khi: ADR-003 nêu rõ khi nào chọn Kafka"),
+     K("w11-modulith-events",3,"Spring Modulith events (event publication registry, @ApplicationModuleListener) so với outbox tự viết: khi nào dùng cái nào",
+       "Spring Modulith event publication registry",
+       "Đạt khi: bảng so sánh 5 dòng trong ADR-003"),
+     K("w11-m5-e2e",1,"M5 test E2E: transfer → outbox → SQS (ElasticMQ) → notification, dùng Testcontainers Postgres + ElasticMQ",
+       "",
+       "Đạt khi: 1 test chạy hết luồng, xanh trong CI"),
+     K("w11-m5-readme",2,"README M5 + sơ đồ luồng event (có các kiểu lỗi) + ghi âm 3 phút bằng tiếng Anh",
+       "",
+       "Đạt khi: sơ đồ + file ghi âm")],
+ en:["Speaking: outbox giải quyết dual-write thế nào (ghi âm 2 phút)",
+     "Mock F3 30 phút: messaging, at-least-once, idempotent consumer",
+     "Trình bày 3 phút: luồng event của MiniPay"],
+ mock:"Mock interview F3 45 phút: messaging + security + 1 system design nhỏ"},
+12:{theme:"AWS → MiniPay M6",goal:"M6: deploy bằng 1 lệnh qua CI (OIDC), demo xong thì destroy, chi phí ghi trong README",
+ be:[K("w12-aws-account",1,"Tài khoản AWS an toàn trước mọi thứ: Free plan (từ 15/7/2025 là credit $100 + tối đa $100, tối đa 6 tháng), MFA cho root, IAM Identity Center, Budget alarm 5/10 USD; sơ đồ Region / AZ / VPC / subnet / SG; bẫy chi phí: ALB khoảng 16 USD/tháng, NAT Gateway, RDS quên tắt",
+       "AWS Free Tier 2026 credits free plan",
+       "Đạt khi: ảnh Budget alarm + sơ đồ mạng tự vẽ"),
+     K("w12-docker-image",1,"Image Docker multi-stage (layered jar, user non-root, JRE 25), JVM flags cho container (nối Tuần 4), quét bằng Trivy",
+       "Spring Boot layered jar Dockerfile multi-stage",
+       "Đạt khi: image không có CVE Critical, chạy bằng user non-root"),
+     K("w12-terraform-base",1,"Terraform cơ bản: provider, state, plan / apply / destroy; tạo ECR + SQS/DLQ + Secrets Manager",
+       "Terraform AWS getting started tutorial",
+       "Đạt khi: terraform destroy xoá sạch, không còn tài nguyên mồ côi"),
+     K("w12-terraform-ecs-rds",1,"Terraform RDS PostgreSQL (t4g.micro) + ECS Fargate (hoặc ECS Express Mode; App Runner đã ngừng nhận khách mới từ 30/4/2026) + ALB health check bằng Actuator + task role least-privilege",
+       "Terraform ECS Fargate RDS example",
+       "Đạt khi: health check xanh; task role chỉ có quyền tối thiểu"),
+     K("w12-oidc-deploy",1,"GitHub Actions deploy qua OIDC (không lưu access key): build → push ECR → cập nhật ECS service",
+       "GitHub Actions OIDC AWS configure-aws-credentials",
+       "Đạt khi: merge vào main là tự deploy; repo không có access key"),
+     K("w12-aws-demo-destroy",1,"Demo thật: chuyển tiền trên AWS (RDS + SQS), xem CloudWatch Logs, ghi chi phí thực tế, terraform destroy ngay trong ngày",
+       "",
+       "Đạt khi: ảnh demo + chi phí trong README + đã destroy"),
+     K("w12-aws-readme",2,"README AWS: sơ đồ kiến trúc, chi phí, 1 lệnh deploy / 1 lệnh gỡ",
+       "",
+       "Đạt khi: người khác làm theo README dựng lại được"),
+     K("w12-lambda",4,"Tuỳ chọn (JD NAB có FaaS): notification consumer bản AWS Lambda trigger từ SQS; so cold start, chi phí, giới hạn với ECS",
+       "AWS Lambda SQS trigger Java",
+       "Đạt khi: bảng so sánh Lambda vs ECS 5 dòng"),
+     K("w12-pitch-star",3,"Pitch “Tell me about MiniPay” bản 60 giây và 3 phút + STAR #1 (deadlock story, giá trị Accountable deliverer)",
+       "",
+       "Đạt khi: 2 file ghi âm + STAR viết ra 1 trang")],
+ en:["Speaking: IAM role vs user, least privilege (ghi âm 2 phút)",
+     "Mock F3 30 phút: AWS cho backend (ECS, RDS, SQS, IAM)",
+     "Pitch MiniPay 60 giây + 3 phút (ghi âm)"],
+ mock:""},
+13:{theme:"Observability + reconciliation → MiniPay M7",goal:"M7: trace xuyên HTTP → DB → SQS, reconciliation báo drift = 0, có video demo 3 phút",
+ be:[K("w13-m7-logging",1,"M7: log JSON (structured logging có sẵn trong Boot) có traceId, idempotencyKey, accountId đã che; MDC",
+       "Spring Boot structured logging JSON",
+       "Đạt khi: 1 dòng log mẫu đủ trường, không lộ PII"),
+     K("w13-m7-metrics",1,"M7 metrics Micrometer: transfers_total{result}, histogram độ trễ, outbox lag, độ sâu DLQ",
+       "Micrometer timer histogram Spring Boot",
+       "Đạt khi: 4 metric hiện trên /actuator/prometheus"),
+     K("w13-m7-tracing",1,"M7 tracing OpenTelemetry → grafana/otel-lgtm (1 container gồm Grafana + Tempo + Loki + Prometheus) chạy local; trace 1 lệnh chuyển xuyên HTTP → DB → SQS → consumer",
+       "grafana docker-otel-lgtm",
+       "Đạt khi: ảnh trace end-to-end trong README"),
+     K("w13-m7-reconciliation",1,"M7 reconciliation job: tính lại số dư từ posting, báo drift; chạy 1 instance (ShedLock hoặc advisory lock); bản song song chia theo khoảng account id vs bản tuần tự trên 10⁶ posting (tận dụng nền HPC/N-Body)",
+       "ShedLock Spring scheduled lock",
+       "Đạt khi: drift = 0 trên dữ liệu thật; bảng speedup song song vs tuần tự"),
+     K("w13-slo-runbook",2,"SLO mẫu (99% lệnh chuyển < 300 ms ở 50 RPS) + dashboard + 1 alert + runbook 1 trang; APRA CPS 230 (operational resilience) ở mức khái niệm",
+       "APRA CPS 230 operational resilience summary",
+       "Đạt khi: dashboard + runbook nằm trong repo"),
+     K("w13-banking-101",3,"Banking 101: clearing vs settlement, ISO 20022 (pacs.008), NPP/PayTo (Úc), NAPAS (VN), KYC/AML; đặt MiniPay vào bức tranh lớn",
+       "ISO 20022 pacs.008 explained NPP PayTo",
+       "Đạt khi: 1 trang ghi chú tiếng Anh + 5 câu hỏi ôn"),
+     K("w13-system-design",2,"System design “payment system” 45 phút tự bấm giờ: yêu cầu, API, data model, nhất quán (ledger, idempotency), scale (partition theo account, read replica), lỗi; modular monolith vs microservices",
+       "donnemartin system-design-primer",
+       "Đạt khi: sơ đồ + ghi âm trình bày 10 phút"),
+     K("w13-video-readme",1,"Video demo 3 phút tiếng Anh + README kể chuyện: vấn đề, kiến trúc, ADR, bằng chứng đúng (test), số liệu, security, chi phí AWS, AI đã dùng thế nào",
+       "",
+       "Đạt khi: video công khai + README đủ mục"),
+     K("w13-tag-v1",2,"Tag v1.0 + retro tháng 3: liệt kê việc còn thiếu cho M8 (làm sau kỳ thi)",
+       "",
+       "Đạt khi: release v1.0 trên GitHub + danh sách M8")],
+ en:["Speaking: log, metric, trace khác nhau thế nào (ghi âm 2 phút)",
+     "Mock F3 30 phút: system design payment",
+     "Tập video demo 3 phút trước gương, sửa 5 lỗi"],
+ mock:"Mock interview F3 60 phút: system design “payment system” + MiniPay end-to-end"},
+14:{theme:"Tuần thi: PE PRJ301, PE CSD201",dsa:"Làm lại bài ☆ (1 bài/ngày)",goal:"Sẵn sàng PE PRJ301 và CSD201",exam:true,
+ be:[K("w14-1",2,"Ôn PE PRJ301: làm 1 đề PE mẫu (Servlet/JSP + SQL Server), bấm giờ 85 phút"),
+     K("w14-2",2,"Ôn CSD201: tự cài đặt lại BST, heap, BFS/DFS, sorting bằng Java không nhìn tài liệu"),
+     K("w14-3",2,"Ôn PE CSD201: 1 đề mẫu, bấm giờ"),
+     K("w14-4",2,"Ôn SWR302: requirements, use case, UML theo đề cương"),
+     K("w14-5",2,"Ôn IOT102 và JPD123 theo đề cương"),
+     K("w14-6",2,"PE PRJ301 mẫu thứ 2"),
+     K("w14-7",2,"MiniPay: chỉ fix bug nhỏ, tối đa 1 giờ"),
+     K("w14-8",2,"Ôn JPD123 (kanji, ngữ pháp) và IOT102"),
+     K("w14-9",2,"Ôn tổng hợp môn có lịch thi sớm nhất"),
+     K("w14-10",2,"Nghỉ nhẹ hoặc ôn tiếp nếu cần")],
  en:["Shadowing 15 phút","Mock với AI 20 phút: Java Core","Shadowing 15 phút"],
  mock:"Ôn thi (tuần thi, bỏ mock)"},
-15:{theme:"Thi cuối kỳ",dsa:"Bit Manipulation (1 bài/ngày)",goal:"Giữ mục tiêu ≥9.0, DSA không đứt nhịp",exam:true,
- be:["Ôn thi môn có lịch gần nhất (xem lịch thi trên FAP)",
-     "Ôn thi môn có lịch gần nhất",
-     "Ôn thi môn có lịch gần nhất",
-     "Ôn thi môn có lịch gần nhất",
-     "Đọc lại note Java Core 30 phút để giữ nhịp",
-     "Ôn thi hoặc đi thi",
-     "Nghỉ",
-     "Ôn thi môn có lịch gần nhất",
-     "Ôn thi môn có lịch gần nhất",
-     "Nghỉ"],
+15:{theme:"Thi cuối kỳ",dsa:"Làm lại bài ☆ (1 bài/ngày)",goal:"Giữ mục tiêu ≥9.0, DSA không đứt nhịp",exam:true,
+ be:[K("w15-1",2,"Ôn thi môn có lịch gần nhất (xem lịch thi trên FAP)"),
+     K("w15-2",2,"Ôn thi môn có lịch gần nhất"),
+     K("w15-3",2,"Ôn thi môn có lịch gần nhất"),
+     K("w15-4",2,"Ôn thi môn có lịch gần nhất"),
+     K("w15-5",2,"Đọc lại note Java Core 30 phút để giữ nhịp"),
+     K("w15-6",2,"Ôn thi hoặc đi thi"),
+     K("w15-7",2,"Nghỉ"),
+     K("w15-8",2,"Ôn thi môn có lịch gần nhất"),
+     K("w15-9",2,"Ôn thi môn có lịch gần nhất"),
+     K("w15-10",2,"Nghỉ")],
  en:["","Shadowing 15 phút",""],
  mock:"Ôn thi (tuần thi, bỏ mock)"},
-16:{theme:"Đóng gói portfolio",dsa:"Làm lại bài từng sai",goal:"Repo kể chuyện được, CV sẵn sàng",
- be:["Hoàn thiện README MiniPay, badge CI và coverage",
-     "CV 1 trang tiếng Anh cho OJT NAB: MiniPay đứng đầu, NitroCine thứ hai, N-Body 1 dòng; nêu Java/Spring/AWS/TDD",
-     "Quay video demo MiniPay 3–5 phút tiếng Anh",
-     "Rà checklist Must-have, vá 2 chủ đề yếu nhất",
-     "Pin repo trên GitHub, viết profile README",
-     "Tết Dương lịch: nghỉ lễ",
-     "Nghỉ",
-     "Làm lại 3 bài NeetCode từng sai + 1 bài Codility khó",
-     "Viết bảng tự chấm: hơn và kém ở đâu so với ứng viên NAB/VNG",
-     "Chuẩn bị câu chuyện dự án cho phỏng vấn: 1 bug concurrency thật đã gặp và cách fix"],
- en:["Luyện pitch CV 2 phút","Mock interview behavioral tiếng Anh","Pitch MiniPay 3 phút"],
- mock:"Final mock interview tiếng Anh 60 phút: Java Core + Spring + DB + MiniPay"}
+16:{theme:"MiniPay M8: hiệu năng + CV",goal:"Báo cáo hiệu năng (k6, flame graph, JMH), PIT ≥ 70%, CV tiếng Anh xong",
+ be:[K("w16-m8-k6",1,"M8: k6 từ 50 → 200 RPS, kịch bản hot account vs phân tán; ghi p95 / p99, error rate",
+       "https://grafana.com/docs/k6/latest/",
+       "Đạt khi: bảng số liệu trong README"),
+     K("w16-m8-flamegraph",1,"M8: flame graph (JFR hoặc async-profiler) khi chạy k6; sửa 1 nút thắt có bằng chứng (pool size, index, tranh chấp hot account), chạy lại so sánh",
+       "async-profiler flame graph Java",
+       "Đạt khi: flame graph trước/sau + bảng số liệu"),
+     K("w16-m8-jmh-vt",2,"M8: JMH cho Money và hash idempotency; so virtual threads vs platform threads trên endpoint gọi provider chậm 200 ms",
+       "",
+       "Đạt khi: bảng JMH + kết luận 3 câu"),
+     K("w16-m8-quality-gates",1,"M8 quality gates trong CI: PIT ≥ 70% (ledger), coverage ledger ≥ 85%, Modulith verify, CVE High → chặn merge",
+       "",
+       "Đạt khi: PR cố tình làm giảm chất lượng bị CI chặn"),
+     K("w16-perf-report",2,"Báo cáo hiệu năng 1 trang trong README (bảng trước/sau, flame graph, giới hạn của phép đo)",
+       "",
+       "Đạt khi: người đọc hiểu được trong 2 phút"),
+     K("w16-cv",1,"CV 1 trang tiếng Anh (MiniPay đứng đầu, có số liệu thật), LinkedIn, GitHub profile README, pin repo",
+       "",
+       "Đạt khi: CV đã được 1 người (bạn hoặc anh chị khoá trên) review"),
+     K("w16-star-bank",1,"Bộ 5 câu chuyện STAR theo 5 giá trị NAB (Analytical, Collaborative, Innovator, Accountable, Proactive), gồm deadlock story và 1 lần bắt lỗi code AI; ghi âm",
+       "",
+       "Đạt khi: 5 STAR viết ra + ghi âm, mỗi câu ≤ 2 phút")],
+ en:["Luyện pitch CV 2 phút","Mock F3 behavioral: 5 giá trị NAB","Pitch MiniPay 3 phút (bản cuối)"],
+ mock:"Final mock interview F3 60 phút: Java core + Spring + DB + MiniPay"}
 };
-const BUF={theme:"Tuần đệm và tổng kiểm tra",dsa:"Làm lại bài sai, Codility Lesson 17",goal:"≥90% Must-have và ≥70% Strong-plus",
- be:["Bù việc còn nợ (xem mục Việc còn nợ)",
-     "Final mock OA: 3 bài trong 90 phút",
-     "Final mock interview tiếng Anh lần 2",
-     "Rà checklist năng lực trong roadmap, tự chấm lần cuối",
-     "Cập nhật CV theo kết quả tự chấm",
-     "Đóng gói: CV, repo, video demo",
-     "Lên danh sách chương trình intern/fresher 2027 cần theo dõi"],
- en:["Speaking: tự giới thiệu + MiniPay","Mock với AI tổng hợp",""],mock:""};
+const BUF={theme:"Tuần đệm: tổng kiểm tra + chuẩn bị OJT / StarCamp",goal:"Codility timed set ≥ 70%, mock F3 ≥ 3/5 mọi tiêu chí, hồ sơ sẵn sàng",
+ be:[K("b-debt",1,"Bù việc nợ (xem mục Việc còn nợ và Lưu trữ)","","Đạt khi: không còn việc nợ, hoặc việc đã cắt có ghi lý do"),
+     K("b-quiz-40",2,"Quiz tổng 40 câu không nhìn note (Java core, JVM, concurrency, DB, Spring, MiniPay) → tìm 3 chủ đề yếu nhất","","Đạt khi: có bảng điểm theo chủ đề"),
+     K("b-patch-weak",2,"Vá chủ đề yếu nhất: làm lại lab của chủ đề đó không nhìn note","","Đạt khi: quiz lại chủ đề đó ≥ 80%"),
+     K("b-final-oa",1,"Final Codility timed set: 3 bài / 90 phút, nộp 1 lần, bằng Java","","Đạt khi: ≥ 70% (cả đúng lẫn hiệu năng)"),
+     K("b-final-mock",1,"Final mock interview F3 60 phút (Java core + JVM + DB + Spring + MiniPay + 1 behavioral)","","Đạt khi: ≥ 3/5 ở cả 4 tiêu chí"),
+     K("b-fpt-starcamp",1,"Hỏi Phòng Quan hệ doanh nghiệp FPT: (a) NAB có nhận OJT kỳ 6 năm nay không, (b) StarCamp có được tính là OJT không; theo dõi StarCamp batch tháng 2–3/2027, chuẩn bị hồ sơ để nộp sớm","NAB Innovation Centre Vietnam StarCamp","Đạt khi: có câu trả lời bằng văn bản + lịch nộp"),
+     K("b-plan-phase2",2,"Lên kế hoạch Giai đoạn 2 theo syllabus FLM kỳ 5 + mốc M9","","Đạt khi: kế hoạch 1 trang theo tuần")],
+ en:["Speaking: tự giới thiệu + MiniPay 60 giây","Mock F3 tổng hợp",""],mock:""};
 
-/* ============ GIAI ĐOẠN 2: KỲ 5 JAVA INTENSIVE → OJT NAB KỲ 6 ============
+/* ============ GIAI ĐOẠN 2: KỲ 5 → OJT / STARCAMP NAB ============
    Mốc ước lượng; cập nhật khi có syllabus trên FLM và lịch OJT chính thức. */
 const PHASE2=[
- {when:"Tháng 1/2027 · bắt đầu kỳ 5",items:[
-   "Tra FLM: danh sách môn chuyên ngành hẹp Java Intensive kỳ 5, đọc syllabus, map từng môn với MiniPay",
-   "Hỏi phòng Quan hệ doanh nghiệp: lịch đăng ký OJT kỳ 6 và đợt tuyển của NAB Innovation Centre Vietnam",
-   "CV + LinkedIn tiếng Anh: MiniPay, NitroCine, N-Body; nêu Java/Spring/AWS/TDD"]},
+ {when:"Tháng 1/2027 · đầu kỳ 5",items:[
+   K("p2-flm-map",2,"Đọc syllabus FLM kỳ 5, map từng môn với MiniPay (môn nào giúp mốc nào)"),
+   K("p2-dsa-ratio",2,"DSA đổi tỉ lệ NeetCode : Codility = 1 : 1, Codility timed set mỗi 2 tuần (tiếp hàng đợi NeetCode bên dưới)")]},
  {when:"Tháng 2/2027",items:[
-   ["Thi AWS Certified Cloud Practitioner (nền đã học ở Tuần 12–13 với MiniPay), làm 2 đề thi thử trước","AWS Certified Cloud Practitioner exam guide"],
-   ["AWS Developer Associate (học, chưa cần thi): Lambda, DynamoDB, API Gateway, SNS/SQS, EventBridge","AWS Certified Developer Associate exam guide"],
-   ["Docker + Kubernetes cơ bản: deploy MiniPay lên minikube (Deployment, Service, ConfigMap)","Kubernetes basics tutorial minikube"],
-   "Giữ nhịp DSA: 5 bài/tuần, ưu tiên Medium hay gặp trong OA"]},
+   K("p2-m9",1,"M9: tách notification-service thành tiến trình riêng + contract test + trace xuyên 2 service"),
+   K("p2-starcamp-apply",1,"Nộp StarCamp nếu NAB mở batch (Batch 20 năm 2026 mở đơn 18/2, hạn 20/3): nộp sớm vì batch đủ người là ngừng","NAB StarCamp Vietnam batch")]},
  {when:"Tháng 3/2027",items:[
-   ["Microservices: tách MiniPay thành account-service + notification-service, Spring Cloud Gateway, giao tiếp qua Kafka","Spring Cloud Gateway getting started"],
-   "Contract test / integration test giữa 2 service; tracing bằng Micrometer Tracing",
-   "Nộp hồ sơ OJT NAB (theo lịch trường), chuẩn bị bài OA/Codility"]},
+   K("p2-dva",5,"Tuỳ chọn: AWS Developer Associate DVA-C03 (thi từ 1/12/2026), chỉ thi sau khi MiniPay đã chạy trên AWS","AWS Certified Developer Associate DVA-C03 exam guide"),
+   K("p2-kafka",4,"Tuỳ chọn: Kafka 4 (KRaft) trên nhánh riêng thay SQS, mở cửa thêm ngân hàng / fintech khác","Apache Kafka 4 KRaft quickstart"),
+   K("p2-k8s",4,"Kubernetes: đọc khái niệm 1 buổi (Pod, Deployment, Service), không dựng cluster","Kubernetes basics concepts")]},
  {when:"Tháng 4/2027 · trước OJT",items:[
-   "Mock technical interview tiếng Anh 3 buổi: Java Core, Spring, DB, MiniPay",
-   "Behavioral theo STAR (teamwork, conflict, failure): viết sẵn 5 câu chuyện",
-   ["Agile/Scrum thực hành: làm MiniPay theo sprint 1 tuần trên Jira/GitHub Projects","Scrum Guide"]]}
+   K("p2-mock3",1,"Mock interview F3 3 buổi: Java core, Spring/DB, MiniPay + system design"),
+   K("p2-star",3,"Cập nhật bộ STAR bằng kinh nghiệm kỳ 5"),
+   K("p2-clf",5,"Tuỳ chọn: AWS Cloud Practitioner (ít giá trị phân loại nếu đã tự deploy được)","AWS Certified Cloud Practitioner exam guide")]}
 ];
 
 /* ============ DSA: NEETCODE 150 (143 BÀI MIỄN PHÍ) ============ */
@@ -675,8 +919,13 @@ const LC=[
 [268,"missing-number","Missing Number","E"],[371,"sum-of-two-integers","Sum of Two Integers","M"],[7,"reverse-integer","Reverse Integer","M"]
 ];
 const DIFF_LABEL={E:"Easy",M:"Medium",H:"Hard"};
+// Vị trí bài đầu tiên của từng nhóm trong LC (theo thứ tự NeetCode 150)
+const CATS=[[0,"Arrays & Hashing"],[8,"Two Pointers"],[13,"Sliding Window"],[19,"Stack"],[26,"Binary Search"],[33,"Linked List"],[44,"Trees"],[59,"Heap"],
+  [66,"Tries"],[69,"Backtracking"],[78,"Graphs"],[88,"Advanced Graphs"],[93,"1-D DP"],[105,"2-D DP"],[116,"Greedy"],[124,"Intervals"],[128,"Math"],[136,"Bit"]];
+function catOf(i){let c="";for(const [s,n] of CATS){if(i>=s)c=n;}return c;}
+const LCI={}; LC.forEach((p,i)=>{LCI[p[0]]=i;});
 
-/* Codility Lessons: T5 hằng tuần, Lesson n ở Tuần n, Lesson 17 ở tuần đệm */
+/* Codility Lessons */
 const COD=[
 [1,"Iterations","BinaryGap"],[2,"Arrays","CyclicRotation, OddOccurrencesInArray"],[3,"Time Complexity","FrogJmp, PermMissingElem, TapeEquilibrium"],
 [4,"Counting Elements","FrogRiverOne, PermCheck, MaxCounters, MissingInteger"],[5,"Prefix Sums","PassingCars, CountDiv, GenomicRangeQuery, MinAvgTwoSlice"],
@@ -688,28 +937,80 @@ const COD=[
 [16,"Greedy algorithms","MaxNonoverlappingSegments, TieRopes"],[17,"Dynamic programming","NumberSolitaire, MinAbsSum"]
 ];
 
-/* Phân bài: Tuần 0 (T6: 2, T7: 1); Tuần 1–13: T2, T3, T4, T6, T7 mỗi ngày 2 bài; Tuần 14–15: mỗi ngày 1 bài */
+/* Lịch DSA v1 (trước 6/10, giữ để xem lại lịch sử): Tuần 0 (T6: 2, T7: 1); Tuần 1–13: T2, T3, T4, T6, T7 mỗi ngày 2 bài */
 const DSA_MAP={};
-let DSA_ASSIGNED=0;
 (function(){
   let p=0;
-  const put=(t,n)=>{const k=isoOf(t);DSA_MAP[k]=[];for(let i=0;i<n&&p<LC.length;i++)DSA_MAP[k].push(p++);};
+  const put=(t,n)=>{const a=[];for(let i=0;i<n&&p<LC.length;i++)a.push(p++);if(t<REBASE)DSA_MAP[isoOf(t)]=a;};
   put(W0,2); put(W0+DAY,1);
   for(let w=1;w<=15;w++){const s=W1+(w-1)*7*DAY;const n=w<=13?2:1;[0,1,2,4,5].forEach(o=>put(s+o*DAY,n));}
-  DSA_ASSIGNED=p;
 })();
 
-/* ============ DỜI LỊCH: HÀNG ĐỢI TASK BACKEND ============
-   Task backend của Tuần 1–13, 16 và tuần đệm xếp thành một hàng đợi (SEQ) và rải lần lượt
-   vào các ô Backend theo ngày (SLOTS). Tuần thi 14–15 đứng ngoài hàng đợi.
-   Mỗi lần dời lịch {date, start, skip}: từ ngày date, ô đầu tiên nhận task SEQ[start],
-   các task trong skip (đã làm) được bỏ qua. Không gộp task: bị trễ thì cả lịch lùi lại. */
+/* Lịch DSA v2 (từ 6/10): chỉ bài Easy/Medium (Codility ra đề Easy–Medium), bài Hard vào Kho Hard tuỳ chọn.
+   Tuần 4 trả nợ 2 bài/ngày (T3, T4, T6); từ Tuần 5: 1 bài vào T2, T3, T4, T6; T5 là Codility; T7 làm lại bài ☆;
+   tuần thi chỉ làm lại bài ☆. Thứ tự: nợ → Linked List → Trees → Heap → Graphs → 1-D DP → các nhóm còn lại. */
+const DSA_DEBT=[153,33,981,206,21,141];
+const DSA_ORDER=["Linked List","Trees","Heap","Graphs","1-D DP","Backtracking","Greedy","Intervals","Tries","2-D DP","Advanced Graphs","Math","Bit"];
+const DSA_Q=(function(){
+  const q=DSA_DEBT.map(n=>LCI[n]); const seen=new Set(q);
+  DSA_ORDER.forEach(c=>LC.forEach((p,i)=>{if(i>=29&&p[3]!=="H"&&catOf(i)===c&&!seen.has(i)){q.push(i);seen.add(i);}}));
+  return q;
+})();
+const DSA2={};
+let DSA2_USED=0;
+(function(){
+  let p=0;
+  for(let t=REBASE;t<=BUFEND;t+=DAY){
+    const w=weekOf(t), d=dow(t), iso=isoOf(t);
+    if(w===14||w===15||HOLIDAYS[iso]) continue;
+    const n=w===4?([2,3,5].includes(d)?2:0):([1,2,3,5].includes(d)?1:0);
+    if(!n) continue;
+    DSA2[iso]=DSA_Q.slice(p,p+n); p+=n;
+  }
+  DSA2_USED=p;
+})();
+// Codility thứ Năm từ 8/10 (bỏ tuần thi): L3–L10, rồi L15–L17, L11; L12–L14 sang Giai đoạn 2
+const COD_ORDER=[3,4,5,6,7,8,9,10,15,16,17,11];
+function codOf(t){
+  const w=weekOf(t); if(w===null) return 0;
+  if(t<REBASE){const n=w==="B"?17:w;return n>=1&&n<=17?n:0;}
+  if(w===14||w===15) return 0;
+  let k=0;
+  for(let x=REBASE;x<t;x+=DAY){const wx=weekOf(x);if(dow(x)===4&&wx!==14&&wx!==15)k++;}
+  return COD_ORDER[k]||0;
+}
+function dsaLabel(w){
+  const wd=weekData(w);
+  if(wd.dsa) return wd.dsa;
+  const [rs,re]=weekRange(w); const cats=[]; let cod=0;
+  for(let t=rs;t<=re;t+=DAY){
+    (DSA2[isoOf(t)]||[]).forEach(i=>{const c=catOf(i);if(!cats.includes(c))cats.push(c);});
+    if(dow(t)===4&&t>=REBASE) cod=codOf(t)||cod;
+  }
+  return (cats.length?cats.join(", "):"Làm lại bài ☆")+(cod?" · Codility L"+cod:"");
+}
+const REV_TEXT="Làm lại 1–2 bài ☆ (bài từng kẹt hoặc sai), không nhìn lời giải, 20 phút/bài";
+const OA_TEXT="Codility timed set: 3 bài trong 90 phút, chỉ nộp 1 lần, bằng Java. Trước khi nộp: tự test biên (rỗng, 1 phần tử, âm, trùng, tràn int) và N = 100.000. Mục tiêu ≥ 70%";
+
+/* ============ HÀNG ĐỢI TASK BACKEND & DỜI LỊCH ============
+   Task backend của Tuần 1–13, 16 và tuần đệm xếp thành một hàng đợi (SEQ) và rải lần lượt vào các ô Backend (SLOTS).
+   Tuần thi 14–15 và Tuần 0 đứng ngoài hàng đợi. Từ 6/10, thứ Bảy là Buffer (không nhận task).
+   Mỗi lần dời lịch {date, startId, skip, cut}: từ ngày date, ô đầu tiên nhận task startId; task trong skip (đã làm)
+   và cut (đã cắt vào Lưu trữ) được bỏ qua. Không gộp task: bị trễ thì cả lịch lùi lại. */
 const FLEX_WEEKS=[1,2,3,4,5,6,7,8,9,10,11,12,13,16,"B"];
-const BASE_SHIFTS=[{date:"2026-09-24",start:8,skip:[]}]; // T5 24/9: tiếp từ "Deep dive: Effective Java chương 3"
-let SEQ=[],SLOTS=[],SLOTMAP={},UNSCHED=[];
+const BASE_SHIFTS=[
+  {date:"2026-09-24",startId:"w01-effective-java-ch3",skip:[],cut:[]}, // v1: T5 24/9 tiếp từ Effective Java ch.3
+  {date:REBASE_ISO,startId:"w04-hashmap-note",skip:[],cut:[]}           // v2: T3 6/10 bắt đầu nội dung mới
+];
+let SEQ=[],IDX={},TASKS={},SLOTS=[],SLOTMAP={},UNSCHED=[],CUTSET=new Set();
+function weekData(w){return w==="B"?BUF:WEEKS[w];}
+function weekName(w){return w==="B"?"tuần đệm":"Tuần "+w;}
+function isRest(task){return /^(Nghỉ|Tết)/.test(task.t);}
 function buildSeq(){
-  SEQ=[];
-  FLEX_WEEKS.forEach(w=>weekData(w).be.forEach(x=>{if(!/^(Nghỉ|Tết)/.test(taskOf(x).text)) SEQ.push({x,w});}));
+  SEQ=[];IDX={};TASKS={};
+  [0,14,15].forEach(w=>WEEKS[w].be.forEach(task=>{TASKS[task.id]=task;}));
+  FLEX_WEEKS.forEach(w=>weekData(w).be.forEach(task=>{TASKS[task.id]=task;if(!isRest(task)){IDX[task.id]=SEQ.length;SEQ.push({task,w});}}));
+  PHASE2.forEach(g=>g.items.forEach(task=>{TASKS[task.id]=task;}));
 }
 function buildSlots(){
   SLOTS=[];
@@ -717,113 +1018,289 @@ function buildSlots(){
     const [rs,re]=weekRange(w), map=w==="B"?BE_BUF:BE_STD;
     for(let t=rs;t<=re;t+=DAY){
       if(HOLIDAYS[isoOf(t)]) continue;
+      if(t>=REBASE&&dow(t)===6) continue;
       const n=(map[dow(t)]||[]).length;
       for(let i=0;i<n;i++) SLOTS.push({t,iso:isoOf(t),slot:i?"be2":"be1"});
     }
   });
 }
-function userShifts(){return Array.isArray(done.__shifts)?done.__shifts:[];}
-function allShifts(){return BASE_SHIFTS.concat(userShifts()).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);}
+function userShifts(){return data.shifts.filter(x=>IDX[x.startId]!==undefined);}
+function allShifts(){
+  return BASE_SHIFTS.map(x=>Object.assign({base:true},x)).concat(userShifts())
+    .sort((a,b)=>byDate(a,b)||(a.base?-1:0)+(b.base?1:0));
+}
 function buildPlan(){
-  SLOTMAP={};
+  SLOTMAP={}; CUTSET=new Set();
   const sh=allShifts(); let si=0,ptr=0,skip=new Set();
+  sh.forEach(s=>(s.cut||[]).forEach(id=>CUTSET.add(id)));
   SLOTS.forEach(sl=>{
-    while(si<sh.length&&sl.iso>=sh[si].date){ptr=sh[si].start;skip=new Set(sh[si].skip||[]);si++;}
-    while(skip.has(ptr)) ptr++;
+    while(si<sh.length&&sl.iso>=sh[si].date){const s=sh[si];ptr=IDX[s.startId];skip=new Set((s.skip||[]).concat(s.cut||[]));si++;}
+    while(ptr<SEQ.length&&skip.has(SEQ[ptr].task.id)) ptr++;
     SLOTMAP[sl.iso+"|"+sl.slot]=ptr<SEQ.length?ptr:-1;
     ptr++;
   });
   UNSCHED=[];
-  for(;ptr<SEQ.length;ptr++) if(!skip.has(ptr)) UNSCHED.push(ptr);
+  for(;ptr<SEQ.length;ptr++) if(!skip.has(SEQ[ptr].task.id)) UNSCHED.push(ptr);
 }
+function slotIdx(iso,slot){const k=SLOTMAP[iso+"|"+slot];return k==null?-1:k;}
 // Mốc dời lịch gần nhất đã có hiệu lực: việc trước mốc này không tính nợ
 function lastShiftTime(){
   const today=todayUTC(); let t=W0;
   allShifts().forEach(x=>{const d=fromIso(x.date);if(d<=today&&d>t)t=d;});
   return t;
 }
-function weekName(w){return w==="B"?"tuần đệm":"Tuần "+w;}
-function slotDone(sl){return !!done[sl.iso+"|"+sl.slot];}
-function shiftToToday(){
+function planShift(){
   const today=todayUTC();
-  const startT=SLOTS.some(sl=>sl.t===today&&slotDone(sl))?today+DAY:today;
-  const from=lastShiftTime(); let e=Infinity; const doneIdx=[];
+  const doneToday=SLOTS.some(sl=>sl.t===today&&slotIdx(sl.iso,sl.slot)>=0&&isDone(SEQ[slotIdx(sl.iso,sl.slot)].task.id));
+  const startT=doneToday?today+DAY:today;
+  const from=lastShiftTime(); let e=Infinity;
   SLOTS.forEach(sl=>{
     if(sl.t<from||sl.t>=startT) return;
-    const k=SLOTMAP[sl.iso+"|"+sl.slot]; if(k==null||k<0) return;
-    if(slotDone(sl)) doneIdx.push(k); else e=Math.min(e,k);
+    const k=slotIdx(sl.iso,sl.slot); if(k<0) return;
+    if(!isDone(SEQ[k].task.id)) e=Math.min(e,k);
   });
-  if(e===Infinity){toast("Không có task backend nào bị trễ");return;}
+  if(e===Infinity) return null;
   const iso=isoOf(startT);
   const prev=allShifts().filter(x=>x.date<=iso).pop();
-  const skip=[...new Set((prev&&prev.skip||[]).concat(doneIdx))].filter(k=>k>e).sort((a,b)=>a-b);
-  done.__shifts=userShifts().filter(x=>x.date<iso).concat([{date:iso,start:e,skip}]);
-  saveDone(); buildPlan(); render();
-  toast("Đã dời lịch: từ "+dm(startT)+" làm tiếp “"+taskOf(SEQ[e].x).text.slice(0,40)+"…”");
+  const cut=((prev&&prev.cut)||[]).slice();
+  const skip=SEQ.slice(e+1).map(s=>s.task.id).filter(id=>isDone(id)&&!cut.includes(id));
+  return {date:iso,startId:SEQ[e].task.id,skip,cut,v:2};
+}
+function shiftToToday(){
+  const sh=planShift();
+  if(!sh){toast("Không có task backend nào bị trễ");return;}
+  data.shifts=userShifts().filter(x=>x.date<sh.date).concat([sh]);
+  saveData(); buildPlan(); render();
+  toast("Đã dời lịch: từ "+dm(fromIso(sh.date))+" làm tiếp “"+TASKS[sh.startId].t.slice(0,40)+"…”");
 }
 function undoShift(){
-  const list=userShifts().slice().sort((a,b)=>a.date<b.date?-1:1);
+  const list=userShifts().slice().sort(byDate);
   if(!list.length) return;
-  list.pop(); done.__shifts=list;
-  saveDone(); buildPlan(); render(); toast("Đã hoàn tác lần dời lịch gần nhất");
+  list.pop(); data.shifts=list;
+  saveData(); buildPlan(); render(); toast("Đã hoàn tác lần dời lịch gần nhất");
+}
+// Cắt task ưu tiên thấp (P5 rồi P4, task xa nhất trước) cho tới khi hết tràn; task bị cắt vào Lưu trữ, không mất
+function cutLowPriority(){
+  const list=userShifts().slice().sort(byDate); const last=list[list.length-1];
+  if(!last||!UNSCHED.length){toast("Không có task nào bị đẩy ra ngoài lộ trình");return;}
+  const start=IDX[last.startId], skip=new Set(last.skip.concat(last.cut));
+  const cand=SEQ.map((s,i)=>({s,i})).filter(x=>x.i>start&&x.s.task.pri>=4&&!isDone(x.s.task.id)&&!skip.has(x.s.task.id))
+    .sort((a,b)=>b.s.task.pri-a.s.task.pri||b.i-a.i);
+  const pick=cand.slice(0,UNSCHED.length).map(x=>x.s.task.id);
+  if(!pick.length){toast("Không còn task P4/P5 để cắt: làm bản Tối thiểu của từng task để đuổi kịp");return;}
+  last.cut=last.cut.concat(pick);
+  saveData(); buildPlan(); render();
+  toast("Đã cắt "+pick.length+" task ưu tiên thấp vào Lưu trữ"+(UNSCHED.length?", vẫn còn "+UNSCHED.length+" task tràn":""));
 }
 // Tuần nội dung của lần đầu tiên có task backend từ ngày t trở đi
 function contentWeekFrom(t){
-  for(const sl of SLOTS){if(sl.t<t) continue;const k=SLOTMAP[sl.iso+"|"+sl.slot];if(k>=0) return SEQ[k].w;}
+  for(const sl of SLOTS){if(sl.t<t) continue;const k=slotIdx(sl.iso,sl.slot);if(k>=0) return SEQ[k].w;}
   return null;
+}
+
+/* ============ LƯU TIẾN ĐỘ (DỮ LIỆU V2) ============
+   Khoá v2 lưu mọi thứ theo id. Khoá v1 không bao giờ bị ghi đè: chính nó là bản sao lưu.
+   Nếu đang chạy trong runtime Artifact của Claude thì lưu thêm vào window.storage. */
+const KEY1="hoang-backend-tracker-v1", KEY2="hoang-backend-tracker-v2";
+function emptyData(){return {schemaVersion:2,done:{},at:{},proof:{},notes:{},shifts:[],reviews:{},retro:{},mvd:{},archive:{},migratedFromV1:null};}
+let data=emptyData();
+let justMigrated=false;
+function isDone(id){return !!data.done[id];}
+const hasLS=(()=>{try{const k="__probe__";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}catch(e){return false;}})();
+const hasWS=(typeof window!=="undefined")&&!!window.storage;
+const storageOK=hasLS||hasWS;
+async function readStore(key){
+  if(hasWS){
+    try{const r=await window.storage.get(key,false);if(r&&r.value)return JSON.parse(r.value);}
+    catch(e){/* chưa có dữ liệu trong window.storage */}
+  }
+  if(hasLS){
+    try{const v=localStorage.getItem(key);if(v)return JSON.parse(v);}
+    catch(e){/* chưa có dữ liệu hoặc hỏng */}
+  }
+  return null;
+}
+async function saveData(){
+  if(!storageOK) return; // không có nơi lưu — banner đã báo
+  let ok=false; const s=JSON.stringify(data);
+  if(hasLS){try{localStorage.setItem(KEY2,s);ok=true;}catch(e){/* đầy hoặc bị chặn */}}
+  if(hasWS){try{const r=await window.storage.set(KEY2,s,false);if(r)ok=true;}catch(e){/* window.storage lỗi */}}
+  if(!ok) toast("Chưa lưu được tiến độ, thử lại sau.");
+}
+function isObj(x){return !!x&&typeof x==="object"&&!Array.isArray(x);}
+function normalize(x){
+  const o=emptyData(); if(!isObj(x)) return o;
+  ["done","at","proof","notes","reviews","retro","mvd","archive"].forEach(k=>{if(isObj(x[k]))o[k]=x[k];});
+  if(Array.isArray(x.shifts)) o.shifts=x.shifts.filter(s=>s&&typeof s.date==="string"&&typeof s.startId==="string")
+    .map(s=>({date:s.date,startId:s.startId,skip:Array.isArray(s.skip)?s.skip.filter(v=>typeof v==="string"):[],cut:Array.isArray(s.cut)?s.cut.filter(v=>typeof v==="string"):[],v:2}));
+  o.migratedFromV1=x.migratedFromV1||null;
+  return o;
+}
+function mergeText(x,y){
+  if(!x) return y||""; if(!y||x===y) return x;
+  const lines=x.split("\n"); y.split("\n").forEach(l=>{if(!lines.includes(l))lines.push(l);});
+  return lines.join("\n");
+}
+// Gộp b vào a (không sửa a): done = true thắng, ghi chú nối không trùng, thẻ ôn và shift hợp nhất theo id / ngày
+function mergeData(a,b){
+  const o=normalize(JSON.parse(JSON.stringify(normalize(a)))); b=normalize(b);
+  for(const k in b.done) if(b.done[k]) o.done[k]=1;
+  for(const k in b.at) if(!o.at[k]||(b.at[k]&&b.at[k]<o.at[k])) o.at[k]=b.at[k];
+  for(const k in b.proof) if(!o.proof[k]) o.proof[k]=b.proof[k];
+  for(const k in b.notes) o.notes[k]=mergeText(o.notes[k],b.notes[k]);
+  const byD={}; o.shifts.forEach(x=>{byD[x.date]=x;}); b.shifts.forEach(x=>{if(!byD[x.date])byD[x.date]=x;});
+  o.shifts=Object.values(byD).sort(byDate);
+  for(const k in b.reviews){const x=o.reviews[k],y=b.reviews[k];if(!x||(!x.doneAt&&y.doneAt))o.reviews[k]=y;}
+  for(const k in b.retro){const x=o.retro[k]||{},y=b.retro[k]||{},r={};["a","b","c"].forEach(f=>{r[f]=mergeText(x[f]||"",y[f]||"");});o.retro[k]=r;}
+  for(const k in b.mvd) if(b.mvd[k]) o.mvd[k]=1;
+  for(const k in b.archive) if(!o.archive[k]) o.archive[k]=b.archive[k];
+  if(!o.migratedFromV1&&b.migratedFromV1) o.migratedFromV1=b.migratedFromV1;
+  return o;
+}
+
+/* ============ CHUYỂN DỮ LIỆU V1 → V2 ============
+   v1 lưu task backend theo ô ngày ("2026-09-14|be1") và vị trí trong hàng đợi. v2 lưu theo id task.
+   28 task đầu hàng đợi (Tuần 1–3) giống hệt nhau ở hai bản, nên chỉ số v1 < 28 đổi được thẳng sang id.
+   Hàm thuần: cùng đầu vào cho cùng kết quả, gộp nhiều lần vẫn vậy. */
+const V1_PREFIX=28;
+function v1SlotIndexMap(v1shifts){
+  const sh=[{date:"2026-09-24",start:8,skip:[]}].concat(v1shifts).sort(byDate);
+  const map={}; let si=0,ptr=0,skip=new Set();
+  FLEX_WEEKS.forEach(w=>{
+    const [rs,re]=weekRange(w), m=w==="B"?BE_BUF:BE_STD;
+    for(let t=rs;t<=re;t+=DAY){
+      const iso=isoOf(t); if(HOLIDAYS[iso]) continue;
+      const n=(m[dow(t)]||[]).length;
+      for(let i=0;i<n;i++){
+        while(si<sh.length&&iso>=sh[si].date){ptr=sh[si].start;skip=new Set(sh[si].skip||[]);si++;}
+        while(skip.has(ptr)) ptr++;
+        map[iso+"|"+(i?"be2":"be1")]=ptr++;
+      }
+    }
+  });
+  return map;
+}
+function migrateV1toV2(src){
+  const out=emptyData(); if(!isObj(src)) return out;
+  const v1sh=(Array.isArray(src.__shifts)?src.__shifts:[]).filter(x=>x&&typeof x.date==="string"&&Number.isInteger(x.start))
+    .map(x=>({date:x.date,start:x.start,skip:Array.isArray(x.skip)?x.skip.filter(Number.isInteger):[]}));
+  const map=v1SlotIndexMap(v1sh);
+  const v1id=k=>(Number.isInteger(k)&&k>=0&&k<V1_PREFIX)?SEQ[k].task.id:null;
+  const beIds=[];
+  const mark=(id,iso)=>{out.done[id]=1;if(iso&&(!out.at[id]||iso<out.at[id]))out.at[id]=iso;};
+  Object.keys(src).sort().forEach(key=>{
+    const v=src[key];
+    if(key==="__shifts") return;
+    if(key.startsWith("note|")){if(typeof v==="string"&&v.trim())out.notes[key.slice(5)]=v;return;}
+    if(!(v===1||v===true)) return;
+    let m=key.match(/^(\d{4}-\d{2}-\d{2})\|(be[12])$/);
+    if(m){
+      const iso=m[1], t=fromIso(iso), w=weekOf(t), pos=m[2]==="be1"?0:1; let id=null;
+      if(w===0){const i=(BE_W0[dow(t)]||[])[pos];if(i!==undefined)id=WEEKS[0].be[i].id;}
+      else if(w===14||w===15){const i=(BE_STD[dow(t)]||[])[pos];if(i!==undefined)id=WEEKS[w].be[i].id;}
+      else if(w!==null) id=v1id(map[key]);
+      if(id){mark(id,iso);beIds.push(id);}
+      else out.archive["v1|"+key]={text:"Task v1 ngày "+dm(t)+" ("+m[2]+") không còn trong lộ trình v2"};
+      return;
+    }
+    m=key.match(/^seq-(\d+)$/);
+    if(m){const id=v1id(Number(m[1]));if(id){mark(id,null);beIds.push(id);}else out.archive["v1|"+key]={text:"Task v1 ngoài lộ trình ("+key+")"};return;}
+    if(/^p2-\d+-\d+$/.test(key)){out.archive["v1|"+key]={text:"Mục Giai đoạn 2 của bản cũ ("+key+")"};return;}
+    const d=key.match(/^(\d{4}-\d{2}-\d{2})\|/);
+    mark(key,d?d[1]:null);
+  });
+  out.shifts=v1sh.filter(x=>x.date<REBASE_ISO)
+    .map(x=>({date:x.date,startId:v1id(x.start),skip:x.skip.map(v1id).filter(Boolean),cut:[],v:2}))
+    .filter(x=>x.startId);
+  // Task đã làm ở v1: gắn bằng chứng "từ v1". Task học (Tuần 1–3, không tính setup Tuần 0) được xếp 1 thẻ ôn
+  // ở mốc +7, giãn 2 thẻ/ngày từ ngày rebase
+  const uniq=[...new Set(beIds)];
+  uniq.forEach(id=>{out.proof[id]={url:"",reason:"Đã làm ở bản v1 (trước 6/10/2026)",q:[],at:out.at[id]||REBASE_ISO};});
+  uniq.filter(id=>IDX[id]!==undefined).sort((a,b)=>IDX[a]-IDX[b]).forEach((id,j)=>{
+    out.reviews[id+"#2"]={task:id,step:2,due:isoOf(REBASE+Math.floor(j/2)*DAY)};
+  });
+  out.migratedFromV1={keys:Object.keys(src).length};
+  return out;
+}
+
+/* ============ ÔN NGẮT QUÃNG ============
+   Tích xong 1 task backend → thẻ ôn ở +1, rồi +3, +7, +21 ngày (khoảng cách 1, 2, 4, 14).
+   Tự chấm 0–3: dưới 2 thì ôn lại ngày mai ở cùng mốc; từ 2 trở lên thì sang mốc kế. Tối đa 5 thẻ/ngày. */
+const RV_GAPS=[1,2,4,14];
+const RV_MAX=5;
+function addCard(cid,task,step,due){if(!data.reviews[cid])data.reviews[cid]={task,step,due};}
+function seedCards(id,t){if(!Object.values(data.reviews).some(c=>c.task===id))addCard(id+"#0",id,0,isoOf(t+RV_GAPS[0]*DAY));}
+function dueCards(t){
+  const iso=isoOf(t);
+  return Object.keys(data.reviews).filter(k=>{const c=data.reviews[k];return !c.doneAt&&c.due<=iso&&isDone(c.task);})
+    .sort((a,b)=>{const x=data.reviews[a],y=data.reviews[b];return x.due<y.due?-1:x.due>y.due?1:(a<b?-1:1);});
+}
+function scoreCard(cid,score,text,t){
+  const c=data.reviews[cid]; if(!c||c.doneAt) return;
+  const iso=isoOf(t);
+  c.score=score; c.doneAt=iso; if(text) c.text=text;
+  if(score<2) addCard(c.task+"#"+c.step+"r"+iso,c.task,c.step,isoOf(t+DAY));
+  else if(c.step<RV_GAPS.length-1) addCard(c.task+"#"+(c.step+1),c.task,c.step+1,isoOf(t+RV_GAPS[c.step+1]*DAY));
 }
 
 /* ============ DỰNG MỘT NGÀY ============ */
 function srch(q){return "https://www.google.com/search?q="+encodeURIComponent(q);}
-function linkOf(spec){if(!spec)return null;return spec.startsWith("http")?{href:spec,label:"Mở bài viết"}:{href:srch(spec),label:"Tìm nguồn"};}
-function taskOf(x){return Array.isArray(x)?{text:x[0],link:linkOf(x[1]),sub:x[2]||""}:{text:x,link:null,sub:""};}
-function weekData(w){return w==="B"?BUF:WEEKS[w];}
+function linkOf(spec){if(!spec)return null;return spec.startsWith("http")?{href:spec,label:"Mở nguồn"}:{href:srch(spec),label:"Tìm nguồn"};}
+function beItem(task){return {id:task.id,kind:"be",text:task.t,link:linkOf(task.src),sub:task.dod,pri:task.pri};}
+function lcItem(pi){const p=LC[pi];return {id:"lc-"+p[0],kind:"lc",text:p[0]+". "+p[2],diff:p[3],link:{href:"https://leetcode.com/problems/"+p[1]+"/",label:"Mở trên LeetCode"},alt:{href:srch("NeetCode "+p[2]+" solution"),label:"Video NeetCode"}};}
+function codItem(n){const c=COD[n-1];return {id:"cod-"+n,kind:"cod",text:"Lesson "+n+": "+c[1],sub:"Bài: "+c[2],link:{href:srch("Codility Lesson "+n+" "+c[1]),label:"Tìm lesson trên Codility"}};}
+// Loại buổi mock CN: từ 6/10, tuần chẵn là Codility timed set; trước đó theo lịch v1 (tuần chẵn là mock OA)
+function mockKind(t){const w=weekOf(t);if(w===14||w===15) return "";return typeof w==="number"&&w>0&&w%2===0?"oa":"enmock";}
 
 function buildDay(t){
   const w=weekOf(t); if(w===null) return null;
-  const wd=weekData(w), dw=dow(t), iso=isoOf(t);
+  const wd=weekData(w), dw=dow(t), iso=isoOf(t), v2=t>=REBASE;
   const flex=FLEX_WEEKS.includes(w);
   // Tuần nội dung: tuần gốc của task backend đầu tiên trong ngày (có thể lùi so với tuần theo lịch)
   let cw=w;
-  if(flex){const k0=SLOTMAP[iso+"|be1"];if(k0>=0)cw=SEQ[k0].w;}
+  if(flex){let k0=slotIdx(iso,"be1");if(k0<0)k0=slotIdx(iso,"be2");if(k0>=0)cw=SEQ[k0].w;}
   const wk=weekData(cw);
   const idxMap=w===0?BE_W0:(w==="B"?BE_BUF:BE_STD);
   const beIdx=idxMap[dw]||[];
   const blocks=TPL[dw].map(b=>{
-    const blk={s:b.s,e:b.e,cat:b.cat,title:b.title,items:[],note:"",slot:b.slot||""};
+    const blk={s:b.s,e:b.e,cat:b.cat,title:b.title,items:[],note:"",slot:b.slot||"",rv:b.slot==="be1"};
     if(b.slot==="be1"||b.slot==="be2"){
       const i=beIdx[b.slot==="be1"?0:1];
       if(i===undefined){blk.cat="free";blk.title="Tự do";blk.slot="";return blk;}
-      let tk;
+      if(flex&&v2&&dw===6){blk.cat="free";blk.title="Buffer: bù việc nợ, không nhận task mới";blk.slot="buffer";return blk;}
+      let task;
       if(flex){
         if(HOLIDAYS[iso]){blk.cat="free";blk.title="Nghỉ lễ";blk.note=HOLIDAYS[iso];blk.slot="";return blk;}
-        const k=SLOTMAP[iso+"|"+b.slot];
-        if(k==null||k<0){blk.cat="free";blk.title="Buffer";blk.note="Hết task trong hàng đợi: bù việc nợ hoặc ôn lại";blk.slot="";return blk;}
-        tk=taskOf(SEQ[k].x);
+        const k=slotIdx(iso,b.slot);
+        if(k<0){blk.cat="free";blk.title="Buffer";blk.note="Hết task trong hàng đợi: bù việc nợ hoặc ôn lại";blk.slot="";return blk;}
+        task=SEQ[k].task;
         if(SEQ[k].w!==w) blk.note="Nội dung "+weekName(SEQ[k].w);
       } else {
-        tk=taskOf(wd.be[i]);
-        if(/^(Nghỉ|Tết)/.test(tk.text)){blk.cat="free";blk.title="Nghỉ";blk.note=tk.text;blk.slot="";return blk;}
+        task=wd.be[i];
+        if(isRest(task)){blk.cat="free";blk.title="Nghỉ";blk.note=task.t;blk.slot="";return blk;}
       }
       if(wd.exam){blk.cat="school";blk.title="Ôn thi (thay backend)";}
-      blk.items.push({id:iso+"|"+b.slot,kind:"be",text:tk.text,link:tk.link,sub:tk.sub});
+      blk.items.push(beItem(task));
     } else if(b.slot==="dsa"){
-      if(dw===4){
-        const n=w==="B"?17:w;
-        if(n>=1&&n<=17){const c=COD[n-1];blk.items.push({id:"cod-"+n,kind:"cod",text:"Lesson "+n+": "+c[1],sub:"Bài: "+c[2],link:{href:srch("Codility Lesson "+n+" "+c[1]),label:"Tìm lesson trên Codility"}});}
-      } else if(DSA_MAP[iso]){
-        DSA_MAP[iso].forEach(pi=>{const p=LC[pi];blk.items.push({id:"lc-"+p[0],kind:"lc",text:p[0]+". "+p[2],diff:p[3],link:{href:"https://leetcode.com/problems/"+p[1]+"/",label:"Mở trên LeetCode"},alt:{href:srch("NeetCode "+p[2]+" solution"),label:"Video NeetCode"}});});
-      } else if(w===16||w==="B"){
-        blk.items.push({id:iso+"|dsarev",kind:"rev",text:"Làm lại 1 bài từng sai (chọn trong các bài đã làm)"});
+      const ex=w===14||w===15;
+      if(dw===4&&!(v2&&ex)){const n=codOf(t);if(n)blk.items.push(codItem(n));}
+      const list=v2?DSA2[iso]:DSA_MAP[iso];
+      if(list&&dw!==4) list.forEach(pi=>blk.items.push(lcItem(pi)));
+      if(!blk.items.length){
+        if(HOLIDAYS[iso]) blk.note="Nghỉ lễ";
+        else if(v2||w===16||w==="B") blk.items.push({id:iso+"|dsarev",kind:"rev",text:REV_TEXT});
+        else blk.note="Không có bài hôm nay";
       }
-      if(!blk.items.length){blk.note="Không có bài hôm nay";}
     } else if(b.slot==="en"){
       const i={2:0,4:1,6:2}[dw]; const txt=(wk.en||[])[i];
-      if(txt) blk.items.push({id:iso+"|en",kind:"en",text:txt}); else {blk.cat="free";blk.title="Tự do";blk.slot="";}
+      if(txt) blk.items.push({id:iso+"|en",kind:dw===4?"enmock":"en",text:txt}); else {blk.cat="free";blk.title="Tự do";blk.slot="";}
     } else if(b.slot==="mock"){
-      if(wk.mock) blk.items.push({id:iso+"|mock",kind:"mock",text:wk.mock});
+      const kind=mockKind(t);
+      let txt=wk.mock;
+      if(v2&&kind==="oa") txt=OA_TEXT;
+      if(txt) blk.items.push({id:iso+"|mock",kind:kind||"mock",text:txt});
     } else if(b.slot==="review"){
-      blk.items.push({id:iso+"|review",kind:"review",text:"Chấm theo tiêu chí tuần: "+wk.goal});
+      blk.items.push({id:iso+"|review",kind:"review",text:(v2?"Retro tuần, chấm 0–5 theo mục tiêu: ":"Chấm theo tiêu chí tuần: ")+wk.goal});
     } else if(b.slot==="plan"){
       const nw=weekOf(t+DAY);
       let nx=null;
@@ -836,57 +1313,48 @@ function buildDay(t){
     }
     return blk;
   });
-  return {w,wk,wd,cw,dw,iso,t,blocks};
-}
-
-/* ============ LƯU TIẾN ĐỘ ============
-   Lưu bền bằng localStorage (chạy trên web tĩnh / Vercel, giữ được sau khi tải lại
-   trang). Nếu đang chạy trong runtime Artifact của Claude thì lưu thêm vào
-   window.storage để đồng bộ. */
-const KEY="hoang-backend-tracker-v1";
-let done={};
-const hasLS=(()=>{try{const k="__probe__";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}catch(e){return false;}})();
-const hasWS=(typeof window!=="undefined")&&!!window.storage;
-const storageOK=hasLS||hasWS;
-async function loadDone(){
-  if(hasWS){
-    try{const r=await window.storage.get(KEY,false);if(r&&r.value){done=JSON.parse(r.value)||{};return;}}
-    catch(e){/* chưa có dữ liệu trong window.storage */}
-  }
-  if(hasLS){
-    try{const v=localStorage.getItem(KEY);if(v) done=JSON.parse(v)||{};}
-    catch(e){/* chưa có dữ liệu lần đầu */}
-  }
-}
-async function saveDone(){
-  if(!storageOK) return; // không có nơi lưu — banner đã báo, không cần toast mỗi lần tích
-  let ok=false;
-  if(hasLS){
-    try{localStorage.setItem(KEY,JSON.stringify(done));ok=true;}
-    catch(e){/* localStorage đầy hoặc bị chặn */}
-  }
-  if(hasWS){
-    try{const r=await window.storage.set(KEY,JSON.stringify(done),false);if(r) ok=true;}
-    catch(e){/* window.storage lỗi */}
-  }
-  if(!ok) toast("Chưa lưu được tiến độ, thử lại sau.");
+  return {w,wk,wd,cw,dw,iso,t,v2,blocks};
 }
 
 /* ============ GIAO DIỆN ============ */
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function toMin(hm){const [h,m]=hm.split(":").map(Number);return h*60+m;}
 function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes();}
-let state={view:null};
+let state={view:null,proofFor:null,noProof:null,drafts:{}};
 let toastTimer=null;
-function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2400);}
+function toast(msg){
+  if(typeof document==="undefined") return;
+  const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+function draft(key){return esc(state.drafts[key]||"");}
+function isUrl(s){return /^https?:\/\//i.test(s);}
 
+function proofForm(id){
+  const reason=state.noProof===id;
+  return '<div class="proof" data-pf-box="'+esc(id)+'">'+
+    '<div class="small">Định nghĩa xong: dán link bằng chứng (commit, PR hoặc note). App sẽ tự xếp lịch ôn +1/+3/+7/+21 ngày.</div>'+
+    (reason
+      ?'<input class="field" data-draft="pf-reason|'+esc(id)+'" value="'+draft("pf-reason|"+id)+'" placeholder="Vì sao không có link? (vd: làm trên giấy, ghi âm trên điện thoại)">'
+      :'<input class="field" type="url" inputmode="url" data-draft="pf-url|'+esc(id)+'" value="'+draft("pf-url|"+id)+'" placeholder="https://github.com/… (commit / PR / note)">')+
+    '<input class="field" data-draft="pf-q1|'+esc(id)+'" value="'+draft("pf-q1|"+id)+'" placeholder="Câu hỏi ôn 1 (tuỳ chọn, câu mở, không phải định nghĩa)">'+
+    '<input class="field" data-draft="pf-q2|'+esc(id)+'" value="'+draft("pf-q2|"+id)+'" placeholder="Câu hỏi ôn 2 (tuỳ chọn)">'+
+    '<div class="btnrow">'+(reason
+      ?'<button class="btn primary" type="button" data-pf="reason">Lưu & tích</button><button class="btn" type="button" data-pf="back">Có link rồi</button>'
+      :'<button class="btn primary" type="button" data-pf="save">Lưu & tích</button><button class="btn" type="button" data-pf="nolink">Không có link…</button>')+
+    '<button class="btn" type="button" data-pf="cancel">Huỷ</button></div></div>';
+}
 function itemHTML(it){
-  const chk=done[it.id]?"checked":"";
-  let h='<label class="task"><input type="checkbox" data-id="'+esc(it.id)+'" '+chk+'><span class="box" aria-hidden="true"></span><span class="txt">'+esc(it.text)+
-    (it.diff?'<span class="diff '+it.diff+'">'+DIFF_LABEL[it.diff]+'</span>':"")+'</span></label>';
+  const chk=isDone(it.id)?"checked":"";
+  let h='<label class="task"><input type="checkbox" data-id="'+esc(it.id)+'" data-kind="'+esc(it.kind||"")+'" '+chk+'><span class="box" aria-hidden="true"></span><span class="txt">'+esc(it.text)+
+    (it.diff?'<span class="diff '+it.diff+'">'+DIFF_LABEL[it.diff]+'</span>':"")+
+    (it.pri?'<span class="pri p'+it.pri+'" title="Ưu tiên khi thiếu giờ (P1 cao nhất)">P'+it.pri+'</span>':"")+'</span></label>';
   if(it.sub) h+='<div class="sub">'+esc(it.sub)+'</div>';
   const links=[it.link,it.alt].filter(Boolean);
+  const pf=it.kind==="be"&&data.proof[it.id];
+  if(pf&&isDone(it.id)&&isUrl(pf.url)) links.push({href:pf.url,label:"Bằng chứng"});
   if(links.length) h+='<div class="links">'+links.map(l=>'<a href="'+esc(l.href)+'" target="_blank" rel="noopener">'+esc(l.label)+'</a>').join("")+'</div>';
+  if(it.kind==="be"&&state.proofFor===it.id&&!isDone(it.id)) h+=proofForm(it.id);
   return h;
 }
 
@@ -908,10 +1376,10 @@ function renderHero(day,t){
     return;
   }
   const [rs,re]=weekRange(day.w);
-  const wkLabel=(day.w==="B"?"Tuần đệm":"Tuần "+day.w)+", "+dm(rs)+" – "+dm(re);
+  const wkLabel=(day.w==="B"?"Tuần đệm":"Tuần "+day.w)+", "+dm(rs)+" – "+dm(re)+(day.v2?" · lộ trình v2":"");
   let h='<div class="hero-meta"><span>'+esc(wkLabel)+'</span><span>'+esc(DAYTYPE[day.dw])+'</span></div>'+
         '<h1>'+esc(title)+'</h1><p class="theme">'+esc(day.wk.theme)+(day.cw!==day.w?' <span class="lag">nội dung '+esc(weekName(day.cw))+'</span>':'')+'</p>'+
-        '<p class="goal">DSA tuần này: '+esc(day.wd.dsa)+'. Coi như đạt: '+esc(day.wk.goal)+'</p>';
+        '<p class="goal">DSA tuần này: '+esc(dsaLabel(day.w))+'. Coi như đạt: '+esc(day.wk.goal)+'</p>';
   const ci=currentIndex(day);
   const idx=ci.now>=0?ci.now:ci.next;
   if(day.t===todayUTC()){
@@ -928,14 +1396,60 @@ function renderHero(day,t){
   hero.innerHTML=h;
 }
 
+function bannerHidden(){try{return localStorage.getItem("hoang-v2-banner")==="1";}catch(e){return false;}}
+function weekDebtCount(){
+  const today=todayUTC(), mon=mondayOfT(today);
+  return debtList().filter(it=>it.kind==="be"&&it.t>=mon).length;
+}
 function renderBanners(day,t){
   const el=document.getElementById("banners"); let h="";
   const iso=isoOf(t);
+  if(data.migratedFromV1&&!bannerHidden()) h+='<div class="banner info">Đã chuyển tiến độ sang dữ liệu v2 (lộ trình mới từ 6/10). Dữ liệu v1 vẫn còn nguyên trong trình duyệt này.'+
+    '<div class="btnrow"><button class="btn" type="button" data-act="backup-v1">Tải bản sao lưu v1</button><button class="btn" type="button" data-act="hide-banner">Ẩn</button></div></div>';
+  if(day&&day.w===4&&day.v2) h+='<div class="banner info">Tuần đầu của lộ trình v2: đọc thẻ “Cách học” một lần trước khi bắt đầu. Task backend giờ cần link bằng chứng khi tích, và có lịch ôn ngắt quãng.</div>';
   if(HOLIDAYS[iso]) h+='<div class="banner">'+esc(HOLIDAYS[iso])+'. Lịch trên lớp có thể nghỉ.</div>';
   if(day&&day.wd.exam) h+='<div class="banner">Chế độ tuần thi. Ngày thi là ước lượng; khi FAP có lịch thật, ưu tiên lịch thi và dời backend sang ô Buffer thứ Bảy.</div>';
+  if(day&&day.t===todayUTC()){const n=weekDebtCount();if(n>3) h+='<div class="banner">Tuần này đã nợ '+n+' task backend (quá 3): Chủ nhật không thêm task mới. Dùng Buffer thứ Bảy để bù, hoặc dời lịch và cắt task ưu tiên thấp ở mục Việc còn nợ.</div>';}
   if(day&&day.w==="B") h+='<div class="banner info">Học kỳ Spring 2027 có thể đã bắt đầu. Nếu lịch học đổi, giữ nội dung, dời khung giờ.</div>';
   if(!storageOK) h+='<div class="banner info">Tiến độ chỉ được giữ trong phiên này vì trình duyệt không có bộ nhớ lưu.</div>';
   el.innerHTML=h;
+}
+
+function reviewHTML(t){
+  const keys=dueCards(t); if(!keys.length) return "";
+  const shown=keys.slice(0,RV_MAX);
+  let h='<div class="rv"><div class="rv-head">Ôn hôm nay · '+shown.length+' thẻ (khoảng 15 phút)'+(keys.length>RV_MAX?' · còn '+(keys.length-RV_MAX)+' thẻ dồn sang mai':'')+'</div>';
+  shown.forEach(cid=>{
+    const c=data.reviews[cid], task=TASKS[c.task], pf=data.proof[c.task]||{};
+    const qs=(pf.q||[]).filter(Boolean);
+    h+='<div class="rv-card" data-card="'+esc(cid)+'"><div class="rv-q"><b>'+esc(task?task.t:c.task)+'</b></div>'+
+      (qs.length?'<ul class="rv-qs">'+qs.map(q=>'<li>'+esc(q)+'</li>').join("")+'</ul>':(task&&task.dod?'<div class="rv-src">'+esc(task.dod)+'</div>':''))+
+      '<div class="rv-src">Mốc ôn '+["+1","+3","+7","+21"][c.step]+' ngày · hạn '+esc(dm(fromIso(c.due)))+'</div>'+
+      '<textarea class="field ta" data-draft="rv|'+esc(cid)+'" placeholder="Giải thích từ trí nhớ: 5 câu, không nhìn tài liệu…">'+draft("rv|"+cid)+'</textarea>'+
+      '<div class="score"><span class="small">Tự chấm:</span>'+[0,1,2,3].map(s=>'<button class="btn" type="button" data-score="'+s+'">'+s+'</button>').join("")+'</div></div>';
+  });
+  return h+'</div>';
+}
+
+function weekStats(t){
+  const [rs,re]=[mondayOfT(t),mondayOfT(t)+6*DAY];
+  let be=0,beD=0,ds=0,dsD=0;
+  for(let x=rs;x<=re;x+=DAY){const d=buildDay(x);if(!d)continue;d.blocks.forEach(b=>b.items.forEach(it=>{
+    if(it.kind==="be"){be++;if(isDone(it.id))beD++;}
+    if(it.kind==="lc"||it.kind==="cod"){ds++;if(isDone(it.id))dsD++;}
+  }));}
+  const r0=isoOf(rs), r1=isoOf(re);
+  const rv=Object.values(data.reviews).filter(c=>c.doneAt&&c.doneAt>=r0&&c.doneAt<=r1).length;
+  return {be,beD,ds,dsD,rv};
+}
+function retroHTML(day){
+  const r=data.retro[day.iso]||{}, st=weekStats(day.t);
+  const ta=(f,ph)=>'<textarea class="field ta" data-retro="'+f+'" data-iso="'+day.iso+'" placeholder="'+esc(ph)+'">'+esc(r[f]||"")+'</textarea>';
+  return '<div class="retro">'+
+    ta("a","Tuần này đã chứng minh được gì? (dán link commit / PR / note)")+
+    ta("b","Kẹt ở đâu, vì sao?")+
+    ta("c","Tuần sau cắt gì hoặc đổi gì?")+
+    '<div class="small">Số liệu tuần: backend '+st.beD+'/'+st.be+' · DSA '+st.dsD+'/'+st.ds+' · thẻ ôn đã chấm '+st.rv+' · việc nợ hiện tại '+debtList().length+'</div></div>';
 }
 
 function renderTimeline(day){
@@ -943,15 +1457,18 @@ function renderTimeline(day){
   if(!day){el.innerHTML='<p class="empty">Chọn một ngày trong khoảng 11/9/2026 – 8/1/2027.</p>';return;}
   const ci=currentIndex(day);
   const debtN=debtList().length;
+  const isToday=day.t===todayUTC();
   el.innerHTML='<div class="tl">'+day.blocks.map((b,i)=>{
-    const isStatic=!b.items.length&&b.slot!=="buffer";
+    const isStatic=!b.items.length&&b.slot!=="buffer"&&!(b.rv&&isToday&&dueCards(day.t).length);
     let tag="";
     if(i===ci.now) tag='<span class="tag">Đang diễn ra</span>';
     else if(i===ci.next) tag='<span class="tag next">Tiếp theo</span>';
     let body='<div class="ttl">'+esc(b.title)+tag+'</div>';
     if(b.note) body+='<div class="note">'+esc(b.note)+'</div>';
-    if(b.slot==="buffer") body+='<div class="note">'+(debtN?"Đang có "+debtN+" việc nợ, xem mục bên dưới.":"Không có việc nợ. Dùng giờ này để nghỉ hoặc làm trước.")+'</div>';
+    if(b.rv&&isToday) body+=reviewHTML(day.t);
+    if(b.slot==="buffer") body+='<div class="note">'+(debtN?"Đang có "+debtN+" việc nợ, xem mục Việc còn nợ.":"Không có việc nợ. Dùng giờ này để ôn, nghỉ hoặc làm trước.")+'</div>';
     body+=b.items.map(itemHTML).join("");
+    if(b.slot==="review"&&day.v2) body+=retroHTML(day);
     return '<div class="row c-'+b.cat+(isStatic?" static":"")+(i===ci.now?" is-now":"")+'"><div class="time">'+b.s+'<span class="end">'+b.e+'</span></div><div class="rail"></div><div class="body">'+body+'</div></div>';
   }).join("")+'</div>';
 }
@@ -962,16 +1479,21 @@ function debtList(){
   for(let t=today-DAY;t>=start;t-=DAY){
     const d=buildDay(t); if(!d) continue;
     d.blocks.forEach(b=>b.items.forEach(it=>{
-      if(["be","lc","cod"].includes(it.kind)&&!done[it.id]&&!seen[it.id]){seen[it.id]=1;out.push(Object.assign({t,cat:b.cat},it));}
+      if(["be","lc","cod"].includes(it.kind)&&!isDone(it.id)&&!seen[it.id]&&!CUTSET.has(it.id)){seen[it.id]=1;out.push(Object.assign({t,cat:b.cat},it));}
     }));
   }
   return out;
 }
-function seqDoneCount(){
-  const s=new Set();
-  SLOTS.forEach(sl=>{const k=SLOTMAP[sl.iso+"|"+sl.slot];if(k>=0&&slotDone(sl))s.add(k);});
-  UNSCHED.forEach(k=>{if(done["seq-"+k])s.add(k);});
-  return s.size;
+function archiveList(){
+  const out=[];
+  SEQ.forEach(s=>{
+    const id=s.task.id;
+    if(isDone(id)) return;
+    if((s.w===2||s.w===3)) out.push({it:beItem(s.task),why:"Bản v1, đã gộp vào Tuần 4–5 của lộ trình v2"});
+    else if(CUTSET.has(id)) out.push({it:beItem(s.task),why:"Đã cắt khi dời lịch (ưu tiên P"+s.task.pri+")"});
+  });
+  Object.keys(data.archive).sort().forEach(k=>out.push({text:data.archive[k].text,why:"Dữ liệu cũ"}));
+  return out;
 }
 function renderDebt(){
   const el=document.getElementById("debt");
@@ -979,6 +1501,7 @@ function renderDebt(){
   const beLate=list.filter(it=>it.kind==="be").length;
   let tools="";
   if(beLate) tools+='<button class="btn primary" type="button" data-shift="today">Dời lịch về hôm nay ('+beLate+' task backend trễ)</button>';
+  if(UNSCHED.length&&userShifts().length) tools+='<button class="btn" type="button" data-shift="cut">Cắt '+UNSCHED.length+' task ưu tiên thấp</button>';
   if(userShifts().length) tools+='<button class="btn" type="button" data-shift="undo">Hoàn tác lần dời gần nhất</button>';
   let h='';
   if(!list.length) h+='<p class="empty">Không có việc nợ kể từ lần dời lịch gần nhất.</p>';
@@ -988,31 +1511,72 @@ function renderDebt(){
       (list.length>12?'<p class="empty" style="margin-top:8px">Còn '+(list.length-12)+' việc cũ hơn.</p>':"");
   }
   if(tools) h+='<div class="btnrow">'+tools+'</div>';
-  if(beLate) h+='<p class="stat-line">Dời lịch không gộp task: các task backend chưa làm được xếp lại lần lượt từ hôm nay, cả lịch phía sau lùi theo (tuần thi giữ nguyên).</p>';
+  if(beLate) h+='<p class="stat-line">Dời lịch không gộp task: task backend chưa làm được xếp lại lần lượt từ hôm nay, cả lịch phía sau lùi theo (tuần thi giữ nguyên). Nếu bị tràn, cắt task P5 rồi P4 thay vì nhồi.</p>';
   if(UNSCHED.length) h+='<details class="unsched"><summary>'+UNSCHED.length+' task bị đẩy ra ngoài lộ trình</summary>'+
-    UNSCHED.map(k=>'<div class="debt-item c-be"><div class="debt-date">'+esc(weekName(SEQ[k].w))+'</div>'+itemHTML(Object.assign({id:"seq-"+k},taskOf(SEQ[k].x)))+'</div>').join("")+'</details>';
+    UNSCHED.map(k=>'<div class="debt-item c-be"><div class="debt-date">'+esc(weekName(SEQ[k].w))+'</div>'+itemHTML(beItem(SEQ[k].task))+'</div>').join("")+'</details>';
+  const arch=archiveList();
+  if(arch.length) h+='<details class="archive"><summary>Lưu trữ: '+arch.length+' mục</summary>'+
+    arch.map(a=>'<div class="debt-item c-free"><div class="debt-date">'+esc(a.why)+'</div>'+(a.it?itemHTML(a.it):'<p class="empty">'+esc(a.text)+'</p>')+'</div>').join("")+'</details>';
   el.innerHTML='<div class="card">'+h+'</div>';
 }
 
+function beTotals(){
+  let tot=0,dn=0;
+  WEEKS[0].be.forEach(x=>{if(isDone(x.id)){tot++;dn++;}});
+  SEQ.forEach(s=>{
+    const d=isDone(s.task.id), v2w=s.w==="B"||s.w>=4;
+    if(v2w){if(CUTSET.has(s.task.id)&&!d)return;tot++;if(d)dn++;}
+    else if(d){tot++;dn++;}
+  });
+  return {tot,dn};
+}
+function counters(){
+  let oa=0,en=0;
+  Object.keys(data.done).forEach(id=>{
+    const m=id.match(/^(\d{4}-\d{2}-\d{2})\|(mock|en)$/); if(!m||!data.done[id]) return;
+    const t=fromIso(m[1]);
+    if(m[2]==="mock"){const k=mockKind(t);if(k==="oa")oa++;else if(k==="enmock")en++;}
+    else if(dow(t)===4) en++;
+  });
+  return {oa,en,rv:Object.values(data.reviews).filter(c=>c.doneAt).length};
+}
+function mvdStatus(t){
+  const iso=isoOf(t);
+  const rv=Object.values(data.reviews).some(c=>c.doneAt===iso);
+  const dsa=Object.keys(data.done).some(id=>data.done[id]&&data.at[id]===iso&&(/^(lc|cod)-/.test(id)||/\|dsarev$/.test(id)));
+  const note=!!(data.notes[iso]&&data.notes[iso].trim());
+  return {rv,dsa,note,ok:rv&&dsa&&note};
+}
 function renderProgress(day){
   const el=document.getElementById("progress");
-  const lcDone=LC.filter(p=>done["lc-"+p[0]]).length;
-  const codDone=COD.filter(c=>done["cod-"+c[0]]).length;
+  const lcDone=LC.filter(p=>isDone("lc-"+p[0])).length;
+  const codDone=COD.filter(c=>isDone("cod-"+c[0])).length;
   let beTot=0,beDone=0;
   if(day){
     const [rs,re]=weekRange(day.w);
-    for(let t=rs;t<=re;t+=DAY){const d=buildDay(t);if(!d)continue;d.blocks.forEach(b=>b.items.forEach(it=>{if(it.kind==="be"){beTot++;if(done[it.id])beDone++;}}));}
+    for(let t=rs;t<=re;t+=DAY){const d=buildDay(t);if(!d)continue;d.blocks.forEach(b=>b.items.forEach(it=>{if(it.kind==="be"){beTot++;if(isDone(it.id))beDone++;}}));}
   }
   const row=(cat,label,a,b)=>'<div class="prog-row c-'+cat+'"><div class="top"><span>'+label+'</span><span>'+a+" / "+b+'</span></div><div class="bar"><i style="width:'+(b?Math.round(a/b*100):0)+'%"></i></div></div>';
-  const ds=day?dayStats(day.t):null;
-  const sk=streak();
+  const ds=day?dayStats(day.t):null, sk=streak(), all=beTotals(), cn=counters();
+  let mvd="";
+  if(day&&day.t===todayUTC()){
+    const iso=day.iso;
+    if(data.mvd[iso]) mvd='<p class="stat-line">Hôm nay là <strong>Ngày tối thiểu</strong>: chuỗi ngày được giữ, task hôm nay vẫn tính nợ. <button class="btn" type="button" data-act="mvd-off">Bỏ đánh dấu</button></p>';
+    else {
+      const s=mvdStatus(day.t);
+      mvd='<div class="stat-line">Hôm nay mệt hoặc có kiểm tra? <strong>Ngày tối thiểu</strong> cần: '+
+        [[s.rv,"1 thẻ ôn"],[s.dsa,"1 bài DSA"],[s.note,"1 dòng ghi chú"]].map(([ok,l])=>(ok?"✓ ":"○ ")+l).join(" · ")+
+        '<div class="btnrow"><button class="btn" type="button" data-act="mvd-on"'+(s.ok?"":" disabled")+'>Đánh dấu Ngày tối thiểu</button></div></div>';
+    }
+  }
   el.innerHTML='<div class="card prog">'+
     (ds?row("gold",(day.t===todayUTC()?"Việc hôm nay":"Việc ngày "+dm(day.t)),ds.dn,ds.tot):"")+
     (day?row(day.wd.exam?"school":"be",day.wd.exam?"Ôn thi tuần này":"Backend tuần này",beDone,beTot):"")+
-    row("be","Backend cả lộ trình",seqDoneCount(),SEQ.length)+
+    row("be","Backend cả lộ trình",all.dn,all.tot)+
     row("dsa","NeetCode 150 (bản miễn phí)",lcDone,LC.length)+
     row("dsa","Codility Lessons",codDone,COD.length)+
-    '<p class="stat-line">Chuỗi ngày xong hết backend: <strong>'+sk+' ngày</strong>'+(sk?"":". Bắt đầu lại từ hôm nay.")+'</p></div>';
+    '<p class="stat-line">Codility timed set: <strong>'+cn.oa+'</strong> · Mock tiếng Anh: <strong>'+cn.en+'</strong> · Thẻ ôn đã chấm: <strong>'+cn.rv+'</strong></p>'+
+    '<p class="stat-line">Chuỗi ngày xong hết backend (hoặc Ngày tối thiểu): <strong>'+sk+' ngày</strong>'+(sk?"":". Bắt đầu lại từ hôm nay.")+'</p>'+mvd+'</div>';
 }
 
 function renderWeek(day){
@@ -1023,10 +1587,10 @@ function renderWeek(day){
     const d=buildDay(t); if(!d) continue;
     const lis=[];
     d.blocks.forEach(b=>b.items.forEach(it=>{
-      if(it.kind==="be") lis.push('<li class="'+(d.wd.exam?"ex":"be")+(done[it.id]?" dn":"")+'">'+esc(it.text)+'</li>');
-      if(it.kind==="lc"||it.kind==="cod") lis.push('<li class="dsa'+(done[it.id]?" dn":"")+'">'+esc(it.kind==="cod"?"Codility "+it.text:it.text)+'</li>');
+      if(it.kind==="be") lis.push('<li class="'+(d.wd.exam?"ex":"be")+(isDone(it.id)?" dn":"")+'">'+esc(it.text)+'</li>');
+      if(it.kind==="lc"||it.kind==="cod") lis.push('<li class="dsa'+(isDone(it.id)?" dn":"")+'">'+esc(it.kind==="cod"?"Codility "+it.text:it.text)+'</li>');
     }));
-    if(!lis.length) lis.push('<li>Nghỉ</li>');
+    if(!lis.length) lis.push(d.blocks.some(b=>b.slot==="buffer"&&b.s==="13:30")?'<li>Buffer: bù việc nợ</li>':'<li>Nghỉ</li>');
     h+='<button type="button" class="weekday'+(t===day.t?" sel":"")+'" data-go="'+isoOf(t)+'"><div class="wd">'+DOW_SHORT[dow(t)]+" "+dm(t)+'<small>'+esc(DAYTYPE[dow(t)])+'</small></div><ul>'+lis.join("")+'</ul></button>';
   }
   el.innerHTML=h;
@@ -1036,16 +1600,17 @@ function renderWeek(day){
 function dayStats(t){
   const d=buildDay(t); if(!d) return null;
   let tot=0,dn=0,beTot=0,beDone=0;
-  d.blocks.forEach(b=>b.items.forEach(it=>{tot++;if(done[it.id])dn++;if(it.kind==="be"){beTot++;if(done[it.id])beDone++;}}));
+  d.blocks.forEach(b=>b.items.forEach(it=>{tot++;if(isDone(it.id))dn++;if(it.kind==="be"){beTot++;if(isDone(it.id))beDone++;}}));
   return {tot,dn,beTot,beDone};
 }
-// Số ngày liên tiếp (tính tới hôm nay nếu đã xong, không thì tới hôm qua) tích hết việc backend; ngày không có backend được bỏ qua
+// Số ngày liên tiếp (tính tới hôm nay nếu đã xong, không thì tới hôm qua) tích hết việc backend hoặc là Ngày tối thiểu; ngày không có backend được bỏ qua
 function streak(){
   const today=todayUTC(); let n=0, t=today;
-  const s0=dayStats(today);
-  if(!(s0&&s0.beTot&&s0.beDone===s0.beTot)) t=today-DAY;
+  const ok=st=>st&&st.beTot&&st.beDone===st.beTot;
+  if(!(ok(dayStats(today))||data.mvd[isoOf(today)])) t=today-DAY;
   for(;t>=W0;t-=DAY){
     const st=dayStats(t); if(!st) break;
+    if(data.mvd[isoOf(t)]){n++;continue;}
     if(!st.beTot) continue;
     if(st.beDone===st.beTot) n++; else break;
   }
@@ -1092,18 +1657,81 @@ function hideTip(){document.getElementById("heatTip").style.display="none";}
 
 /* ============ GIAI ĐOẠN 2 ============ */
 function renderPhase2(){
-  document.getElementById("phase2").innerHTML=PHASE2.map((g,gi)=>'<div class="p2-group c-be"><div class="p2-when">'+esc(g.when)+'</div>'+
-    g.items.map((x,ii)=>{const tk=taskOf(x);return itemHTML({id:"p2-"+gi+"-"+ii,text:tk.text,link:tk.link});}).join("")+'</div>').join("")+
+  const p2item=task=>itemHTML({id:task.id,kind:"p2",text:task.t,link:linkOf(task.src),pri:task.pri});
+  const hard=LC.map((p,i)=>i).filter(i=>LC[i][3]==="H");
+  const rest=DSA_Q.slice(DSA2_USED);
+  const hardDone=hard.filter(i=>isDone("lc-"+LC[i][0])).length;
+  document.getElementById("phase2").innerHTML=PHASE2.map(g=>'<div class="p2-group c-be"><div class="p2-when">'+esc(g.when)+'</div>'+
+    g.items.map(p2item).join("")+'</div>').join("")+
+    '<div class="p2-group c-dsa"><div class="p2-when">Codility còn lại (sau tuần đệm)</div>'+[12,13,14].map(n=>itemHTML(codItem(n))).join("")+'</div>'+
+    '<details class="p2-more c-dsa"><summary>Hàng đợi NeetCode tiếp theo: '+rest.length+' bài Easy/Medium (làm tiếp từ 1/2027)</summary>'+rest.map(i=>itemHTML(lcItem(i))).join("")+'</details>'+
+    '<details class="p2-more c-dsa"><summary>Kho Hard (tuỳ chọn, 1–2 bài/tuần): '+hardDone+'/'+hard.length+' bài</summary>'+
+    '<p class="small">Codility của NAB ra đề Easy–Medium, nên bài Hard không nằm trong lịch. Làm khi đã vững Medium.</p>'+hard.map(i=>itemHTML(lcItem(i))).join("")+'</details>'+
     '<p class="stat-line">Mốc ước lượng. Khi có syllabus trên FLM và lịch OJT chính thức thì chỉnh lại cho khớp.</p>';
 }
 
+/* ============ CÁCH HỌC (CHỐNG HỌC VẸT) ============ */
+const PROMPTS={
+ f2:{label:"F2 · Gia sư Socratic",text:`Vai trò: gia sư Socratic cho sinh viên SE năm 2 (Java, mục tiêu NAB Vietnam). Chủ đề hôm nay: <CHỦ ĐỀ>. Mức hiện tại: <tự mô tả>.
+Luật: (1) Bắt đầu bằng 5 câu quiz chẩn đoán từ dễ đến khó, hỏi từng câu một, chờ tôi trả lời. (2) KHÔNG đưa code hoặc đáp án trước khi tôi đã thử; nếu tôi kẹt, gợi ý theo 3 nấc (câu hỏi dẫn → khái niệm liên quan → khung giả mã). (3) Mỗi khái niệm: yêu cầu tôi DỰ ĐOÁN kết quả một thí nghiệm nhỏ trước khi chạy, sau đó bắt tôi giải thích vì sao đúng/sai. (4) Chỉ ra hiểu lầm phổ biến và kiến thức lỗi thời (nói rõ phiên bản Java/Spring áp dụng; nếu không chắc, nói "không chắc" và gợi ý tôi kiểm tra trong JEP/tài liệu chính thức). (5) Kết thúc: tôi tự giải thích lại toàn bộ trong 5 câu bằng tiếng Anh; bạn chấm 0–3, sửa lỗi tiếng Anh, và tạo 4 flashcard (câu hỏi mở, không phải định nghĩa thuộc lòng).`},
+ f3:{label:"F3 · Mock interview NAB",text:`Act as a NAB Innovation Centre Vietnam interviewer panel (one senior Java engineer + one engineering manager) for a StarCamp/intern Back-end (Java) role. Interview me in English for 30 minutes:
+1) 2 min intro, then "Tell me about MiniPay".
+2) Java core & concurrency (HashMap, streams, JVM memory/GC in containers, synchronized vs locks, virtual threads), one question at a time, with follow-ups that go one level deeper each time I answer.
+3) Spring Boot/JPA/transactions (isolation, locking, @Transactional pitfalls) and one mini system design: "design an idempotent money-transfer API".
+4) One behavioral question mapped to NAB values (Accountable deliverers, Collaborative Team Players, Proactive and Eager Learners, Analytical Problem Solvers, Outside the box Innovators); require STAR.
+Rules: do not give answers during the interview. Afterwards, give: a score 1–5 for technical depth, communication clarity, structure, English fluency; my 3 weakest answers rewritten as model answers; a list of grammar/pronunciation-prone phrases I used; and 3 drills for next week.`},
+ f4:{label:"F4 · Review PR kiểu ngân hàng",text:`You are a senior backend engineer at a bank reviewing a pull request for MiniPay (Java 25, Spring Boot 4.1, PostgreSQL, modular monolith with Spring Modulith). Review the diff below with this checklist and cite file:line:
+- Money correctness: minor units/currency, rounding, no double/float, ledger entries balance to zero, immutability (no UPDATE/DELETE on postings).
+- Concurrency: lock ordering, isolation level, lost update/write skew risks, retries only on SQLSTATE 40001/40P01 with idempotency.
+- Idempotency & messaging: Idempotency-Key handling (same key different body → 422), transactional outbox, idempotent consumers, no "exactly-once" assumptions.
+- Security: authz on every resource (BOLA), JWT validation, input validation, rate limiting, PII in logs, secrets.
+- Tests: does a test FAIL if the bug existed? Missing concurrency/property/integration tests? Mutation-weak assertions?
+- Observability & operability: logs with traceId, metrics, timeouts, error handling (ProblemDetail).
+- Design: module boundaries, naming, simpler alternative.
+Output: (1) Blocking issues, (2) Should-fix, (3) Nits, (4) Questions to the author that test whether he truly understands the change. Do NOT rewrite the code for me; describe the fix and let me implement it.`}
+};
+function renderMethod(){
+  document.getElementById("method").innerHTML='<details open><summary>Đọc 1 lần, áp dụng mỗi ngày</summary>'+
+  '<h3>Vòng học của mỗi task</h3><ol>'+
+   '<li>15 phút đầu khối Backend: làm hết thẻ “Ôn hôm nay” (giải thích từ trí nhớ rồi tự chấm 0–3).</li>'+
+   '<li>Dự đoán → chạy → giải thích: ghi dự đoán vào Ghi chú ngày trước khi chạy thí nghiệm, sai ở đâu ghi lại.</li>'+
+   '<li>Làm theo “Đạt khi”. Chưa đạt thì chưa tích. Ngày bận: làm bản tối thiểu của task, phần mở rộng để sau.</li>'+
+   '<li>Tích xong: dán link bằng chứng + viết 2 câu hỏi ôn. App tự xếp ôn +1/+3/+7/+21 ngày.</li></ol>'+
+  '<h3>Luật dùng AI</h3><ul>'+
+   '<li>Tự làm 25 phút trước khi hỏi AI (1 pomodoro).</li>'+
+   '<li>AI hỏi, bạn trả lời: dùng Study Mode / Guided Learning hoặc prompt F2. Xin gợi ý, không xin code.</li>'+
+   '<li>Không merge dòng code nào bạn không giải thích được; code AI gợi ý phải đi kèm test do bạn tự viết.</li>'+
+   '<li>Phần ledger, concurrency, security của MiniPay bạn tự viết, AI chỉ review (prompt F4).</li>'+
+   '<li>NotebookLM chỉ nạp tài liệu gốc (JEP, Spring docs, PostgreSQL docs, note của bạn), mở lại trích dẫn khi đọc câu trả lời.</li>'+
+   '<li>Mỗi tuần 1 buổi không AI: Codility timed set và 1 lab nhỏ.</li></ul>'+
+  '<h3>Vì sao làm vậy</h3><ul class="small">'+
+   '<li>Tự kiểm tra nhớ lâu hơn đọc lại (Roediger & Karpicke 2006); ôn giãn cách theo mốc tăng dần (Cepeda và cs. 2008); trộn dạng bài (Rohrer & Taylor 2007); tự sinh câu trả lời trước khi xem đáp án (Slamecka & Graf 1978, Bjork 1994).</li>'+
+   '<li>RCT của Anthropic (29/1/2026, 52 kỹ sư chủ yếu junior): nhóm học bằng AI điểm hiểu bài thấp hơn 17% so với nhóm tự code, mà không nhanh hơn có ý nghĩa thống kê; nhóm dùng AI để hỏi khái niệm giữ được mức hiểu.</li>'+
+   '<li>NAB dùng Amazon Q Developer, khoảng 40% code production đến từ gợi ý AI (case study của AWS): người được giữ lại là người đọc, kiểm và test được code AI viết.</li></ul>'+
+  '<h3>Ưu tiên khi thiếu giờ</h3><p class="small">P1 lab có sản phẩm cho MiniPay → Codility/NeetCode bằng Java → nói tiếng Anh → P4 lý thuyết JVM sâu → P5 chứng chỉ. Bị trễ thì cắt, không nhồi.</p>'+
+  '<h3>Prompt dùng sẵn</h3><div class="btnrow">'+Object.keys(PROMPTS).map(k=>'<button class="btn" type="button" data-copy="'+k+'">Sao chép '+esc(PROMPTS[k].label)+'</button>').join("")+'</div>'+
+  '<h3>NotebookLM (4 notebook, chỉ tài liệu gốc)</h3><ul class="small">'+
+   '<li>Java hiện đại: JEP 444, 491, 506, 505/533, 485, 519/534, 523 + note JVM và concurrency của bạn → quiz 15 câu mỗi tuần, flashcards.</li>'+
+   '<li>Spring + DB: Spring Boot 4.1 / Framework 7 reference, Spring Security OAuth2 Resource Server, PostgreSQL Transaction Isolation và Explicit Locking.</li>'+
+   '<li>Payments: Stripe idempotent requests, Airbnb “Avoiding Double Payments”, microservices.io (outbox, saga, idempotent consumer), OWASP API Top 10 2023, ADR của bạn.</li>'+
+   '<li>NAB: các JD, trang careers NAB Vietnam, bộ STAR của bạn → câu hỏi behavioral theo 5 giá trị.</li></ul>'+
+  '<h3>Stack 2026</h3><p class="small">Java 25 LTS · Spring Boot 4.1 (Framework 7, Security 7, Jackson 3) · PostgreSQL 18 · JUnit 6 · Testcontainers 2 · Spring Modulith · Spring Cloud AWS 4 + ElasticMQ · Keycloak · OpenTelemetry + grafana/otel-lgtm · k6 · Terraform. Spring Boot 3.5 đã hết hỗ trợ OSS từ 30/6/2026; LocalStack từ 3/2026 cần tài khoản.</p>'+
+  '</details>';
+}
+async function copyText(s){
+  try{await navigator.clipboard.writeText(s);return true;}
+  catch(e){
+    try{const ta=document.createElement("textarea");ta.value=s;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();const ok=document.execCommand("copy");ta.remove();return ok;}
+    catch(e2){return false;}
+  }
+}
+
 /* ============ GHI CHÚ TRONG NGÀY ============ */
-const noteKey=iso=>"note|"+iso;
 function renderNote(){
   const ta=document.getElementById("dayNote"), iso=isoOf(state.view);
   document.getElementById("h-note").textContent="Ghi chú ngày "+dm(state.view);
   if(document.activeElement!==ta||ta.dataset.iso!==iso){
-    const v=done[noteKey(iso)];
+    const v=data.notes[iso];
     ta.value=typeof v==="string"?v:"";
     ta.dataset.iso=iso;
     document.getElementById("noteMeta").textContent=ta.value?"Đã lưu trong trình duyệt":"";
@@ -1114,16 +1742,23 @@ function onNoteInput(e){
   const ta=e.target, iso=ta.dataset.iso, v=ta.value;
   clearTimeout(noteTimer);
   noteTimer=setTimeout(()=>{
-    if(v.trim()) done[noteKey(iso)]=v; else delete done[noteKey(iso)];
-    saveDone();
+    if(v.trim()) data.notes[iso]=v; else delete data.notes[iso];
+    saveData();
     const n=new Date();
     document.getElementById("noteMeta").textContent="Đã lưu lúc "+String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");
+    if(state.view===todayUTC()) renderProgress(buildDay(state.view));
   },400);
+}
+let retroTimer=null;
+function onRetroInput(el){
+  const iso=el.dataset.iso, f=el.dataset.retro, v=el.value;
+  clearTimeout(retroTimer);
+  retroTimer=setTimeout(()=>{data.retro[iso]=Object.assign({},data.retro[iso],{[f]:v});saveData();},400);
 }
 
 /* ============ HẸN GIỜ TẬP TRUNG ============ */
 const TKEY="hoang-timer-v1";
-const BASE_TITLE=document.title;
+const BASE_TITLE=typeof document!=="undefined"?document.title:"";
 let timer={dur:25*60000,left:25*60000,endAt:0,label:""};
 function loadTimer(){try{const v=JSON.parse(localStorage.getItem(TKEY)||"null");if(v&&typeof v.dur==="number")timer=Object.assign(timer,v);}catch(e){/* chưa có */}}
 function saveTimer(){try{localStorage.setItem(TKEY,JSON.stringify(timer));}catch(e){/* bị chặn */}}
@@ -1192,34 +1827,76 @@ function toggleTheme(){
 }
 
 /* ============ SAO LƯU ============ */
-function exportDone(){
-  const data={app:"hoang-backend-tracker",version:1,exportedAt:new Date().toISOString(),done};
-  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:"application/json"}));
-  const a=document.createElement("a"); a.href=url; a.download="tien-do-"+isoOf(todayUTC())+".json";
+function downloadJSON(obj,name){
+  const url=URL.createObjectURL(new Blob([JSON.stringify(obj,null,1)],{type:"application/json"}));
+  const a=document.createElement("a"); a.href=url; a.download=name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportData(){
+  downloadJSON({app:"hoang-backend-tracker",version:2,exportedAt:new Date().toISOString(),data},"tien-do-v2-"+isoOf(todayUTC())+".json");
   toast("Đã xuất file tiến độ");
 }
-function importDone(file){
+async function backupV1(){
+  const v1=await readStore(KEY1);
+  if(!v1){toast("Không còn dữ liệu v1 trong trình duyệt này");return;}
+  downloadJSON({app:"hoang-backend-tracker",version:1,exportedAt:new Date().toISOString(),done:v1},"tien-do-v1-sao-luu.json");
+}
+// Nhận file v2 ({version:2, data}) hoặc v1 ({done} hay object phẳng); file v1 được chuyển sang v2 rồi gộp
+function importPayload(j){
+  if(isObj(j)&&j.version===2&&isObj(j.data)) return normalize(j.data);
+  const src=isObj(j)&&isObj(j.done)?j.done:j;
+  if(!isObj(src)) throw new Error("bad");
+  return migrateV1toV2(src);
+}
+function importFile(file){
   const r=new FileReader();
   r.onload=()=>{
     try{
-      const j=JSON.parse(r.result);
-      const src=j&&j.done&&typeof j.done==="object"?j.done:j;
-      if(!src||typeof src!=="object"||Array.isArray(src)) throw new Error("bad");
-      let n=0;
-      for(const k in src){
-        const v=src[k];
-        if(v===1||v===true){done[k]=1;n++;}
-        else if(typeof v==="string"&&k.startsWith("note|")){done[k]=v;n++;}
-      }
-      if(Array.isArray(src.__shifts)){
-        const byDate={}; userShifts().concat(src.__shifts).forEach(x=>{if(x&&typeof x.date==="string"&&Number.isInteger(x.start))byDate[x.date]={date:x.date,start:x.start,skip:Array.isArray(x.skip)?x.skip.filter(Number.isInteger):[]};});
-        done.__shifts=Object.values(byDate); n++;
-      }
-      saveDone(); buildPlan(); render(); toast("Đã gộp "+n+" mục từ file");
+      const incoming=importPayload(JSON.parse(r.result));
+      const before=Object.keys(data.done).length;
+      data=mergeData(data,incoming);
+      saveData(); buildPlan(); render();
+      toast("Đã gộp: thêm "+(Object.keys(data.done).length-before)+" việc đã làm");
     }catch(e){toast("File không hợp lệ");}
   };
   r.readAsText(file);
+}
+
+/* ============ TƯƠNG TÁC ============ */
+function onCheck(el){
+  const id=el.dataset.id, kind=el.dataset.kind, t=todayUTC();
+  if(el.checked&&kind==="be"&&!data.proof[id]){
+    el.checked=false; state.proofFor=id; state.noProof=null; render();
+    const f=document.querySelector('[data-pf-box="'+CSS.escape(id)+'"] input');
+    if(f) f.focus();
+    return;
+  }
+  if(el.checked){data.done[id]=1;data.at[id]=isoOf(t);if(kind==="be")seedCards(id,t);}
+  else delete data.done[id];
+  saveData(); render();
+}
+function proofAction(btn){
+  const box=btn.closest("[data-pf-box]"), id=box.dataset.pfBox, act=btn.dataset.pf;
+  const val=k=>(state.drafts[k+"|"+id]||"").trim();
+  if(act==="cancel"){state.proofFor=null;state.noProof=null;render();return;}
+  if(act==="nolink"){state.noProof=id;render();return;}
+  if(act==="back"){state.noProof=null;render();return;}
+  const url=val("pf-url"), reason=val("pf-reason");
+  if(act==="save"&&url.length<4){toast("Dán link commit / PR / note, hoặc bấm “Không có link…”");return;}
+  if(act==="reason"&&!reason){toast("Ghi lý do không có link");return;}
+  const t=todayUTC(), iso=isoOf(t);
+  data.done[id]=1; data.at[id]=iso;
+  data.proof[id]={url:act==="save"?url:"",reason:act==="reason"?reason:"",q:[val("pf-q1"),val("pf-q2")].filter(Boolean),at:iso};
+  seedCards(id,t);
+  ["pf-url","pf-reason","pf-q1","pf-q2"].forEach(k=>delete state.drafts[k+"|"+id]);
+  state.proofFor=null; state.noProof=null;
+  saveData(); render(); toast("Đã tích. Thẻ ôn đầu tiên vào ngày mai");
+}
+function scoreAction(btn){
+  const card=btn.closest("[data-card]"), cid=card.dataset.card;
+  scoreCard(cid,Number(btn.dataset.score),(state.drafts["rv|"+cid]||"").trim(),todayUTC());
+  delete state.drafts["rv|"+cid];
+  saveData(); render();
 }
 
 function render(){
@@ -1238,25 +1915,44 @@ function render(){
 }
 
 function clampView(t){return Math.min(Math.max(t,W0),BUFEND);}
-
 function go(delta){state.view=clampView(state.view+delta*DAY);render();}
 function openHelp(){const d=document.getElementById("helpDlg");if(d.showModal){if(!d.open)d.showModal();}else alert("Phím tắt: ← → đổi ngày, T hôm nay, F hẹn giờ, N ghi chú, D sáng/tối");}
+
+async function loadData(){
+  const v2=await readStore(KEY2);
+  if(v2&&v2.schemaVersion===2){data=normalize(v2);return;}
+  const v1=await readStore(KEY1);
+  if(isObj(v1)){data=mergeData(emptyData(),migrateV1toV2(v1));justMigrated=true;await saveData();}
+}
 
 async function init(){
   const td=todayUTC();
   state.view=(td<W0||td>BUFEND)?clampView(td):td;
-  await loadDone();
-  buildSeq(); buildSlots(); buildPlan();
+  buildSeq(); buildSlots();
+  await loadData();
+  buildPlan();
   loadTimer();
   syncThemeMeta();
+  renderMethod();
   render();
   renderTimer();
   tickTimer();
-  document.addEventListener("change",e=>{
-    const id=e.target&&e.target.dataset&&e.target.dataset.id;
-    if(!id) return;
-    if(e.target.checked) done[id]=1; else delete done[id];
-    saveDone(); render();
+  if(justMigrated) toast("Đã chuyển tiến độ sang lộ trình v2");
+  document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&e.target.dataset.id&&e.target.type==="checkbox")onCheck(e.target);});
+  document.addEventListener("input",e=>{
+    const el=e.target; if(!el||!el.dataset) return;
+    if(el.dataset.draft) state.drafts[el.dataset.draft]=el.value;
+    else if(el.dataset.retro) onRetroInput(el);
+  });
+  document.addEventListener("click",async e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    if(b.dataset.pf) proofAction(b);
+    else if(b.dataset.score!==undefined) scoreAction(b);
+    else if(b.dataset.copy){const ok=await copyText(PROMPTS[b.dataset.copy].text);toast(ok?"Đã sao chép "+PROMPTS[b.dataset.copy].label:"Không sao chép được, hãy chọn tay");}
+    else if(b.dataset.act==="backup-v1") backupV1();
+    else if(b.dataset.act==="hide-banner"){try{localStorage.setItem("hoang-v2-banner","1");}catch(err){/* bị chặn */}render();}
+    else if(b.dataset.act==="mvd-on"){data.mvd[isoOf(todayUTC())]=1;saveData();render();toast("Đã đánh dấu Ngày tối thiểu");}
+    else if(b.dataset.act==="mvd-off"){delete data.mvd[isoOf(todayUTC())];saveData();render();}
   });
   document.getElementById("prev").onclick=()=>go(-1);
   document.getElementById("next").onclick=()=>go(1);
@@ -1270,13 +1966,13 @@ async function init(){
   heat.addEventListener("mouseleave",hideTip);
   document.getElementById("dayNote").addEventListener("input",onNoteInput);
   document.getElementById("timer").addEventListener("click",e=>{const b=e.target.closest("[data-tm]");if(b)timerAction(b.dataset.tm,Number(b.dataset.min));});
-  document.getElementById("debt").addEventListener("click",e=>{const b=e.target.closest("[data-shift]");if(!b)return;if(b.dataset.shift==="today")shiftToToday();else undoShift();});
+  document.getElementById("debt").addEventListener("click",e=>{const b=e.target.closest("[data-shift]");if(!b)return;const a=b.dataset.shift;if(a==="today")shiftToToday();else if(a==="cut")cutLowPriority();else undoShift();});
   document.getElementById("themeBtn").onclick=toggleTheme;
   document.getElementById("helpBtn").onclick=openHelp;
-  document.getElementById("exportBtn").onclick=exportDone;
+  document.getElementById("exportBtn").onclick=exportData;
   const fileIn=document.getElementById("importFile");
   document.getElementById("importBtn").onclick=()=>fileIn.click();
-  fileIn.onchange=()=>{if(fileIn.files[0])importDone(fileIn.files[0]);fileIn.value="";};
+  fileIn.onchange=()=>{if(fileIn.files[0])importFile(fileIn.files[0]);fileIn.value="";};
   if(window.matchMedia){const mq=matchMedia("(prefers-color-scheme: dark)");if(mq.addEventListener)mq.addEventListener("change",syncThemeMeta);}
   document.addEventListener("keydown",e=>{
     if(e.ctrlKey||e.metaKey||e.altKey) return;
@@ -1296,11 +1992,13 @@ async function init(){
   });
   setInterval(tickTimer,1000);
   setInterval(()=>{
-    if(state.view===todayUTC()){renderHero(buildDay(state.view),state.view);renderTimeline(buildDay(state.view));}
+    // Không vẽ lại khi đang gõ trong lịch (thẻ ôn, form bằng chứng, retro) để không mất chữ và con trỏ
+    const busy=document.getElementById("timeline").contains(document.activeElement);
+    if(state.view===todayUTC()&&!busy){renderHero(buildDay(state.view),state.view);renderTimeline(buildDay(state.view));}
     if(!document.getElementById("timer").contains(document.activeElement)) renderTimer();
   },60000);
 }
-if(typeof document!=="undefined") init();
+if(typeof document!=="undefined"&&document.getElementById) init();
 </script>
 </body>
 </html>
