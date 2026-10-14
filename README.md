@@ -4,6 +4,15 @@ Web tĩnh một file (`index.html`), không cần build, không cần backend. T
 
 ## Lộ trình v2 (từ T3 6/10/2026)
 
+### Bản cập nhật theo tiến độ 14/10/2026
+
+`index.html` có sẵn bản tiến độ đã xuất ngày 14/10: 19 task backend, 29 bài LeetCode, 2 lesson Codility và 8 lượt ôn đã chấm. Tại ngày 14/10 có 6 thẻ ôn quá hạn; phần **Tiến độ hiện tại** tính lại các số này từ dữ liệu đang dùng, và chỉ ra task tiếp theo.
+
+- Trình duyệt chưa lưu dữ liệu: tự nạp đầy đủ bản 14/10, gồm ngày hoàn thành, bằng chứng và lịch ôn.
+- Trình duyệt có dữ liệu v2: giữ nguyên, kể cả việc đã bỏ tích; dữ liệu v1 vẫn được chuyển như trước. Muốn bổ sung bản 14/10, bấm **Gộp bản tiến độ 14/10/2026** trong **Sao lưu tiến độ**. Gộp dùng quy tắc việc đã làm thắng, nên có thể tích lại việc bạn đã bỏ tích.
+- Giữ toàn bộ ID task. Tuần 9 học và test idempotency trước retry; hai bài concurrency nâng cao chuyển sang Tuần 10. Khởi tạo MiniPay với 4 module cốt lõi, phân biệt cửa sổ Stream theo số phần tử và theo thời gian, và bổ sung điều kiện giữ thứ tự / xử lý gửi lặp của outbox.
+- Có **19 task tuỳ chọn P4/P5** chưa làm trong bản 14/10. Nút cắt luôn xuất hiện khi còn task tuỳ chọn; task đã cắt vẫn nằm trong Lưu trữ và có thể khôi phục. Ngày hoàn thành được tính từ lịch cuộn, ngày nghỉ và tiến độ thực tế.
+
 Từ 6/10, nội dung từ Tuần 4 được làm lại theo chuẩn 2026 và theo các cổng tuyển của NAB (Codility, tiếng Anh, Java/JVM/DB):
 
 - **Tuần 4–5:** Java Core III thành 3 sản phẩm (Stream lab, note HashMap, note JVM có 3 lệnh docker), Concurrency gồm 3 lab (race, deadlock chuyển tiền + virtual threads sau JEP 491, CompletableFuture).
@@ -67,7 +76,7 @@ Logic (chuyển v1 → v2, lịch cuộn, ngày nghỉ, lịch nối dài, DSA, 
 node --test
 ```
 
-Fixture `tests/fixtures/` là một file tiến độ v1 thật (chỉ có id các ô đã tích). Thư mục `tests/` không được deploy (`.vercelignore`).
+Fixture `tests/fixtures/` gồm tiến độ v1 và bản xuất v2 ngày 14/10. Các kiểm tra bao gồm nạp bản có sẵn, giữ bộ nhớ cũ, bỏ tích rồi tải lại, và gộp bản xuất nhiều lần. Thư mục `tests/` không được deploy (`.vercelignore`).
 
 ## Chạy thử ở máy
 
