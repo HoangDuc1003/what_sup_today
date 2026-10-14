@@ -8,6 +8,7 @@ import vm from "node:vm";
 const HTML = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 const SRC = HTML.match(/<script>\n([\s\S]*?)<\/script>\n<\/body>/)[1];
 const FIXTURE = JSON.parse(fs.readFileSync(new URL("./fixtures/tien-do-2026-10-05.json", import.meta.url), "utf8"));
+const SNAPSHOT = JSON.parse(fs.readFileSync(new URL("./fixtures/tien-do-v2-2026-10-14.json", import.meta.url), "utf8"));
 const J = x => JSON.parse(JSON.stringify(x));
 
 const API = `
@@ -18,14 +19,20 @@ globalThis.__app={
   get data(){return data}, set data(v){data=v}, get IDX(){return IDX}, get TASKS(){return TASKS},
   buildSeq,buildSlots,buildPlan,buildRoll,buildDay,dayStats,streak,heatCols,migrateV1toV2,v1SlotIndexMap,mergeData,normalize,emptyData,importPayload,
   cutLowPriority,restoreCut,setOff,lagCounts,beFinishDate,aheadTasks,beTotals,scoreCard,seedCards,dueCards,slotIdx,SUPERSEDED,
+  loadData,readStore,restoreSnapshot,progressSummary,PROGRESS_SNAPSHOT,KEY1,KEY2,
   DSA2,DSA_Q,COD_ORDER,LC,WEEKS,BUF,PHASE2,FLEX_WEEKS,REBASE,REBASE_ISO,BUFEND,EXT1,isoOf,fromIso,weekOf,dow,DAY
 };`;
 
 // Nạp app với "hôm nay" là todayIso (12:00 giờ VN), dữ liệu là file tiến độ v1 đã chuyển sang v2
-function load(todayIso, withFixture = true) {
+function load(todayIso, withFixture = true, initialStores = {}) {
   const [y, m, d] = todayIso.split("-").map(Number);
   const fixed = Date.UTC(y, m - 1, d, 5, 0, 0);
-  const ctx = vm.createContext({ console });
+  const stores = new Map(Object.entries(initialStores).map(([k,v]) => [k, JSON.stringify(v)]));
+  const ctx = vm.createContext({ console, localStorage: {
+    getItem: k => stores.get(k) ?? null,
+    setItem: (k,v) => stores.set(k,String(v)),
+    removeItem: k => stores.delete(k)
+  }});
   vm.runInContext(`(()=>{const R=Date;const F=${fixed};class D extends R{constructor(...a){if(a.length)super(...a);else super(F);}static now(){return F;}}globalThis.Date=D;})();`, ctx);
   vm.runInContext(SRC + API, ctx);
   const app = ctx.__app;
@@ -42,6 +49,83 @@ const lcBase = (app, iso) => J(app.DSA2[iso] || []).map(i => app.LC[i][0]);
 const beIds = day => day.blocks.flatMap(b => b.items).filter(it => it.kind === "be").map(it => it.id);
 // Tích 1 task vào ngày iso (như khi bấm checkbox hôm đó)
 const tick = (app, id, iso) => { app.data.done[id] = 1; app.data.at[id] = iso; app.buildRoll(); };
+
+test("bản 14/10: nạp đầy đủ khi chưa có bộ nhớ, giữ ngày làm và thẻ ôn", async () => {
+  const app = load("2026-10-14", false);
+  assert.deepEqual(J(app.PROGRESS_SNAPSHOT), SNAPSHOT);
+  await app.loadData();
+  const expected = { ...SNAPSHOT.data, snapshotImportedAt: SNAPSHOT.exportedAt };
+  assert.deepEqual(J(app.data), expected);
+  assert.deepEqual(J(await app.readStore(app.KEY2)), expected);
+  app.buildPlan(); app.buildRoll();
+  const {next, ...counts} = J(app.progressSummary(app.fromIso("2026-10-14")));
+  assert.deepEqual(counts, {backend:19, leetcode:29, codility:2, overdue:6});
+  assert.equal(next.id, "w02-map-comparison");
+  assert.deepEqual(ids(app, "2026-10-14"), ["w02-map-comparison"]);
+  assert.deepEqual(lcRoll(app, "2026-10-14"), [153]);
+  assert.equal(app.dueCards(app.fromIso("2026-10-14")).length, 6);
+  const scheduled = futureIds(app, "2026-10-14");
+  assert.ok(!scheduled.some(id => app.data.done[id]), "task đã làm không xếp lại");
+});
+
+test("bỏ tích sau khi nạp bản 14/10 rồi tải lại: không tự tích lại", async () => {
+  const app = load("2026-10-14", false);
+  await app.loadData();
+  const changed = J(app.data);
+  delete changed.done["lc-76"];
+  changed.notes["2026-10-14"] = "Ghi chú mới";
+  changed.reviews["w01-effective-java-ch3#2"].doneAt = "2026-10-14";
+  const fresh = load("2026-10-15", false, {[app.KEY2]: changed});
+  await fresh.loadData();
+  assert.deepEqual(J(fresh.data), changed);
+  fresh.buildPlan(); fresh.buildRoll();
+  assert.equal(fresh.progressSummary(fresh.fromIso("2026-10-15")).leetcode, 28);
+});
+
+test("bộ nhớ v1 hiện có được migrate, không tự gộp bản 14/10", async () => {
+  const app = load("2026-10-14", false, {"hoang-backend-tracker-v1":FIXTURE.done});
+  const expected = J(app.migrateV1toV2(J(FIXTURE.done)));
+  await app.loadData();
+  assert.deepEqual(J(app.data), expected);
+  assert.equal(app.data.snapshotImportedAt, null);
+  assert.deepEqual(J(await app.readStore(app.KEY1)), FIXTURE.done);
+});
+
+test("gộp bản 14/10 chủ động: giữ dữ liệu mới và gộp lại không nhân đôi", async () => {
+  const app = load("2026-10-14", false);
+  tick(app, "w04-lambda", "2026-10-14");
+  app.data.notes["2026-10-14"] = "Đã giải thích invokedynamic";
+  app.data.proof["w01-oop"] = {url:"https://example.com/new", q:["Câu hỏi mới"]};
+  app.data.reviews["w01-effective-java-ch3#2"] = {task:"w01-effective-java-ch3", step:2, due:"2026-10-10", score:3, doneAt:"2026-10-14"};
+  await app.restoreSnapshot();
+  const once = J(app.data);
+  assert.equal(once.done["w04-lambda"], 1);
+  assert.equal(once.at["w04-lambda"], "2026-10-14");
+  assert.equal(once.notes["2026-10-14"], "Đã giải thích invokedynamic");
+  assert.equal(once.proof["w01-oop"].url, "https://example.com/new");
+  assert.equal(once.reviews["w01-effective-java-ch3#2"].doneAt, "2026-10-14");
+  assert.equal(once.snapshotImportedAt, SNAPSHOT.exportedAt);
+  await app.restoreSnapshot();
+  assert.deepEqual(J(app.data), once);
+});
+
+test("idempotency đi trước retry; cắt tuỳ chọn giữ các cổng đúng đắn của MiniPay", () => {
+  const app = load("2026-10-14", false);
+  assert.ok(app.IDX["w10-m4-idempotency"] < app.IDX["w09-m3-optimistic"]);
+  assert.ok(app.IDX["w10-m4-idem-concurrency"] < app.IDX["w09-m3-retry-rules"]);
+  const required = ["w07-m1-ledger", "w07-m1-tests", "w08-m2-bola", "w09-m3-10k-test", "w10-m4-webhook", "w11-m5-outbox", "w13-m7-reconciliation"];
+  app.data = app.normalize(J(SNAPSHOT.data));
+  app.buildPlan(); app.buildRoll();
+  const before = J(app.data), finish = app.beFinishDate();
+  app.cutLowPriority();
+  assert.equal(app.data.cut.length, 19);
+  assert.ok(required.every(id => !app.data.cut.includes(id)));
+  for (const field of ["done", "at", "proof", "reviews", "notes"]) assert.deepEqual(J(app.data[field]), before[field]);
+  assert.ok(app.beFinishDate() < finish);
+  app.restoreCut();
+  assert.deepEqual(J(app.data), before);
+  assert.equal(app.beFinishDate(), finish);
+});
 
 test("nội dung: id duy nhất, task v2 có ưu tiên 1–5 và Đạt khi", () => {
   const app = load("2026-10-06", false);
@@ -233,7 +317,12 @@ test("chậm nhiều tuần: lịch kéo dài qua 8/1, tuần thi giữ trống,
   assert.ok(app.buildDay(fin), "ngày nối dài dựng được");
   for (let t = app.fromIso("2026-12-14"); t <= app.fromIso("2026-12-27"); t += app.DAY) assert.deepEqual(ids(app, app.isoOf(t)), []);
   app.cutLowPriority();
-  assert.deepEqual(J(app.data.cut).sort(), ["w05-scoped-structured", "w12-lambda"]);
+  assert.deepEqual(J(app.data.cut).sort(), [
+    "w04-jmh-parallel", "w05-scoped-structured", "w06-di-from-scratch", "w08-oauth2-keycloak", "w08-supply-chain",
+    "w09-m3-random-invariant", "w09-m3-skew-chaos", "w10-m4-risk-tdd", "w10-pit", "w11-modulith-events",
+    "w12-aws-demo-destroy", "w12-lambda", "w12-oidc-deploy", "w12-terraform-base", "w12-terraform-ecs-rds",
+    "w13-m7-tracing", "w13-slo-runbook", "w16-m8-jmh-vt", "w16-m8-quality-gates"
+  ]);
   const all = Object.values(J(app.ROLL.be)).flat().map(i => app.SEQ[i].task.id);
   assert.ok(!all.includes("w12-lambda"));
   assert.ok(app.beFinishDate() < fin, "cắt xong thì lịch ngắn lại");

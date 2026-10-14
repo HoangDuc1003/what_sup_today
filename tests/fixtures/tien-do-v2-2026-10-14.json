@@ -1,0 +1,409 @@
+{
+ "app": "hoang-backend-tracker",
+ "version": 2,
+ "exportedAt": "2026-10-14T09:21:10.270Z",
+ "data": {
+  "schemaVersion": 2,
+  "done": {
+   "w00-setup": 1,
+   "w00-hello-boot": 1,
+   "2026-09-11|sch-15:45": 1,
+   "w00-baseline-java": 1,
+   "2026-09-12|en": 1,
+   "w00-baseline-db": 1,
+   "w00-minipay-readme": 1,
+   "2026-09-13|mock": 1,
+   "2026-09-13|plan": 1,
+   "2026-09-13|review": 1,
+   "w01-oop": 1,
+   "2026-09-14|sch-15:45": 1,
+   "2026-09-14|sch-20:15": 1,
+   "w01-equals-pass-by-value": 1,
+   "2026-09-15|en": 1,
+   "2026-09-15|sch-10:15": 1,
+   "w01-string-pool": 1,
+   "2026-09-16|sch-15:45": 1,
+   "2026-09-16|sch-20:15": 1,
+   "w01-equals-hashcode": 1,
+   "w01-immutable-record": 1,
+   "2026-09-17|en": 1,
+   "2026-09-17|sch-15:45": 1,
+   "w01-integer-cache": 1,
+   "w01-readme-qa": 1,
+   "2026-09-18|sch-15:45": 1,
+   "w01-multimodule-junit": 1,
+   "2026-09-19|en": 1,
+   "w01-effective-java-ch3": 1,
+   "w01-notes": 1,
+   "2026-09-20|mock": 1,
+   "2026-09-20|plan": 1,
+   "2026-09-20|review": 1,
+   "w02-collections": 1,
+   "2026-09-21|sch-15:45": 1,
+   "2026-09-21|sch-20:15": 1,
+   "w02-generics": 1,
+   "2026-09-22|en": 1,
+   "2026-09-22|sch-10:15": 1,
+   "2026-09-23|sch-15:45": 1,
+   "2026-09-23|sch-20:15": 1,
+   "2026-09-24|en": 1,
+   "2026-09-24|sch-15:45": 1,
+   "2026-09-25|sch-15:45": 1,
+   "w02-hashmap-internals": 1,
+   "w02-myhashmap": 1,
+   "2026-09-27|mock": 1,
+   "2026-09-27|plan": 1,
+   "2026-09-27|review": 1,
+   "2026-09-30|sch-15:45": 1,
+   "2026-09-30|sch-20:15": 1,
+   "2026-10-01|sch-15:45": 1,
+   "cod-1": 1,
+   "cod-2": 1,
+   "lc-1": 1,
+   "lc-11": 1,
+   "lc-121": 1,
+   "lc-125": 1,
+   "lc-128": 1,
+   "lc-15": 1,
+   "lc-150": 1,
+   "lc-155": 1,
+   "lc-167": 1,
+   "lc-20": 1,
+   "lc-217": 1,
+   "lc-22": 1,
+   "lc-238": 1,
+   "lc-242": 1,
+   "lc-3": 1,
+   "lc-347": 1,
+   "lc-36": 1,
+   "lc-42": 1,
+   "lc-424": 1,
+   "lc-49": 1,
+   "lc-567": 1,
+   "lc-704": 1,
+   "lc-739": 1,
+   "lc-74": 1,
+   "lc-84": 1,
+   "lc-853": 1,
+   "lc-875": 1,
+   "lc-239": 1,
+   "lc-76": 1,
+   "2026-10-06|en": 1,
+   "2026-10-06|sch-10:15": 1,
+   "2026-10-09|sch-15:45": 1
+  },
+  "at": {
+   "w00-setup": "2026-09-11",
+   "w00-hello-boot": "2026-09-11",
+   "2026-09-11|sch-15:45": "2026-09-11",
+   "w00-baseline-java": "2026-09-12",
+   "2026-09-12|en": "2026-09-12",
+   "w00-baseline-db": "2026-09-13",
+   "w00-minipay-readme": "2026-09-13",
+   "2026-09-13|mock": "2026-09-13",
+   "2026-09-13|plan": "2026-09-13",
+   "2026-09-13|review": "2026-09-13",
+   "w01-oop": "2026-09-14",
+   "2026-09-14|sch-15:45": "2026-09-14",
+   "2026-09-14|sch-20:15": "2026-09-14",
+   "w01-equals-pass-by-value": "2026-09-15",
+   "2026-09-15|en": "2026-09-15",
+   "2026-09-15|sch-10:15": "2026-09-15",
+   "w01-string-pool": "2026-09-16",
+   "2026-09-16|sch-15:45": "2026-09-16",
+   "2026-09-16|sch-20:15": "2026-09-16",
+   "w01-equals-hashcode": "2026-09-17",
+   "w01-immutable-record": "2026-09-17",
+   "2026-09-17|en": "2026-09-17",
+   "2026-09-17|sch-15:45": "2026-09-17",
+   "w01-integer-cache": "2026-09-18",
+   "w01-readme-qa": "2026-09-18",
+   "2026-09-18|sch-15:45": "2026-09-18",
+   "w01-multimodule-junit": "2026-09-19",
+   "2026-09-19|en": "2026-09-19",
+   "w01-effective-java-ch3": "2026-09-20",
+   "w01-notes": "2026-09-20",
+   "2026-09-20|mock": "2026-09-20",
+   "2026-09-20|plan": "2026-09-20",
+   "2026-09-20|review": "2026-09-20",
+   "w02-collections": "2026-09-21",
+   "2026-09-21|sch-15:45": "2026-09-21",
+   "2026-09-21|sch-20:15": "2026-09-21",
+   "w02-generics": "2026-09-22",
+   "2026-09-22|en": "2026-09-22",
+   "2026-09-22|sch-10:15": "2026-09-22",
+   "2026-09-23|sch-15:45": "2026-09-23",
+   "2026-09-23|sch-20:15": "2026-09-23",
+   "2026-09-24|en": "2026-09-24",
+   "2026-09-24|sch-15:45": "2026-09-24",
+   "2026-09-25|sch-15:45": "2026-09-25",
+   "w02-hashmap-internals": "2026-09-26",
+   "w02-myhashmap": "2026-09-27",
+   "2026-09-27|mock": "2026-09-27",
+   "2026-09-27|plan": "2026-09-27",
+   "2026-09-27|review": "2026-09-27",
+   "2026-09-30|sch-15:45": "2026-09-30",
+   "2026-09-30|sch-20:15": "2026-09-30",
+   "2026-10-01|sch-15:45": "2026-10-01",
+   "lc-239": "2026-10-06",
+   "lc-76": "2026-10-06",
+   "2026-10-06|en": "2026-10-06",
+   "2026-10-06|sch-10:15": "2026-10-06",
+   "2026-10-09|sch-15:45": "2026-10-09"
+  },
+  "proof": {
+   "w00-setup": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-11"
+   },
+   "w00-hello-boot": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-11"
+   },
+   "w00-baseline-java": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-12"
+   },
+   "w00-baseline-db": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-13"
+   },
+   "w00-minipay-readme": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-13"
+   },
+   "w01-oop": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-14"
+   },
+   "w01-equals-pass-by-value": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-15"
+   },
+   "w01-string-pool": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-16"
+   },
+   "w01-equals-hashcode": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-17"
+   },
+   "w01-immutable-record": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-17"
+   },
+   "w01-integer-cache": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-18"
+   },
+   "w01-readme-qa": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-18"
+   },
+   "w01-multimodule-junit": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-19"
+   },
+   "w01-effective-java-ch3": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-20"
+   },
+   "w01-notes": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-20"
+   },
+   "w02-collections": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-21"
+   },
+   "w02-generics": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-22"
+   },
+   "w02-hashmap-internals": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-26"
+   },
+   "w02-myhashmap": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-27"
+   }
+  },
+  "notes": {},
+  "shifts": [],
+  "cut": [],
+  "off": {},
+  "reviews": {
+   "w01-oop#2": {
+    "task": "w01-oop",
+    "step": 2,
+    "due": "2026-10-06",
+    "score": 3,
+    "doneAt": "2026-10-06"
+   },
+   "w01-equals-pass-by-value#2": {
+    "task": "w01-equals-pass-by-value",
+    "step": 2,
+    "due": "2026-10-06",
+    "score": 3,
+    "doneAt": "2026-10-06"
+   },
+   "w01-string-pool#2": {
+    "task": "w01-string-pool",
+    "step": 2,
+    "due": "2026-10-07",
+    "score": 3,
+    "doneAt": "2026-10-08"
+   },
+   "w01-equals-hashcode#2": {
+    "task": "w01-equals-hashcode",
+    "step": 2,
+    "due": "2026-10-07",
+    "score": 3,
+    "doneAt": "2026-10-08"
+   },
+   "w01-immutable-record#2": {
+    "task": "w01-immutable-record",
+    "step": 2,
+    "due": "2026-10-08",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-integer-cache#2": {
+    "task": "w01-integer-cache",
+    "step": 2,
+    "due": "2026-10-08",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-readme-qa#2": {
+    "task": "w01-readme-qa",
+    "step": 2,
+    "due": "2026-10-09",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-multimodule-junit#2": {
+    "task": "w01-multimodule-junit",
+    "step": 2,
+    "due": "2026-10-09",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-effective-java-ch3#2": {
+    "task": "w01-effective-java-ch3",
+    "step": 2,
+    "due": "2026-10-10"
+   },
+   "w01-notes#2": {
+    "task": "w01-notes",
+    "step": 2,
+    "due": "2026-10-10"
+   },
+   "w02-collections#2": {
+    "task": "w02-collections",
+    "step": 2,
+    "due": "2026-10-11"
+   },
+   "w02-generics#2": {
+    "task": "w02-generics",
+    "step": 2,
+    "due": "2026-10-11"
+   },
+   "w02-hashmap-internals#2": {
+    "task": "w02-hashmap-internals",
+    "step": 2,
+    "due": "2026-10-12"
+   },
+   "w02-myhashmap#2": {
+    "task": "w02-myhashmap",
+    "step": 2,
+    "due": "2026-10-12"
+   },
+   "w01-equals-pass-by-value#3": {
+    "task": "w01-equals-pass-by-value",
+    "step": 3,
+    "due": "2026-10-20"
+   },
+   "w01-oop#3": {
+    "task": "w01-oop",
+    "step": 3,
+    "due": "2026-10-20"
+   },
+   "w01-equals-hashcode#3": {
+    "task": "w01-equals-hashcode",
+    "step": 3,
+    "due": "2026-10-22"
+   },
+   "w01-string-pool#3": {
+    "task": "w01-string-pool",
+    "step": 3,
+    "due": "2026-10-22"
+   },
+   "w01-immutable-record#3": {
+    "task": "w01-immutable-record",
+    "step": 3,
+    "due": "2026-10-23"
+   },
+   "w01-integer-cache#3": {
+    "task": "w01-integer-cache",
+    "step": 3,
+    "due": "2026-10-23"
+   },
+   "w01-multimodule-junit#3": {
+    "task": "w01-multimodule-junit",
+    "step": 3,
+    "due": "2026-10-23"
+   },
+   "w01-readme-qa#3": {
+    "task": "w01-readme-qa",
+    "step": 3,
+    "due": "2026-10-23"
+   }
+  },
+  "retro": {},
+  "mvd": {},
+  "archive": {},
+  "migratedFromV1": {
+   "keys": 85
+  }
+ }
+}

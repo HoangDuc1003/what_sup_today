@@ -259,6 +259,14 @@ kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-wid
   .hero h1{font-size:26px;margin:6px 0 4px}
   .nowcard{margin-top:10px}
 }
+/* Tiếp tục từ tiến độ thực tế */
+.resume{border-top:4px solid var(--c-be);padding:16px 18px}
+.resume-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.resume-metric strong{display:block;font-size:28px;line-height:1.2;color:var(--ink)}
+.resume-metric span{font-size:12px;color:var(--muted)}
+.resume-next{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:14px;overflow-wrap:anywhere}
+.resume .stat-line{margin-bottom:0}
+@media(max-width:440px){.resume-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -276,6 +284,7 @@ kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-wid
   </nav>
   <div id="banners"></div>
   <main class="layout">
+    <section class="span-all" aria-labelledby="h-resume"><h2 id="h-resume">Tiến độ hiện tại</h2><div id="resume" class="card resume"></div></section>
     <div class="split span-all">
     <div class="col-main">
       <section aria-labelledby="h-day"><h2 id="h-day">Lịch trong ngày</h2><div id="timeline"></div></section>
@@ -296,9 +305,11 @@ kbd{font:inherit;font-size:12.5px;border:1px solid var(--line);border-bottom-wid
     <section aria-labelledby="h-bak"><h2 id="h-bak">Sao lưu tiến độ</h2>
       <div class="card">
         <p class="empty">Tiến độ chỉ nằm trong trình duyệt này. Xuất file JSON (định dạng v2) để lưu dự phòng hoặc chuyển sang máy khác (PC ↔ điện thoại). Nhập được cả file v1 cũ: app tự chuyển sang v2 rồi gộp (việc đã làm thắng, ghi chú nối không trùng).</p>
+        <p class="stat-line">Bản mới có sẵn tiến độ bạn xuất ngày 14/10/2026. Trình duyệt chưa có dữ liệu sẽ tự nạp; trình duyệt đã có dữ liệu giữ nguyên. Nút gộp bên dưới bổ sung việc đã xong, có thể đánh dấu lại việc bạn từng bỏ tích.</p>
         <div class="btnrow">
           <button id="exportBtn" class="btn primary" type="button">Xuất file tiến độ</button>
           <button id="importBtn" class="btn" type="button">Nhập file (gộp)</button>
+          <button class="btn" type="button" data-act="restore-snapshot">Gộp bản tiến độ 14/10/2026</button>
           <button class="btn" type="button" data-act="backup-v1">Tải bản sao lưu v1</button>
           <input id="importFile" type="file" accept="application/json,.json" hidden>
         </div>
@@ -463,7 +474,7 @@ const WEEKS={
  en:["Speaking: giải thích lazy evaluation của Stream","Mock với AI: JVM memory và GC","Trình bày: heap vs stack"],
  mock:"Mock interview tiếng Anh 45 phút: Collections + JVM"},
 
-/* ---------- Lộ trình v2 (từ T3 6/10/2026) ---------- */
+/* ---------- Lộ trình v2 (từ T3 6/10/2026 - Đã tinh chỉnh ưu tiên & thứ tự phụ thuộc) ---------- */
 4:{theme:"Java Core III → 3 sản phẩm (bù nợ Tuần 2–3)",goal:"Có repo java-core-labs/streams có test, note HashMap và note JVM kèm 3 lệnh docker chứng minh GC nào được chọn",
  be:[K("w04-hashmap-note",2,"Note HashMap hoàn chỉnh: hash spreading h ^ (h >>> 16), chỉ số (n − 1) & hash, resize ở 0.75, treeify khi bucket ≥ 8 node và bảng ≥ 64 (nhỏ hơn thì resize), bug key bị đổi sau khi put. Mở đầu bằng quiz W1–W2 15 phút không nhìn note",
        "Java HashMap TREEIFY_THRESHOLD MIN_TREEIFY_CAPACITY source code",
@@ -474,19 +485,19 @@ const WEEKS={
      K("w04-stream-lab",2,"Lab Stream (repo java-core-labs/streams): record Transaction (amountMinor long, Currency, YearMonth…), tổng theo tháng, top-5 khách, groupingBy / partitioningBy / teeing; predict → run → explain với peek (thực thi theo chiều dọc, short-circuit)",
        "Java Stream lazy evaluation peek order short-circuit",
        "Đạt khi: test xanh cho 3 truy vấn; note ghi 1 lần dự đoán sai thứ tự peek và giải thích vì sao"),
-     K("w04-stream-advanced",2,"Stream nâng cao: toMap gặp key trùng (IllegalStateException → cần merge function), value null → NPE, flatMap; Stream Gatherers (JEP 485, final ở JDK 24): Gatherers.windowSliding phát hiện giao dịch trùng trong 60 giây",
+     K("w04-stream-advanced",2,"Stream nâng cao: toMap gặp key trùng (IllegalStateException → cần merge function), value null → NPE, flatMap; Stream Gatherers (JEP 485): phân biệt Gatherers.windowSliding(int) (trượt theo số phần tử) với cửa sổ thời gian 60 giây (dùng Deque<Instant> hoặc custom Gatherer)",
        "https://openjdk.org/jeps/485",
-       "Đạt khi: test cho toMap trùng key / null và cho bộ phát hiện trùng; giải thích intermediate vs terminal, vì sao stream không dùng lại được"),
+       "Đạt khi: test cho toMap trùng key / null, test windowSliding(3) theo số phần tử và test phát hiện giao dịch trùng trong cửa sổ thời gian 60 giây bằng Deque"),
      K("w04-errors-money",2,"Lỗi & tiền (bù Exception/Optional): checked vs unchecked, try-with-resources + suppressed, Optional đúng/sai, Comparator.comparing().thenComparing(); sealed interface TransferResult (Success | InsufficientFunds | AccountFrozen) + switch pattern matching; BigDecimal: equals của 2.0 và 2.00 là false, compareTo là 0; HALF_EVEN",
        "Java sealed interface record pattern matching switch",
        "Đạt khi: test chứng minh HashSet giữ 2 phần tử 2.0/2.00 còn TreeSet giữ 1; thêm 1 subtype mới thì switch (không có default) báo lỗi compile"),
-     K("w04-jmh-parallel",2,"JMH: sequential vs parallel stream trên 10⁶ phần tử, ArrayList vs LinkedList; chạy trong Docker với --cpus=1 và --cpus=4. Parallel stream dùng ForkJoin common pool (cores − 1): không chạy I/O blocking trong đó",
+     K("w04-jmh-parallel",4,"[Tuỳ chọn P4 - Đã có nền HPC] JMH: sequential vs parallel stream trên 10⁶ phần tử, ArrayList vs LinkedList; Parallel stream dùng ForkJoin common pool (cores − 1): không chạy I/O blocking trong đó",
        "https://github.com/openjdk/jmh",
-       "Đạt khi: bảng số liệu JMH (không dùng System.nanoTime tự đo) + giải thích khi nào parallel chậm hơn"),
+       "Đạt khi: giải thích được khi nào parallel stream chậm hơn sequential và vì sao không chạy I/O blocking trong common pool"),
      K("w04-jvm-note",2,"Note JVM: heap (young/old), stack frame, Metaspace (PermGen bỏ từ JDK 8), escape analysis; đo object bằng JOL có/không -XX:+UseCompactObjectHeaders (JEP 519). GC được chọn: trước JDK 27, JVM dùng Serial nếu chỉ 1 CPU hoặc dưới 1792 MB RAM; từ JDK 27 (JEP 523) luôn là G1. MaxRAMPercentage (mặc định 25%) + NMT",
        "https://openjdk.org/jeps/523",
        "Đạt khi: 3 lệnh docker chạy ra đúng (temurin:25 với --cpus=1 --memory=1g → \"Using Serial\"; --cpus=2 --memory=2g → G1; image JDK 27 → G1); bảng MaxHeapSize ở 512 MB / 1 GB / 2 GB; sơ đồ bộ nhớ trong note"),
-     K("w04-oom-lab",2,"Lab OOM: -Xmx64m + -XX:+HeapDumpOnOutOfMemoryError → mở dump bằng Eclipse MAT (dominator tree, retained size); ghi JFR, xem bằng JDK Mission Control; jcmd. 45 phút cuối (P4): class loader delegation, JIT tiered C1/C2, AOT cache (Leyden) ở mức khái niệm; demo JMM: while(!flag) không dừng khi thiếu volatile",
+     K("w04-oom-lab",2,"Lab OOM & JMM cốt lõi: -Xmx64m + -XX:+HeapDumpOnOutOfMemoryError → mở dump bằng Eclipse MAT (dominator tree, retained size); demo JMM: while(!flag) không dừng khi thiếu volatile (Phần JFR/AOT Leyden để P4)",
        "Eclipse MAT dominator tree heap dump analysis",
        "Đạt khi: ảnh dominator tree chỉ ra object gây leak (tìm từ dump, không nhìn code); giải thích happens-before bằng ví dụ volatile vừa chạy")],
  en:["Shadowing 15 phút + giải thích bằng tiếng Anh vì sao capacity HashMap là luỹ thừa của 2 (ghi âm 2 phút)",
@@ -497,9 +508,9 @@ const WEEKS={
  be:[K("w05-race-lab",2,"Lab 1a: race condition counter++ (2 thread × 1.000.000 lần, chạy 10 lần); javap -c thấy getfield/iadd/putfield (read-modify-write); xem trạng thái thread bằng jstack",
        "Java race condition counter++ not atomic javap",
        "Đạt khi: ghi dự đoán khoảng kết quả trước khi chạy; giải thích bằng bytecode vì sao count++ không atomic"),
-     K("w05-fix-jmh",2,"Lab 1b: sửa bằng synchronized, AtomicInteger (CAS), ReentrantLock, LongAdder; đo bằng JMH ở 1 / 4 / 16 thread",
+     K("w05-fix-jmh",2,"Lab 1b: sửa bằng synchronized, AtomicInteger (CAS), ReentrantLock, LongAdder; viết test đa luồng kiểm chứng tính đúng đắn và đo thời gian thực thi ở mức tranh chấp cao",
        "Java LongAdder vs AtomicLong contention benchmark",
-       "Đạt khi: bảng throughput 4 cách × 3 mức tranh chấp + giải thích vì sao LongAdder thắng khi tranh chấp cao"),
+       "Đạt khi: test đa luồng xanh tuyệt đối cho cả 4 cách + giải thích cơ chế striping của LongAdder giúp thắng AtomicLong khi tranh chấp cao"),
      K("w05-chm-note",2,"Đọc ConcurrentHashMap.putVal: CAS cho bin rỗng + synchronized trên node đầu bin, counter cells cho size(), computeIfAbsent atomic, vì sao cấm key/value null; volatile vs synchronized, safe publication (final field)",
        "Java ConcurrentHashMap putVal implementation explained",
        "Đạt khi: note 1 trang tự viết + test chứng minh computeIfAbsent chỉ gọi hàm 1 lần dưới 8 thread"),
@@ -512,7 +523,7 @@ const WEEKS={
      K("w05-completablefuture",2,"Lab 3a: CompletableFuture gọi 3 mock service (200/300/500 ms): tuần tự ≈ 1 s vs song song ≈ 0,5 s; executor riêng (không dùng common pool cho I/O), orTimeout + exceptionally làm fallback; thenApply vs thenCompose",
        "Baeldung Guide to CompletableFuture",
        "Đạt khi: test thời gian chạy + test timeout trả fallback"),
-     K("w05-scoped-structured",4,"Lab 3b: viết lại 3a bằng virtual threads; ScopedValue (final ở JDK 25, JEP 506) vs ThreadLocal (MDC vẫn dựa trên ThreadLocal); Structured Concurrency vẫn preview ở JDK 27: chỉ demo khái niệm với --enable-preview",
+     K("w05-scoped-structured",4,"[Tuỳ chọn P4] Lab 3b: viết lại 3a bằng virtual threads; ScopedValue (final ở JDK 25, JEP 506) vs ThreadLocal (MDC vẫn dựa trên ThreadLocal); Structured Concurrency vẫn preview ở JDK 27: chỉ demo khái niệm với --enable-preview",
        "https://openjdk.org/jeps/506",
        "Đạt khi: so sánh code 2 cách + giải thích vì sao ThreadLocal dễ rò rỉ trong thread pool"),
      K("w05-cheatsheet",3,"Cheat-sheet concurrency 1 trang tiếng Anh + 10 câu tự hỏi từ JCiP ch.2–3 và Effective Java ch.11 (đọc có mục tiêu, không đọc lướt)",
@@ -526,19 +537,19 @@ const WEEKS={
      "Pitch “Tell me about yourself” bản 60 giây + 1 câu STAR (giá trị Proactive learner)"],
  mock:"Mock interview F3 45 phút: Java core + JVM + concurrency; chấm 1–5 theo 4 tiêu chí, viết lại 3 câu yếu nhất"},
 6:{theme:"Spring Boot 4 nền tảng + MiniPay M0",goal:"M0: CI xanh, ADR-001 (modular monolith), README chạy được bằng docker compose up",
- be:[K("w06-di-from-scratch",2,"Tự viết DI container khoảng 60 dòng bằng reflection (constructor injection theo type, singleton) để hiểu vì sao cần IoC",
+ be:[K("w06-di-from-scratch",4,"[Tuỳ chọn P4] Tự viết DI container khoảng 60 dòng bằng reflection (constructor injection theo type, singleton) để hiểu vì sao cần IoC",
        "Java reflection simple dependency injection container",
        "Đạt khi: test container dựng được đồ thị 3 tầng; giải thích được vòng tròn phụ thuộc gây lỗi gì"),
-     K("w06-m0-init",1,"M0 khởi tạo MiniPay: Java 25, Spring Boot 4.1.x, Gradle; Spring Modulith (tự pin version tương thích Boot 4, BOM của Boot không quản lý Modulith) với module account, ledger, transfer, payment, risk, statement, notification, audit; ADR-001 “modular monolith”; board GitHub Projects chạy sprint 1 tuần",
+     K("w06-m0-init",1,"M0 khởi tạo MiniPay: Java 25, Spring Boot 4.1.x, Gradle; khởi tạo trước 4 module cốt lõi (account, ledger, transfer, shared; các module payment, notification, audit thêm dần ở M2–M5); ADR-001 “modular monolith”",
        "https://start.spring.io",
-       "Đạt khi: repo public, ADR-001 theo mẫu Context / Decision / Consequences, board có sprint đầu"),
+       "Đạt khi: repo public có cây thư mục code thật trên nhánh main, ADR-001 theo mẫu Context / Decision / Consequences"),
      K("w06-beans",2,"Bean: @Component vs @Bean + @Configuration (proxyBeanMethods, CGLIB: gọi @Bean method 2 lần ra mấy instance?), scope, lifecycle, constructor injection; JSpecify @NullMarked/@Nullable",
        "Spring Framework 7 JSpecify null safety",
        "Đạt khi: test chứng minh full mode vs lite mode, đã ghi dự đoán trước"),
      K("w06-autoconfig-mvc",2,"Auto-configuration Boot 4 (@AutoConfiguration, @Conditional…, condition report bằng --debug) + đi hết 1 request bằng breakpoint: DispatcherServlet → HandlerMapping → HandlerAdapter → argument resolver → HttpMessageConverter (Jackson 3); so với Servlet/JSP của PRJ301",
        "Spring Boot auto-configuration condition evaluation report",
        "Đạt khi: sơ đồ luồng request tự vẽ + giải thích vì sao thêm starter JPA là có DataSource"),
-     K("w06-m0-db",1,"M0: PostgreSQL 18 + Flyway (V1__accounts.sql) + Docker Compose support của Boot; ddl-auto=validate",
+     K("w06-m0-db",1,"M0: PostgreSQL (17/18 tương thích Flyway) + Flyway (V1__accounts.sql) + Docker Compose support của Boot; ddl-auto=validate",
        "Spring Boot Docker Compose support Flyway PostgreSQL",
        "Đạt khi: docker compose up là app + DB chạy; chạy migration lần 2 không lỗi"),
      K("w06-m0-accounts-api",1,"M0: /accounts với DTO record, Bean Validation, lỗi trả ProblemDetail (RFC 9457, thay RFC 7807), API versioning qua header (có sẵn ở Spring Framework 7), status code 201 + Location / 400 / 404 / 409",
@@ -547,10 +558,10 @@ const WEEKS={
      K("w06-m0-tests",1,"M0: @WebMvcTest cho controller (kiểm JSON ProblemDetail) + integration test Testcontainers 2 (@ServiceConnection) + JUnit 6; không dùng H2",
        "https://docs.spring.io/spring-boot/reference/testing/testcontainers.html",
        "Đạt khi: test chạy bằng 1 lệnh; giải thích vì sao H2 “nói dối” về SQL và locking"),
-     K("w06-m0-ci",1,"M0: CI GitHub Actions (build + test + Testcontainers), ApplicationModules.verify() của Modulith + 1 luật ArchUnit, PR template có checklist review (prompt F4) và mục “AI đã giúp gì / mình đã kiểm gì”",
+     K("w06-m0-ci",1,"M0: CI GitHub Actions (build + test + Testcontainers), ApplicationModules.verify() của Modulith (hoặc ArchUnit kiểm ranh giới package), PR template có checklist review (prompt F4)",
        "Spring Modulith verify application module structure",
        "Đạt khi: CI xanh trên PR đầu tiên; cố tình vi phạm ranh giới module thì CI đỏ"),
-     K("w06-aop-m0-readme",2,"AOP & proxy: @Around đo thời gian, JDK dynamic proxy vs CGLIB, tự viết Proxy.newProxyInstance; bẫy self-invocation (chuẩn bị cho @Transactional). Viết README M0",
+     K("w06-aop-m0-readme",2,"AOP & proxy: @Around đo thời gian, JDK dynamic proxy vs CGLIB, tự viết Proxy.newProxyInstance; bẫy self-invocation (chuẩn bị cho @Transactional và @Retryable). Viết README M0",
        "Spring AOP self-invocation proxy explained",
        "Đạt khi: test chứng minh self-invocation không đi qua proxy; README chạy được bằng docker compose up")],
  en:["Speaking: IoC/DI là gì, vì sao cần container (ghi âm 2 phút)",
@@ -558,7 +569,7 @@ const WEEKS={
      "Trình bày 3 phút: life of a request trong Spring Boot (vẽ lên giấy)"],
  mock:""},
 7:{theme:"PostgreSQL + JPA + ledger kép → MiniPay M1",goal:"M1: test bất biến ledger xanh; test lost update có/không lock; đọc EXPLAIN chỉ ra index thiếu",
- be:[K("w07-pg-index",2,"PostgreSQL index: B-tree (Use The Index, Luke), seed 5 triệu dòng bằng generate_series, EXPLAIN (ANALYZE, BUFFERS): Seq / Index / Index Only / Bitmap scan; composite (equality trước, range sau), covering INCLUDE, partial index",
+ be:[K("w07-pg-index",2,"PostgreSQL index: B-tree (Use The Index, Luke), seed 1–5 triệu dòng bằng generate_series, EXPLAIN (ANALYZE, BUFFERS): Seq / Index / Index Only / Bitmap scan; composite (equality trước, range sau), covering INCLUDE, partial index",
        "https://use-the-index-luke.com/sql/anatomy",
        "Đạt khi: ảnh plan trước/sau cho 4 query + giải thích vì sao planner vẫn chọn Seq Scan khi selectivity thấp"),
      K("w07-pg-mvcc-isolation",2,"MVCC (xmin/xmax, ctid, VACUUM) + tái hiện lost update, non-repeatable read, phantom, write skew bằng 2 phiên psql ở READ COMMITTED / REPEATABLE READ / SERIALIZABLE (SSI)",
@@ -570,9 +581,9 @@ const WEEKS={
      K("w07-m1-money",1,"M1: Money = record(long minor, Currency) theo ISO 4217 (VND 0 số lẻ, USD 2); DB lưu amount_minor BIGINT + currency CHAR(3); BigDecimal + HALF_EVEN chỉ dùng khi đổi tỉ giá / tính phí, làm tròn đúng 1 chỗ",
        "ISO 4217 minor unit currency exponent",
        "Đạt khi: test cộng khác loại tiền bị chặn, làm tròn HALF_EVEN đúng các ca biên; trong code không có double/float"),
-     K("w07-m1-ledger",1,"M1: ledger kép bất biến: journal_entry(id, type, created_at, idempotency_key) + posting(entry_id, account_id, amount_minor, currency); tổng mỗi entry theo từng loại tiền = 0; REVOKE UPDATE, DELETE (hoặc trigger); sửa sai bằng entry đảo (reversal); Flyway V2",
+     K("w07-m1-ledger",1,"M1: ledger kép bất biến: journal_entry(id, type, created_at, idempotency_key) + posting(entry_id, account_id, amount_minor, currency); DEFERRABLE INITIALLY DEFERRED constraint trigger bảo vệ tổng mỗi entry theo từng currency = 0; REVOKE UPDATE, DELETE; sửa sai bằng entry đảo (reversal); Flyway V2",
        "double entry ledger database design immutable postings",
-       "Đạt khi: test UPDATE/DELETE posting bị DB từ chối; entry lệch tổng bị từ chối"),
+       "Đạt khi: test UPDATE/DELETE posting bị DB từ chối; entry lệch tổng bị trigger từ chối khi COMMIT"),
      K("w07-jpa-basics",2,"Nền JPA/Hibernate 7: @ManyToOne(fetch = LAZY) (mặc định là EAGER!), persistence context, dirty checking (UPDATE không cần save()), tắt open-in-view, equals/hashCode cho entity (nối Tuần 1)",
        "Vlad Mihalcea JPA entity equals hashCode",
        "Đạt khi: log SQL chứng minh dirty checking; giải thích vì sao tắt open-in-view"),
@@ -596,91 +607,91 @@ const WEEKS={
      K("w08-jwt-manual",2,"JWT: tự ký và verify RS256 bằng Nimbus trong unit test; kiểm iss / aud / exp, ghim thuật toán, từ chối alg=none; access token ngắn hạn; session vs token (thu hồi thế nào)",
        "Nimbus JOSE JWT RS256 sign verify example",
        "Đạt khi: test 4 ca: hợp lệ, hết hạn, sai aud, alg=none"),
-     K("w08-oauth2-keycloak",2,"OAuth2/OIDC: authorization code + PKCE (người dùng), client credentials (service-to-service); Keycloak bằng Docker: realm, client, role, user; lấy token bằng curl, đọc claim",
+     K("w08-oauth2-keycloak",4,"[Tuỳ chọn P4] OAuth2/OIDC: authorization code + PKCE (người dùng), client credentials (service-to-service); đọc luồng PKCE (không cần tốn giờ dựng Keycloak container nếu đã dùng Nimbus RS256)",
        "Keycloak docker getting started realm client",
        "Đạt khi: sơ đồ giải thích vì sao cần PKCE"),
-     K("w08-m2-resource-server",1,"M2: MiniPay là OAuth2 Resource Server (issuer-uri / JWKS), map role/scope → authority, phân biệt 401 vs 403 trả ProblemDetail; test bằng jwt() của spring-security-test",
+     K("w08-m2-resource-server",1,"M2: MiniPay là OAuth2 Resource Server (verify RS256 public key / JWKS), map role/scope → authority, phân biệt 401 vs 403 trả ProblemDetail; test bằng jwt() của spring-security-test",
        "Spring Security OAuth2 resource server JWT",
        "Đạt khi: test 401 (không token), 403 (thiếu quyền), 200"),
-     K("w08-m2-bola",1,"M2: chống BOLA (OWASP API1:2023): kiểm quyền sở hữu trên mọi tài nguyên (@PreAuthorize hoặc trong domain); API6: luồng nghiệp vụ nhạy cảm (chuyển tiền) không bị lạm dụng",
+     K("w08-m2-bola",1,"M2: chống BOLA (OWASP API1:2023): kiểm quyền sở hữu trên mọi tài nguyên (@PreAuthorize hoặc gắn owner_id vào câu SQL); API6: luồng nghiệp vụ nhạy cảm (chuyển tiền) không bị lạm dụng",
        "https://owasp.org/API-Security/editions/2023/en/0x11-t10/",
-       "Đạt khi: test user A đọc / chuyển từ ví của user B → bị chặn"),
+       "Đạt khi: test user A đọc / chuyển từ ví của user B → bị chặn (403/404)"),
      K("w08-m2-rate-limit",1,"M2: rate limit bằng Bucket4j (token bucket) cho POST /transfers và đăng nhập: trả 429 + Retry-After; so token bucket với fixed / sliding window",
        "Bucket4j Spring Boot rate limiting",
        "Đạt khi: test bắn quá hạn mức nhận 429 đúng lúc"),
      K("w08-m2-audit-pii",1,"M2: audit log append-only (ai, làm gì, lúc nào, IP, correlationId) + che PII trong log (số tài khoản chỉ hiện 4 số cuối), không bao giờ log token",
        "",
        "Đạt khi: test mỗi lệnh chuyển sinh đúng 1 audit event; log không chứa số tài khoản đầy đủ"),
-     K("w08-supply-chain",2,"Chuỗi cung ứng: Dependabot + OWASP dependency-check (hoặc GitHub dependency review) + CodeQL + secret scanning; CI chặn merge khi có CVE mức High",
+     K("w08-supply-chain",4,"[Tuỳ chọn P4] Chuỗi cung ứng: bật Dependabot + GitHub dependency review / Semgrep SAST (kế thừa từ Cinema-booking)",
        "GitHub dependency review action CodeQL Java",
-       "Đạt khi: PR thử thêm thư viện có CVE bị CI chặn"),
-     K("w08-threat-model",2,"Threat model 1 trang (STRIDE rút gọn): tài sản, ranh giới tin cậy, top 5 mối đe doạ và cách chặn, map OWASP API Top 10 2023; ADR: Keycloak + Resource Server vs tự phát JWT",
+       "Đạt khi: cấu hình quét trên GitHub Actions xanh"),
+     K("w08-threat-model",2,"Threat model 1 trang (STRIDE rút gọn): tài sản, ranh giới tin cậy, top 5 mối đe doạ và cách chặn, map OWASP API Top 10 2023; ADR: Resource Server JWT",
        "STRIDE threat modeling lightweight",
        "Đạt khi: threat model + ADR nằm trong repo")],
  en:["Speaking: JWT validation gồm những bước nào (ghi âm 2 phút)",
      "Mock F3 30 phút: Spring Security, OAuth2, OWASP API",
      "Trình bày 3 phút: threat model MiniPay"],
  mock:""},
-9:{theme:"Chứng minh concurrency → MiniPay M3",goal:"M3: 10.000 lệnh chuyển / 64 virtual threads giữ nguyên tổng tiền, không âm; ADR-002 có số liệu 3 chiến lược",
- be:[K("w09-m3-optimistic",1,"M3 chiến lược 2: @Version + retry bằng @Retryable (có sẵn Spring Framework 7, bật @EnableResilientMethods)",
-       "Spring Framework 7 Retryable EnableResilientMethods",
-       "Đạt khi: test xung đột → retry thành công, có giới hạn số lần"),
+9:{theme:"Idempotency + Chứng minh Concurrency → MiniPay M3",goal:"M3: Có Idempotency-Key chống ghi đôi trước khi bật Retry; 10.000 lệnh chuyển / 64 virtual threads giữ nguyên tổng tiền",
+ be:[K("w10-m4-idempotency",1,"M3/M4 (Đẩy lên đầu W9 trước khi làm Retry): Idempotency-Key (kiểu Stripe + draft IETF): bảng idempotency_record(key, user_id, request_hash, status, response_body, created_at), UNIQUE(user_id, key); cùng key → trả response đã lưu; khác body → 422; đang xử lý → 409",
+       "https://docs.stripe.com/api/idempotent_requests",
+       "Đạt khi: test 3 ca: gửi lại trả kết quả cũ, cùng key khác body trả 422, đang xử lý trả 409"),
+     K("w10-m4-idem-concurrency",1,"M3/M4: test 50 request đồng thời cùng Idempotency-Key (INSERT ... ON CONFLICT DO NOTHING) → đúng 1 journal entry; inject java.time.Clock (fake) để test hết hạn",
+       "https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/",
+       "Đạt khi: test xanh 20 lần liên tiếp (không flaky)"),
+     K("w09-m3-optimistic",1,"M3 chiến lược 2: @Version + retry bằng @Retryable (có sẵn Spring Framework 7, bật @EnableResilientMethods; đặt ngoài biên @Transactional)",
+       "https://docs.spring.io/spring-framework/reference/core/resilience.html",
+       "Đạt khi: test xung đột → mở transaction mới retry thành công, có giới hạn số lần"),
      K("w09-m3-conditional-update",1,"M3 chiến lược 3: UPDATE account_balance SET balance = balance − :x WHERE id = :id AND balance >= :x; kiểm số dòng bị ảnh hưởng",
        "",
        "Đạt khi: test rút quá số dư → 0 dòng, trả lỗi nghiệp vụ"),
-     K("w09-m3-retry-rules",1,"Retry đúng: chỉ khi SQLSTATE 40001 (serialization_failure) / 40P01 (deadlock_detected), backoff + jitter, tối đa 3 lần, dùng chung idempotency key để retry không ghi đôi",
+     K("w09-m3-retry-rules",1,"Retry đúng: lọc SQLSTATE 40001 (serialization_failure) / 40P01 (deadlock_detected), backoff + jitter; tối đa 3 retry sau lần đầu (maxRetries=3), mỗi lần mở transaction mới; Idempotency-Key bảo vệ request gửi lại",
        "PostgreSQL error codes 40001 40P01",
-       "Đạt khi: test lỗi khác không retry; 40001 retry tối đa 3 lần"),
+       "Đạt khi: test lỗi khác không retry; 40001/40P01 có tối đa 4 lần gọi (1 lần đầu + 3 retry), mỗi lần trong transaction mới"),
      K("w09-m3-10k-test",1,"M3 test chứng minh #1: 10 tài khoản, 10.000 lệnh chuyển ngẫu nhiên trên 64 virtual threads, Postgres thật (Testcontainers)",
        "",
        "Đạt khi: assert tổng tiền không đổi, không tài khoản âm, mỗi entry tổng = 0, số entry = số lệnh thành công"),
-     K("w09-m3-skew-chaos",1,"M3 test #2: write skew dưới REPEATABLE READ và SERIALIZABLE chặn được; test #3 chaos: kill connection giữa transaction (Toxiproxy), sau retry không ghi đôi",
-       "Testcontainers Toxiproxy module",
-       "Đạt khi: 2 test xanh + giải thích bằng timeline"),
-     K("w09-m3-random-invariant",1,"M3 test #4: tự viết test invariant ngẫu nhiên (seed cố định, in seed khi fail, thu nhỏ ca lỗi bằng tay): với mọi chuỗi lệnh hợp lệ, số dư tính lại từ ledger = account_balance (thay jqwik vì jqwik chưa chạy trên JUnit 6)",
-       "",
-       "Đạt khi: 500 chuỗi ngẫu nhiên xanh; cố tình cài bug thì test bắt được và in seed tái hiện"),
      K("w09-m3-benchmark-adr",1,"Benchmark 3 chiến lược (pessimistic / optimistic / conditional) với hot account vs phân tán: throughput, số retry, deadlock → ADR-002 “Chiến lược khoá số dư”",
        "",
        "Đạt khi: bảng số liệu + ADR-002 nêu rõ đánh đổi"),
      K("w09-m3-query-tuning",2,"EXPLAIN cho query thật của MiniPay (sao kê, posting theo account + thời gian): thêm index đúng, keyset pagination cho lịch sử giao dịch",
        "keyset pagination seek method PostgreSQL",
        "Đạt khi: ảnh plan trước/sau trong README; trang 1 và trang 1000 nhanh như nhau"),
-     K("w09-m3-readme",2,"README mục “Correctness evidence” (4 test chứng minh + số liệu) + ghi âm 3 phút “how MiniPay prevents double-spend”; tự kiểm tháng 2: quiz 20 câu không nhìn note",
+     K("w09-m3-readme",2,"README mục “Correctness evidence” (test chứng minh + số liệu) + ghi âm 3 phút “how MiniPay prevents double-spend”; tự kiểm tháng 2: quiz 20 câu không nhìn note",
        "",
        "Đạt khi: README cập nhật + file ghi âm + điểm quiz")],
  en:["Speaking: optimistic vs pessimistic locking (ghi âm 2 phút)",
      "Mock F3 30 phút: transaction, isolation, retry",
      "Trình bày 3 phút: MiniPay chống double-spend thế nào"],
  mock:"Mock interview F3 45 phút: Spring + JPA + transaction + MiniPay; viết lại 3 câu yếu nhất"},
-10:{theme:"Idempotency + payment → MiniPay M4",goal:"M4: 50 request cùng Idempotency-Key → đúng 1 journal entry; webhook có chữ ký HMAC; state machine có test",
- be:[K("w10-m4-idempotency",1,"M4: Idempotency-Key (kiểu Stripe + draft IETF): bảng idempotency_record(key, user_id, request_hash, status, response_body, created_at), UNIQUE(user_id, key); gửi lại cùng key → trả response đã lưu; cùng key khác body → 422; đang xử lý → 409; giữ ít nhất 24 giờ",
-       "https://docs.stripe.com/api/idempotent_requests",
-       "Đạt khi: test 3 ca: gửi lại, khác body, đang xử lý"),
-     K("w10-m4-idem-concurrency",1,"M4: test 50 request đồng thời cùng Idempotency-Key → đúng 1 journal entry; inject java.time.Clock (fake) để test hết hạn",
-       "https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/",
-       "Đạt khi: test xanh 20 lần liên tiếp (không flaky)"),
-     K("w10-m4-state-machine",1,"M4: payment state machine CREATED → PENDING_PROVIDER → SUCCEEDED | FAILED | EXPIRED; chỉ cho chuyển hợp lệ; test bảng chuyển trạng thái bằng @ParameterizedTest",
+10:{theme:"Payment State Machine + Webhook → MiniPay M4",goal:"M4: xử lý đúng UNKNOWN_TIMEOUT khi gọi provider; webhook có chữ ký HMAC + chống sai thứ tự; state machine có test",
+ be:[K("w10-m4-state-machine",1,"M4: payment state machine CREATED → FUNDS_RESERVED → PENDING_PROVIDER → SUCCEEDED | FAILED | EXPIRED; chỉ cho chuyển một chiều hợp lệ; test bảng chuyển trạng thái bằng @ParameterizedTest",
        "",
-       "Đạt khi: mọi cặp trạng thái đều có test"),
-     K("w10-m4-provider-client",1,"M4: mock provider + HTTP Service Client (@HttpExchange, RestClient): luôn đặt timeout, @Retryable + jitter chỉ cho call idempotent, @ConcurrencyLimit làm bulkhead; WireMock giả lập chậm / lỗi 5xx",
+       "Đạt khi: mọi cặp trạng thái đều có test; sự kiện cũ đến muộn không làm lùi trạng thái đã SUCCEEDED/FAILED"),
+     K("w10-m4-provider-client",1,"M4: mock provider + HTTP Service Client (@HttpExchange, RestClient): luôn đặt timeout, @Retryable + jitter chỉ cho call có Idempotency-Key, @ConcurrencyLimit làm bulkhead; WireMock giả lập chậm / lỗi 5xx (Timeout giữ nguyên PENDING chờ đối soát/webhook, không tự ý nhả tiền ngay)",
        "Spring Framework 7 HTTP service client HttpExchange",
-       "Đạt khi: test provider chậm → timeout đúng; 5xx → retry rồi thất bại có kiểm soát"),
-     K("w10-m4-saga",1,"M4: top-up / withdraw bằng saga có bước bù (compensation), không dùng 2PC; ADR ngắn",
+       "Đạt khi: test provider chậm → timeout không làm mất tiền tạm giữ; 5xx → retry có kiểm soát"),
+     K("w10-m4-saga",1,"M4: top-up / withdraw bằng saga có bước bù (compensation: tạo bút toán đảo trả tiền từ tạm giữ về khả dụng khi provider xác nhận FAILED), không dùng 2PC; ADR ngắn",
        "https://microservices.io/patterns/data/saga.html",
-       "Đạt khi: test provider lỗi sau khi đã giữ tiền → bước bù trả lại đúng"),
-     K("w10-m4-webhook",1,"M4: webhook từ provider: chữ ký HMAC-SHA256 + timestamp (lệch quá 5 phút thì từ chối), loại trùng theo provider_event_id",
+       "Đạt khi: test provider xác nhận lỗi sau khi đã giữ tiền → bước bù tạo entry đảo trả lại đúng"),
+     K("w10-m4-webhook",1,"M4: webhook từ provider: kiểm chữ ký HMAC-SHA256 trên raw body bằng MessageDigest.isEqual + timestamp (lệch quá 5 phút thì từ chối), loại trùng theo provider_event_id",
        "",
-       "Đạt khi: test sai chữ ký, timestamp cũ, gửi lại lần 2 đều xử lý đúng"),
-     K("w10-m4-risk-tdd",1,"M4 module risk (TDD, commit theo từng bước red-green-refactor): hạn mức/ngày theo KYC tier (biên ngày UTC+7!), tối đa N giao dịch/phút, cảnh báo người nhận mới + số tiền lớn",
+       "Đạt khi: test sai chữ ký, timestamp cũ, gửi lại lần 2 và đến ngược thứ tự đều xử lý đúng"),
+     K("w10-m4-readme",2,"README M4 + mini system design “idempotent money-transfer & webhook API” (API, bảng, luồng lỗi timeout) viết bằng tiếng Anh",
+       "",
+       "Đạt khi: sơ đồ + 1 trang giải thích"),
+     K("w09-m3-skew-chaos",4,"[Tuỳ chọn P4] Test nâng cao: write skew dưới REPEATABLE READ vs SERIALIZABLE; chaos test với Toxiproxy kill connection giữa transaction",
+       "Testcontainers Toxiproxy module",
+       "Đạt khi: 2 test xanh + giải thích bằng timeline"),
+     K("w09-m3-random-invariant",4,"[Tuỳ chọn P4] Tự viết test invariant ngẫu nhiên (seed cố định): với mọi chuỗi lệnh hợp lệ, số dư tính lại từ ledger = account_balance",
+       "",
+       "Đạt khi: 500 chuỗi ngẫu nhiên xanh; cố tình cài bug thì test bắt được"),
+     K("w10-m4-risk-tdd",4,"[Tuỳ chọn P4] Module risk (TDD): hạn mức/ngày theo KYC tier (biên ngày UTC+7!), tối đa N giao dịch/phút",
        "",
        "Đạt khi: lịch sử commit thể hiện TDD; có test ca 23:59 / 00:00 giờ Việt Nam"),
-     K("w10-pit",2,"Mutation testing PIT cho ledger/transfer: so line coverage (JaCoCo) với mutation score, diệt mutant sống sót",
+     K("w10-pit",4,"[Tuỳ chọn P4] Mutation testing PIT cho ledger/transfer: so line coverage (JaCoCo) với mutation score",
        "https://pitest.org/",
-       "Đạt khi: mutation score module ledger ≥ 70%; có 1 ví dụ test “phủ dòng nhưng không bắt được bug”"),
-     K("w10-m4-readme",2,"README M4 + mini system design “idempotent money-transfer API” (API, bảng, luồng lỗi) viết bằng tiếng Anh",
-       "",
-       "Đạt khi: sơ đồ + 1 trang giải thích")],
+       "Đạt khi: mutation score module ledger ≥ 70%")],
  en:["Speaking: idempotency key hoạt động thế nào (ghi âm 2 phút)",
      "Mock F3 30 phút: mini system design “idempotent money-transfer API”",
      "Vòng tiếng Anh NAB: “Tell me about a time you made a mistake” (STAR, giá trị Accountable)"],
@@ -689,9 +700,9 @@ const WEEKS={
  be:[K("w11-m5-outbox",1,"M5: demo dual-write (crash giữa commit DB và publish → mất event) → transactional outbox: ghi outbox_event cùng transaction với ledger",
        "https://microservices.io/patterns/data/transactional-outbox.html",
        "Đạt khi: test chứng minh event không mất khi app chết ngay sau commit"),
-     K("w11-m5-relay",1,"M5: relay polling SELECT … FOR UPDATE SKIP LOCKED (an toàn khi chạy nhiều instance), batch, đánh dấu đã gửi; thứ tự theo tài khoản; at-least-once",
-       "",
-       "Đạt khi: test 2 relay chạy song song không gửi trùng 1 event"),
+     K("w11-m5-relay",1,"M5: relay polling SELECT … FOR UPDATE SKIP LOCKED; giữ thứ tự bằng sequence theo account + 1 active poller hoặc worker sở hữu độc quyền shard account_id, gửi tuần tự vào SQS FIFO MessageGroupId=accountId. Publish có thể lặp nếu crash trước khi đánh dấu đã gửi: consumer phải idempotent",
+       "https://microservices.io/patterns/data/transactional-outbox.html",
+       "Đạt khi: test 2 relay không cùng giữ lock 1 dòng; test crash sau publish có gửi lại nhưng không lặp tác dụng; test thứ tự 2 event cùng account"),
      K("w11-m5-sqs-local",1,"M5: SQS bằng Spring Cloud AWS 4 (SqsTemplate / @SqsListener); local và CI dùng ElasticMQ qua Testcontainers (LocalStack từ 3/2026 cần tài khoản + token); Standard vs FIFO (MessageGroupId = accountId)",
        "https://github.com/softwaremill/elasticmq",
        "Đạt khi: integration test gửi/nhận qua ElasticMQ xanh"),
@@ -704,7 +715,7 @@ const WEEKS={
      K("w11-exactly-once-adr",2,"“Exactly-once” là hiểu sai phổ biến: thực tế là at-least-once + xử lý idempotent; ADR-003 “SQS FIFO vs Kafka” (partition key, offset, replay, consumer group, KIP-848)",
        "",
        "Đạt khi: ADR-003 nêu rõ khi nào chọn Kafka"),
-     K("w11-modulith-events",3,"Spring Modulith events (event publication registry, @ApplicationModuleListener) so với outbox tự viết: khi nào dùng cái nào",
+     K("w11-modulith-events",4,"[Tuỳ chọn P4] Spring Modulith events (event publication registry, @ApplicationModuleListener) so với outbox tự viết: khi nào dùng cái nào",
        "Spring Modulith event publication registry",
        "Đạt khi: bảng so sánh 5 dòng trong ADR-003"),
      K("w11-m5-e2e",1,"M5 test E2E: transfer → outbox → SQS (ElasticMQ) → notification, dùng Testcontainers Postgres + ElasticMQ",
@@ -717,66 +728,66 @@ const WEEKS={
      "Mock F3 30 phút: messaging, at-least-once, idempotent consumer",
      "Trình bày 3 phút: luồng event của MiniPay"],
  mock:"Mock interview F3 45 phút: messaging + security + 1 system design nhỏ"},
-12:{theme:"AWS → MiniPay M6",goal:"M6: deploy bằng 1 lệnh qua CI (OIDC), demo xong thì destroy, chi phí ghi trong README",
- be:[K("w12-aws-account",1,"Tài khoản AWS an toàn trước mọi thứ: Free plan (từ 15/7/2025 là credit $100 + tối đa $100, tối đa 6 tháng), MFA cho root, IAM Identity Center, Budget alarm 5/10 USD; sơ đồ Region / AZ / VPC / subnet / SG; bẫy chi phí: ALB khoảng 16 USD/tháng, NAT Gateway, RDS quên tắt",
-       "AWS Free Tier 2026 credits free plan",
-       "Đạt khi: ảnh Budget alarm + sơ đồ mạng tự vẽ"),
-     K("w12-docker-image",1,"Image Docker multi-stage (layered jar, user non-root, JRE 25), JVM flags cho container (nối Tuần 4), quét bằng Trivy",
+12:{theme:"Đóng gói Docker chuẩn Production & AWS → MiniPay M6",goal:"M6: Image Docker multi-stage sạch CVE, Pitch MiniPay + STAR hoàn chỉnh (Terraform AWS để P4 làm khi rảnh)",
+ be:[K("w12-docker-image",1,"Image Docker multi-stage (layered jar, user non-root, JRE 25), JVM flags cho container (-XX:MaxRAMPercentage, nối Tuần 4), quét bằng Trivy",
        "Spring Boot layered jar Dockerfile multi-stage",
-       "Đạt khi: image không có CVE Critical, chạy bằng user non-root"),
-     K("w12-terraform-base",1,"Terraform cơ bản: provider, state, plan / apply / destroy; tạo ECR + SQS/DLQ + Secrets Manager",
+       "Đạt khi: image không có CVE Critical, chạy bằng user non-root trong docker compose"),
+     K("w12-pitch-star",1,"Pitch “Tell me about MiniPay” bản 60 giây và 3 phút + STAR #1 (deadlock story, giá trị Accountable deliverer)",
+       "",
+       "Đạt khi: 2 file ghi âm + STAR viết ra 1 trang"),
+     K("w12-aws-account",2,"Tài khoản AWS an toàn & Kiến trúc mạng: MFA cho root, IAM Identity Center, Budget alarm 5/10 USD; vẽ sơ đồ Region / AZ / VPC / Public-Private Subnet / Security Group cho MiniPay; phân tích chi phí ALB, NAT Gateway, RDS",
+       "AWS Free Tier 2026 credits free plan",
+       "Đạt khi: sơ đồ kiến trúc mạng AWS tự vẽ + bảng ước tính chi phí trong README"),
+     K("w12-aws-readme",2,"README Deployment: hướng dẫn chạy local 1 lệnh (docker compose up) và kiến trúc triển khai đám mây (ECS + RDS + SQS)",
+       "",
+       "Đạt khi: người khác làm theo README dựng lại được ngay trên máy local"),
+     K("w12-terraform-base",4,"[Tuỳ chọn P4 - Hoãn sau kỳ thi nếu bận] Terraform cơ bản: provider, state, plan / apply / destroy; tạo ECR + SQS/DLQ + Secrets Manager",
        "Terraform AWS getting started tutorial",
        "Đạt khi: terraform destroy xoá sạch, không còn tài nguyên mồ côi"),
-     K("w12-terraform-ecs-rds",1,"Terraform RDS PostgreSQL (t4g.micro) + ECS Fargate (hoặc ECS Express Mode; App Runner đã ngừng nhận khách mới từ 30/4/2026) + ALB health check bằng Actuator + task role least-privilege",
+     K("w12-terraform-ecs-rds",4,"[Tuỳ chọn P4] Terraform RDS PostgreSQL (t4g.micro) + ECS Fargate / ECS Express Mode (App Runner đã ngừng nhận khách mới từ 30/4/2026) + ALB health check",
        "Terraform ECS Fargate RDS example",
        "Đạt khi: health check xanh; task role chỉ có quyền tối thiểu"),
-     K("w12-oidc-deploy",1,"GitHub Actions deploy qua OIDC (không lưu access key): build → push ECR → cập nhật ECS service",
+     K("w12-oidc-deploy",4,"[Tuỳ chọn P4] GitHub Actions deploy qua OIDC (không lưu access key): build → push ECR → cập nhật ECS service",
        "GitHub Actions OIDC AWS configure-aws-credentials",
        "Đạt khi: merge vào main là tự deploy; repo không có access key"),
-     K("w12-aws-demo-destroy",1,"Demo thật: chuyển tiền trên AWS (RDS + SQS), xem CloudWatch Logs, ghi chi phí thực tế, terraform destroy ngay trong ngày",
+     K("w12-aws-demo-destroy",4,"[Tuỳ chọn P4] Demo thật trên AWS (RDS + SQS), xem CloudWatch Logs, ghi chi phí thực tế, terraform destroy ngay trong ngày",
        "",
        "Đạt khi: ảnh demo + chi phí trong README + đã destroy"),
-     K("w12-aws-readme",2,"README AWS: sơ đồ kiến trúc, chi phí, 1 lệnh deploy / 1 lệnh gỡ",
-       "",
-       "Đạt khi: người khác làm theo README dựng lại được"),
-     K("w12-lambda",4,"Tuỳ chọn (JD NAB có FaaS): notification consumer bản AWS Lambda trigger từ SQS; so cold start, chi phí, giới hạn với ECS",
+     K("w12-lambda",4,"[Tuỳ chọn P4] Notification consumer bản AWS Lambda trigger từ SQS; so cold start, chi phí, giới hạn với ECS",
        "AWS Lambda SQS trigger Java",
-       "Đạt khi: bảng so sánh Lambda vs ECS 5 dòng"),
-     K("w12-pitch-star",3,"Pitch “Tell me about MiniPay” bản 60 giây và 3 phút + STAR #1 (deadlock story, giá trị Accountable deliverer)",
-       "",
-       "Đạt khi: 2 file ghi âm + STAR viết ra 1 trang")],
+       "Đạt khi: bảng so sánh Lambda vs ECS 5 dòng")],
  en:["Speaking: IAM role vs user, least privilege (ghi âm 2 phút)",
      "Mock F3 30 phút: AWS cho backend (ECS, RDS, SQS, IAM)",
      "Pitch MiniPay 60 giây + 3 phút (ghi âm)"],
  mock:""},
-13:{theme:"Observability + reconciliation → MiniPay M7",goal:"M7: trace xuyên HTTP → DB → SQS, reconciliation báo drift = 0, có video demo 3 phút",
+13:{theme:"Observability + reconciliation → MiniPay M7",goal:"M7: reconciliation MVCC snapshot báo drift = 0 (song song vs tuần tự), có video demo 3 phút và tag v1.0",
  be:[K("w13-m7-logging",1,"M7: log JSON (structured logging có sẵn trong Boot) có traceId, idempotencyKey, accountId đã che; MDC",
        "Spring Boot structured logging JSON",
        "Đạt khi: 1 dòng log mẫu đủ trường, không lộ PII"),
      K("w13-m7-metrics",1,"M7 metrics Micrometer: transfers_total{result}, histogram độ trễ, outbox lag, độ sâu DLQ",
        "Micrometer timer histogram Spring Boot",
        "Đạt khi: 4 metric hiện trên /actuator/prometheus"),
-     K("w13-m7-tracing",1,"M7 tracing OpenTelemetry → grafana/otel-lgtm (1 container gồm Grafana + Tempo + Loki + Prometheus) chạy local; trace 1 lệnh chuyển xuyên HTTP → DB → SQS → consumer",
-       "grafana docker-otel-lgtm",
-       "Đạt khi: ảnh trace end-to-end trong README"),
-     K("w13-m7-reconciliation",1,"M7 reconciliation job: tính lại số dư từ posting, báo drift; chạy 1 instance (ShedLock hoặc advisory lock); bản song song chia theo khoảng account id vs bản tuần tự trên 10⁶ posting (tận dụng nền HPC/N-Body)",
+     K("w13-m7-reconciliation",1,"M7 reconciliation job: mở transaction REPEATABLE READ READ ONLY để lấy snapshot nhất quán không chặn giao dịch đang chạy; tính lại số dư từ posting, báo drift; chạy 1 instance (ShedLock / advisory lock); so bản song song chia theo khoảng account id vs bản tuần tự trên 10⁶ posting (tận dụng nền HPC/N-Body)",
        "ShedLock Spring scheduled lock",
        "Đạt khi: drift = 0 trên dữ liệu thật; bảng speedup song song vs tuần tự"),
-     K("w13-slo-runbook",2,"SLO mẫu (99% lệnh chuyển < 300 ms ở 50 RPS) + dashboard + 1 alert + runbook 1 trang; APRA CPS 230 (operational resilience) ở mức khái niệm",
+     K("w13-system-design",2,"System design “payment system” 45 phút tự bấm giờ: yêu cầu, API, data model, nhất quán (ledger, idempotency), scale (partition theo account, read replica), lỗi; modular monolith vs microservices",
+       "donnemartin system-design-primer",
+       "Đạt khi: sơ đồ + ghi âm trình bày 10 phút"),
+     K("w13-video-readme",1,"Video demo 3 phút tiếng Anh + README kể chuyện: vấn đề, kiến trúc, ADR, bằng chứng đúng (test), số liệu, security, AI đã dùng thế nào",
+       "",
+       "Đạt khi: video công khai + README đủ mục"),
+     K("w13-tag-v1",1,"Tag v1.0 + retro tháng 3: đóng băng tính năng cốt lõi trước kỳ thi cuối kỳ",
+       "",
+       "Đạt khi: release v1.0 trên GitHub"),
+     K("w13-m7-tracing",4,"[Tuỳ chọn P4] Tracing OpenTelemetry → grafana/otel-lgtm chạy local; trace 1 lệnh chuyển xuyên HTTP → DB → SQS → consumer",
+       "grafana docker-otel-lgtm",
+       "Đạt khi: ảnh trace end-to-end trong README"),
+     K("w13-slo-runbook",4,"[Tuỳ chọn P4] SLO mẫu (99% lệnh chuyển < 300 ms ở 50 RPS) + dashboard + 1 alert + runbook 1 trang; APRA CPS 230 ở mức khái niệm",
        "APRA CPS 230 operational resilience summary",
        "Đạt khi: dashboard + runbook nằm trong repo"),
      K("w13-banking-101",3,"Banking 101: clearing vs settlement, ISO 20022 (pacs.008), NPP/PayTo (Úc), NAPAS (VN), KYC/AML; đặt MiniPay vào bức tranh lớn",
        "ISO 20022 pacs.008 explained NPP PayTo",
-       "Đạt khi: 1 trang ghi chú tiếng Anh + 5 câu hỏi ôn"),
-     K("w13-system-design",2,"System design “payment system” 45 phút tự bấm giờ: yêu cầu, API, data model, nhất quán (ledger, idempotency), scale (partition theo account, read replica), lỗi; modular monolith vs microservices",
-       "donnemartin system-design-primer",
-       "Đạt khi: sơ đồ + ghi âm trình bày 10 phút"),
-     K("w13-video-readme",1,"Video demo 3 phút tiếng Anh + README kể chuyện: vấn đề, kiến trúc, ADR, bằng chứng đúng (test), số liệu, security, chi phí AWS, AI đã dùng thế nào",
-       "",
-       "Đạt khi: video công khai + README đủ mục"),
-     K("w13-tag-v1",2,"Tag v1.0 + retro tháng 3: liệt kê việc còn thiếu cho M8 (làm sau kỳ thi)",
-       "",
-       "Đạt khi: release v1.0 trên GitHub + danh sách M8")],
+       "Đạt khi: 1 trang ghi chú tiếng Anh + 5 câu hỏi ôn")],
  en:["Speaking: log, metric, trace khác nhau thế nào (ghi âm 2 phút)",
      "Mock F3 30 phút: system design payment",
      "Tập video demo 3 phút trước gương, sửa 5 lỗi"],
@@ -807,28 +818,28 @@ const WEEKS={
      K("w15-10",2,"Nghỉ")],
  en:["","Shadowing 15 phút",""],
  mock:"Ôn thi (tuần thi, bỏ mock)"},
-16:{theme:"MiniPay M8: hiệu năng + CV",goal:"Báo cáo hiệu năng (k6, flame graph, JMH), PIT ≥ 70%, CV tiếng Anh xong",
- be:[K("w16-m8-k6",1,"M8: k6 từ 50 → 200 RPS, kịch bản hot account vs phân tán; ghi p95 / p99, error rate",
+16:{theme:"MiniPay M8: hiệu năng + CV",goal:"Báo cáo hiệu năng (k6 hot account vs phân tán), CV tiếng Anh 1 trang và bộ 5 câu chuyện STAR xong",
+ be:[K("w16-m8-k6",1,"M8: k6 từ 50 → 200 RPS, kịch bản hot account vs phân tán; ghi rõ CPU/RAM, HikariCP pool size, p50 / p95 / p99, error rate và xác nhận lệch sổ cái = 0",
        "https://grafana.com/docs/k6/latest/",
-       "Đạt khi: bảng số liệu trong README"),
+       "Đạt khi: bảng số liệu thực nghiệm trong README"),
      K("w16-m8-flamegraph",1,"M8: flame graph (JFR hoặc async-profiler) khi chạy k6; sửa 1 nút thắt có bằng chứng (pool size, index, tranh chấp hot account), chạy lại so sánh",
        "async-profiler flame graph Java",
        "Đạt khi: flame graph trước/sau + bảng số liệu"),
-     K("w16-m8-jmh-vt",2,"M8: JMH cho Money và hash idempotency; so virtual threads vs platform threads trên endpoint gọi provider chậm 200 ms",
-       "",
-       "Đạt khi: bảng JMH + kết luận 3 câu"),
-     K("w16-m8-quality-gates",1,"M8 quality gates trong CI: PIT ≥ 70% (ledger), coverage ledger ≥ 85%, Modulith verify, CVE High → chặn merge",
-       "",
-       "Đạt khi: PR cố tình làm giảm chất lượng bị CI chặn"),
-     K("w16-perf-report",2,"Báo cáo hiệu năng 1 trang trong README (bảng trước/sau, flame graph, giới hạn của phép đo)",
+     K("w16-perf-report",2,"Báo cáo hiệu năng 1 trang trong README (bảng trước/sau, flame graph, nêu rõ giới hạn của phép đo local so với môi trường ngân hàng thật)",
        "",
        "Đạt khi: người đọc hiểu được trong 2 phút"),
-     K("w16-cv",1,"CV 1 trang tiếng Anh (MiniPay đứng đầu, có số liệu thật), LinkedIn, GitHub profile README, pin repo",
+     K("w16-cv",1,"CV 1 trang tiếng Anh (MiniPay đứng đầu điền số liệu thật từ k6 & Testcontainers, tiếp theo là NitroCine và N-Body HPC; ghi rõ GPA 3.45/4.0, 100% Scholarship và lịch sẵn sàng OJT)",
        "",
-       "Đạt khi: CV đã được 1 người (bạn hoặc anh chị khoá trên) review"),
+       "Đạt khi: CV đã khớp 100% với code trên GitHub và được review"),
      K("w16-star-bank",1,"Bộ 5 câu chuyện STAR theo 5 giá trị NAB (Analytical, Collaborative, Innovator, Accountable, Proactive), gồm deadlock story và 1 lần bắt lỗi code AI; ghi âm",
        "",
-       "Đạt khi: 5 STAR viết ra + ghi âm, mỗi câu ≤ 2 phút")],
+       "Đạt khi: 5 STAR viết ra + ghi âm, mỗi câu ≤ 2 phút"),
+     K("w16-m8-jmh-vt",4,"[Tuỳ chọn P4] JMH cho Money và hash idempotency; so virtual threads vs platform threads trên endpoint gọi provider chậm 200 ms",
+       "",
+       "Đạt khi: bảng JMH + kết luận 3 câu"),
+     K("w16-m8-quality-gates",4,"[Tuỳ chọn P4] Quality gates mở rộng trong CI: PIT ≥ 70% (ledger), coverage ledger ≥ 85%",
+       "",
+       "Đạt khi: PR cố tình làm giảm chất lượng bị CI chặn")],
  en:["Luyện pitch CV 2 phút","Mock F3 behavioral: 5 giá trị NAB","Pitch MiniPay 3 phút (bản cuối)"],
  mock:"Final mock interview F3 60 phút: Java core + Spring + DB + MiniPay"}
 };
@@ -1179,7 +1190,417 @@ function contentWeekFrom(t){
    Khoá v2 lưu mọi thứ theo id. Khoá v1 không bao giờ bị ghi đè: chính nó là bản sao lưu.
    Nếu đang chạy trong runtime Artifact của Claude thì lưu thêm vào window.storage. */
 const KEY1="hoang-backend-tracker-v1", KEY2="hoang-backend-tracker-v2";
-function emptyData(){return {schemaVersion:2,done:{},at:{},proof:{},notes:{},shifts:[],cut:[],off:{},reviews:{},retro:{},mvd:{},archive:{},migratedFromV1:null};}
+// Bản tiến độ người dùng cung cấp; chỉ tự nạp khi chưa có dữ liệu lưu.
+const PROGRESS_SNAPSHOT = {
+ "app": "hoang-backend-tracker",
+ "version": 2,
+ "exportedAt": "2026-10-14T09:21:10.270Z",
+ "data": {
+  "schemaVersion": 2,
+  "done": {
+   "w00-setup": 1,
+   "w00-hello-boot": 1,
+   "2026-09-11|sch-15:45": 1,
+   "w00-baseline-java": 1,
+   "2026-09-12|en": 1,
+   "w00-baseline-db": 1,
+   "w00-minipay-readme": 1,
+   "2026-09-13|mock": 1,
+   "2026-09-13|plan": 1,
+   "2026-09-13|review": 1,
+   "w01-oop": 1,
+   "2026-09-14|sch-15:45": 1,
+   "2026-09-14|sch-20:15": 1,
+   "w01-equals-pass-by-value": 1,
+   "2026-09-15|en": 1,
+   "2026-09-15|sch-10:15": 1,
+   "w01-string-pool": 1,
+   "2026-09-16|sch-15:45": 1,
+   "2026-09-16|sch-20:15": 1,
+   "w01-equals-hashcode": 1,
+   "w01-immutable-record": 1,
+   "2026-09-17|en": 1,
+   "2026-09-17|sch-15:45": 1,
+   "w01-integer-cache": 1,
+   "w01-readme-qa": 1,
+   "2026-09-18|sch-15:45": 1,
+   "w01-multimodule-junit": 1,
+   "2026-09-19|en": 1,
+   "w01-effective-java-ch3": 1,
+   "w01-notes": 1,
+   "2026-09-20|mock": 1,
+   "2026-09-20|plan": 1,
+   "2026-09-20|review": 1,
+   "w02-collections": 1,
+   "2026-09-21|sch-15:45": 1,
+   "2026-09-21|sch-20:15": 1,
+   "w02-generics": 1,
+   "2026-09-22|en": 1,
+   "2026-09-22|sch-10:15": 1,
+   "2026-09-23|sch-15:45": 1,
+   "2026-09-23|sch-20:15": 1,
+   "2026-09-24|en": 1,
+   "2026-09-24|sch-15:45": 1,
+   "2026-09-25|sch-15:45": 1,
+   "w02-hashmap-internals": 1,
+   "w02-myhashmap": 1,
+   "2026-09-27|mock": 1,
+   "2026-09-27|plan": 1,
+   "2026-09-27|review": 1,
+   "2026-09-30|sch-15:45": 1,
+   "2026-09-30|sch-20:15": 1,
+   "2026-10-01|sch-15:45": 1,
+   "cod-1": 1,
+   "cod-2": 1,
+   "lc-1": 1,
+   "lc-11": 1,
+   "lc-121": 1,
+   "lc-125": 1,
+   "lc-128": 1,
+   "lc-15": 1,
+   "lc-150": 1,
+   "lc-155": 1,
+   "lc-167": 1,
+   "lc-20": 1,
+   "lc-217": 1,
+   "lc-22": 1,
+   "lc-238": 1,
+   "lc-242": 1,
+   "lc-3": 1,
+   "lc-347": 1,
+   "lc-36": 1,
+   "lc-42": 1,
+   "lc-424": 1,
+   "lc-49": 1,
+   "lc-567": 1,
+   "lc-704": 1,
+   "lc-739": 1,
+   "lc-74": 1,
+   "lc-84": 1,
+   "lc-853": 1,
+   "lc-875": 1,
+   "lc-239": 1,
+   "lc-76": 1,
+   "2026-10-06|en": 1,
+   "2026-10-06|sch-10:15": 1,
+   "2026-10-09|sch-15:45": 1
+  },
+  "at": {
+   "w00-setup": "2026-09-11",
+   "w00-hello-boot": "2026-09-11",
+   "2026-09-11|sch-15:45": "2026-09-11",
+   "w00-baseline-java": "2026-09-12",
+   "2026-09-12|en": "2026-09-12",
+   "w00-baseline-db": "2026-09-13",
+   "w00-minipay-readme": "2026-09-13",
+   "2026-09-13|mock": "2026-09-13",
+   "2026-09-13|plan": "2026-09-13",
+   "2026-09-13|review": "2026-09-13",
+   "w01-oop": "2026-09-14",
+   "2026-09-14|sch-15:45": "2026-09-14",
+   "2026-09-14|sch-20:15": "2026-09-14",
+   "w01-equals-pass-by-value": "2026-09-15",
+   "2026-09-15|en": "2026-09-15",
+   "2026-09-15|sch-10:15": "2026-09-15",
+   "w01-string-pool": "2026-09-16",
+   "2026-09-16|sch-15:45": "2026-09-16",
+   "2026-09-16|sch-20:15": "2026-09-16",
+   "w01-equals-hashcode": "2026-09-17",
+   "w01-immutable-record": "2026-09-17",
+   "2026-09-17|en": "2026-09-17",
+   "2026-09-17|sch-15:45": "2026-09-17",
+   "w01-integer-cache": "2026-09-18",
+   "w01-readme-qa": "2026-09-18",
+   "2026-09-18|sch-15:45": "2026-09-18",
+   "w01-multimodule-junit": "2026-09-19",
+   "2026-09-19|en": "2026-09-19",
+   "w01-effective-java-ch3": "2026-09-20",
+   "w01-notes": "2026-09-20",
+   "2026-09-20|mock": "2026-09-20",
+   "2026-09-20|plan": "2026-09-20",
+   "2026-09-20|review": "2026-09-20",
+   "w02-collections": "2026-09-21",
+   "2026-09-21|sch-15:45": "2026-09-21",
+   "2026-09-21|sch-20:15": "2026-09-21",
+   "w02-generics": "2026-09-22",
+   "2026-09-22|en": "2026-09-22",
+   "2026-09-22|sch-10:15": "2026-09-22",
+   "2026-09-23|sch-15:45": "2026-09-23",
+   "2026-09-23|sch-20:15": "2026-09-23",
+   "2026-09-24|en": "2026-09-24",
+   "2026-09-24|sch-15:45": "2026-09-24",
+   "2026-09-25|sch-15:45": "2026-09-25",
+   "w02-hashmap-internals": "2026-09-26",
+   "w02-myhashmap": "2026-09-27",
+   "2026-09-27|mock": "2026-09-27",
+   "2026-09-27|plan": "2026-09-27",
+   "2026-09-27|review": "2026-09-27",
+   "2026-09-30|sch-15:45": "2026-09-30",
+   "2026-09-30|sch-20:15": "2026-09-30",
+   "2026-10-01|sch-15:45": "2026-10-01",
+   "lc-239": "2026-10-06",
+   "lc-76": "2026-10-06",
+   "2026-10-06|en": "2026-10-06",
+   "2026-10-06|sch-10:15": "2026-10-06",
+   "2026-10-09|sch-15:45": "2026-10-09"
+  },
+  "proof": {
+   "w00-setup": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-11"
+   },
+   "w00-hello-boot": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-11"
+   },
+   "w00-baseline-java": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-12"
+   },
+   "w00-baseline-db": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-13"
+   },
+   "w00-minipay-readme": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-13"
+   },
+   "w01-oop": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-14"
+   },
+   "w01-equals-pass-by-value": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-15"
+   },
+   "w01-string-pool": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-16"
+   },
+   "w01-equals-hashcode": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-17"
+   },
+   "w01-immutable-record": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-17"
+   },
+   "w01-integer-cache": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-18"
+   },
+   "w01-readme-qa": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-18"
+   },
+   "w01-multimodule-junit": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-19"
+   },
+   "w01-effective-java-ch3": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-20"
+   },
+   "w01-notes": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-20"
+   },
+   "w02-collections": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-21"
+   },
+   "w02-generics": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-22"
+   },
+   "w02-hashmap-internals": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-26"
+   },
+   "w02-myhashmap": {
+    "url": "",
+    "reason": "Đã làm ở bản v1 (trước 6/10/2026)",
+    "q": [],
+    "at": "2026-09-27"
+   }
+  },
+  "notes": {},
+  "shifts": [],
+  "cut": [],
+  "off": {},
+  "reviews": {
+   "w01-oop#2": {
+    "task": "w01-oop",
+    "step": 2,
+    "due": "2026-10-06",
+    "score": 3,
+    "doneAt": "2026-10-06"
+   },
+   "w01-equals-pass-by-value#2": {
+    "task": "w01-equals-pass-by-value",
+    "step": 2,
+    "due": "2026-10-06",
+    "score": 3,
+    "doneAt": "2026-10-06"
+   },
+   "w01-string-pool#2": {
+    "task": "w01-string-pool",
+    "step": 2,
+    "due": "2026-10-07",
+    "score": 3,
+    "doneAt": "2026-10-08"
+   },
+   "w01-equals-hashcode#2": {
+    "task": "w01-equals-hashcode",
+    "step": 2,
+    "due": "2026-10-07",
+    "score": 3,
+    "doneAt": "2026-10-08"
+   },
+   "w01-immutable-record#2": {
+    "task": "w01-immutable-record",
+    "step": 2,
+    "due": "2026-10-08",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-integer-cache#2": {
+    "task": "w01-integer-cache",
+    "step": 2,
+    "due": "2026-10-08",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-readme-qa#2": {
+    "task": "w01-readme-qa",
+    "step": 2,
+    "due": "2026-10-09",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-multimodule-junit#2": {
+    "task": "w01-multimodule-junit",
+    "step": 2,
+    "due": "2026-10-09",
+    "score": 3,
+    "doneAt": "2026-10-09"
+   },
+   "w01-effective-java-ch3#2": {
+    "task": "w01-effective-java-ch3",
+    "step": 2,
+    "due": "2026-10-10"
+   },
+   "w01-notes#2": {
+    "task": "w01-notes",
+    "step": 2,
+    "due": "2026-10-10"
+   },
+   "w02-collections#2": {
+    "task": "w02-collections",
+    "step": 2,
+    "due": "2026-10-11"
+   },
+   "w02-generics#2": {
+    "task": "w02-generics",
+    "step": 2,
+    "due": "2026-10-11"
+   },
+   "w02-hashmap-internals#2": {
+    "task": "w02-hashmap-internals",
+    "step": 2,
+    "due": "2026-10-12"
+   },
+   "w02-myhashmap#2": {
+    "task": "w02-myhashmap",
+    "step": 2,
+    "due": "2026-10-12"
+   },
+   "w01-equals-pass-by-value#3": {
+    "task": "w01-equals-pass-by-value",
+    "step": 3,
+    "due": "2026-10-20"
+   },
+   "w01-oop#3": {
+    "task": "w01-oop",
+    "step": 3,
+    "due": "2026-10-20"
+   },
+   "w01-equals-hashcode#3": {
+    "task": "w01-equals-hashcode",
+    "step": 3,
+    "due": "2026-10-22"
+   },
+   "w01-string-pool#3": {
+    "task": "w01-string-pool",
+    "step": 3,
+    "due": "2026-10-22"
+   },
+   "w01-immutable-record#3": {
+    "task": "w01-immutable-record",
+    "step": 3,
+    "due": "2026-10-23"
+   },
+   "w01-integer-cache#3": {
+    "task": "w01-integer-cache",
+    "step": 3,
+    "due": "2026-10-23"
+   },
+   "w01-multimodule-junit#3": {
+    "task": "w01-multimodule-junit",
+    "step": 3,
+    "due": "2026-10-23"
+   },
+   "w01-readme-qa#3": {
+    "task": "w01-readme-qa",
+    "step": 3,
+    "due": "2026-10-23"
+   }
+  },
+  "retro": {},
+  "mvd": {},
+  "archive": {},
+  "migratedFromV1": {
+   "keys": 85
+  }
+ }
+};
+function emptyData(){return {schemaVersion:2,done:{},at:{},proof:{},notes:{},shifts:[],cut:[],off:{},reviews:{},retro:{},mvd:{},archive:{},migratedFromV1:null,snapshotImportedAt:null};}
 let data=emptyData();
 let justMigrated=false;
 function isDone(id){return !!data.done[id];}
@@ -1215,6 +1636,7 @@ function normalize(x){
     (Array.isArray(s.cut)?s.cut:[]).forEach(id=>{if(typeof id==="string"&&!o.cut.includes(id))o.cut.push(id);});
   });
   o.migratedFromV1=x.migratedFromV1||null;
+  o.snapshotImportedAt=typeof x.snapshotImportedAt==="string"?x.snapshotImportedAt:null;
   return o;
 }
 function mergeText(x,y){
@@ -1238,6 +1660,7 @@ function mergeData(a,b){
   for(const k in b.mvd) if(b.mvd[k]) o.mvd[k]=1;
   for(const k in b.archive) if(!o.archive[k]) o.archive[k]=b.archive[k];
   if(!o.migratedFromV1&&b.migratedFromV1) o.migratedFromV1=b.migratedFromV1;
+  if(!o.snapshotImportedAt&&b.snapshotImportedAt) o.snapshotImportedAt=b.snapshotImportedAt;
   return o;
 }
 
@@ -1513,7 +1936,7 @@ function endLabel(){const d=new Date(END_T);return dm(END_T)+"/"+d.getUTCFullYea
 function renderBanners(day,t){
   const el=document.getElementById("banners"); let h="";
   const iso=isoOf(t);
-  if(data.migratedFromV1&&!bannerHidden()) h+='<div class="banner info">Đã chuyển tiến độ sang dữ liệu v2 (lộ trình mới từ 6/10). Dữ liệu v1 vẫn còn nguyên trong trình duyệt này.'+
+  if(data.migratedFromV1&&!data.snapshotImportedAt&&!bannerHidden()) h+='<div class="banner info">Đã chuyển tiến độ sang dữ liệu v2 (lộ trình mới từ 6/10). Dữ liệu v1 vẫn còn nguyên trong trình duyệt này.'+
     '<div class="btnrow"><button class="btn" type="button" data-act="backup-v1">Tải bản sao lưu v1</button><button class="btn" type="button" data-act="hide-banner">Ẩn</button></div></div>';
   if(day&&day.w===4&&day.v2) h+='<div class="banner info">Lịch cuộn: việc chưa làm tự sang ngày hôm sau, mỗi ngày chỉ nhận đủ số ô của ngày đó, cả lịch lùi theo (kéo qua 8/1 nếu cần). Ngày ôn thi thì bấm “Nghỉ backend” ở mục Hàng đợi. Đọc thẻ “Cách học” một lần trước khi bắt đầu.</div>';
   if(HOLIDAYS[iso]) h+='<div class="banner">'+esc(HOLIDAYS[iso])+'. Lịch trên lớp có thể nghỉ.</div>';
@@ -1618,7 +2041,8 @@ function renderQueue(){
   const offFuture=Object.keys(data.off).filter(k=>k>=isoOf(today)).sort();
   if(offFuture.length) h+='<p class="small">Đang đánh dấu nghỉ: '+offFuture.map(k=>esc(dm(fromIso(k)))).join(", ")+'.</p>';
   let tools='';
-  if(fin&&fin>BUFEND&&SEQ.some(s=>isV2Week(s.w)&&s.task.pri>=4&&!isDone(s.task.id)&&!CUTSET.has(s.task.id))) tools+='<button class="btn" type="button" data-q="cut">Cắt task tuỳ chọn (P4/P5) để rút ngắn</button>';
+  const optionalCount=SEQ.filter(s=>isV2Week(s.w)&&s.task.pri>=4&&!isDone(s.task.id)&&!CUTSET.has(s.task.id)).length;
+  if(optionalCount) tools+='<button class="btn" type="button" data-q="cut">Cắt '+optionalCount+' task tuỳ chọn (P4/P5) để rút ngắn</button>';
   if(data.cut.length) tools+='<button class="btn" type="button" data-q="restore">Khôi phục '+data.cut.length+' task đã cắt</button>';
   if(tools) h+='<div class="btnrow">'+tools+'</div>';
   const ahead=aheadTasks(5);
@@ -1660,6 +2084,25 @@ function mvdStatus(t){
   const note=!!(data.notes[iso]&&data.notes[iso].trim());
   return {rv,dsa,note,ok:rv&&dsa&&note};
 }
+function progressSummary(t){
+  const backend=beTotals().dn;
+  const leetcode=LC.filter(p=>isDone("lc-"+p[0])).length;
+  const codility=COD.filter(c=>isDone("cod-"+c[0])).length;
+  const overdue=dueCards(t).filter(cid=>data.reviews[cid].due<isoOf(t)).length;
+  const next=SEQ.find(s=>!isDone(s.task.id)&&!CUTSET.has(s.task.id)&&!SUPERSEDED[s.task.id]);
+  return {backend,leetcode,codility,overdue,next:next?next.task:null};
+}
+function renderResume(){
+  const t=todayUTC(), s=progressSummary(t);
+  const metrics=[[s.backend,"task backend đã xong"],[s.leetcode,"bài LeetCode đã xong"],[s.codility,"lesson Codility đã xong"],[s.overdue,"thẻ ôn quá hạn"]];
+  let h='<div class="resume-metrics">'+metrics.map(([n,label])=>'<div class="resume-metric"><strong>'+n+'</strong><span>'+esc(label)+'</span></div>').join("")+'</div>';
+  if(s.next) h+='<p class="resume-next"><strong>Tiếp tục với:</strong> '+esc(s.next.t)+'</p>';
+  else h+='<p class="resume-next">Bạn đã xong hàng đợi backend đang chọn.</p>';
+  if(s.overdue) h+='<p class="stat-line">Ôn từ thẻ cũ nhất, tối đa '+RV_MAX+' thẻ trong một ngày. Còn '+s.overdue+' thẻ quá hạn; không cần học dồn.</p>';
+  h+='<p class="stat-line">'+(data.snapshotImportedAt?'Đã nạp bản tiến độ 14/10/2026. Các số trên cập nhật theo việc bạn làm tiếp.':'Đang dùng tiến độ lưu trong trình duyệt. Bạn có thể gộp bản 14/10/2026 ở mục Sao lưu tiến độ.')+'</p>';
+  document.getElementById("resume").innerHTML=h;
+}
+
 function renderProgress(day){
   const el=document.getElementById("progress");
   const lcDone=LC.filter(p=>isDone("lc-"+p[0])).length;
@@ -1964,6 +2407,15 @@ function exportData(){
   downloadJSON({app:"hoang-backend-tracker",version:2,exportedAt:new Date().toISOString(),data},"tien-do-v2-"+isoOf(todayUTC())+".json");
   toast("Đã xuất file tiến độ");
 }
+async function restoreSnapshot(){
+  const before=Object.values(data.done).filter(Boolean).length;
+  const snapshot=normalize(JSON.parse(JSON.stringify(PROGRESS_SNAPSHOT.data)));
+  snapshot.snapshotImportedAt=PROGRESS_SNAPSHOT.exportedAt;
+  data=mergeData(data,snapshot);
+  await saveData(); buildPlan(); render();
+  const added=Object.values(data.done).filter(Boolean).length-before;
+  toast("Đã gộp bản 14/10/2026: thêm "+added+" việc đã làm");
+}
 async function backupV1(){
   const v1=await readStore(KEY1);
   if(!v1){toast("Không còn dữ liệu v1 trong trình duyệt này");return;}
@@ -2037,6 +2489,7 @@ function render(){
   renderTimeline(day);
   renderQueue();
   renderProgress(day);
+  renderResume();
   renderWeek(day);
   renderHeat(day);
   renderPhase2();
@@ -2053,7 +2506,10 @@ async function loadData(){
   const v2=await readStore(KEY2);
   if(v2&&v2.schemaVersion===2){data=normalize(v2);return;}
   const v1=await readStore(KEY1);
-  if(isObj(v1)){data=mergeData(emptyData(),migrateV1toV2(v1));justMigrated=true;await saveData();}
+  if(isObj(v1)){data=mergeData(emptyData(),migrateV1toV2(v1));justMigrated=true;await saveData();return;}
+  data=normalize(JSON.parse(JSON.stringify(PROGRESS_SNAPSHOT.data)));
+  data.snapshotImportedAt=PROGRESS_SNAPSHOT.exportedAt;
+  await saveData();
 }
 
 async function init(){
@@ -2081,6 +2537,7 @@ async function init(){
     else if(b.dataset.score!==undefined) scoreAction(b);
     else if(b.dataset.copy){const ok=await copyText(PROMPTS[b.dataset.copy].text);toast(ok?"Đã sao chép "+PROMPTS[b.dataset.copy].label:"Không sao chép được, hãy chọn tay");}
     else if(b.dataset.act==="backup-v1") backupV1();
+    else if(b.dataset.act==="restore-snapshot") await restoreSnapshot();
     else if(b.dataset.act==="hide-banner"){try{localStorage.setItem("hoang-v2-banner","1");}catch(err){/* bị chặn */}render();}
     else if(b.dataset.act==="mvd-on"){data.mvd[isoOf(todayUTC())]=1;saveData();render();toast("Đã đánh dấu Ngày tối thiểu");}
     else if(b.dataset.act==="mvd-off"){delete data.mvd[isoOf(todayUTC())];saveData();render();}
